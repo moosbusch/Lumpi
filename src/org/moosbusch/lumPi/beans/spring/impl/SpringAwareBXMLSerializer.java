@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.moosbusch.lumPi.application.impl;
+package org.moosbusch.lumPi.beans.spring.impl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -18,7 +18,7 @@ import org.apache.pivot.beans.BindException;
 import org.apache.pivot.collections.HashSet;
 import org.apache.pivot.collections.Set;
 import org.apache.pivot.serialization.Serializer;
-import org.moosbusch.lumPi.application.SpringAwareSerializer;
+import org.moosbusch.lumPi.beans.spring.SpringAwareSerializer;
 import org.moosbusch.lumPi.util.PivotUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

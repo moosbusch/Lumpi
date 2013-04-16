@@ -16,9 +16,9 @@ import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.Display;
 import org.apache.pivot.wtk.Window;
 import org.moosbusch.lumPi.application.DesktopApplication;
-import org.moosbusch.lumPi.application.PivotApplicationContext;
-import org.moosbusch.lumPi.application.impl.PivotApplicationContextImpl;
-import org.moosbusch.lumPi.application.impl.SpringAwareBXMLSerializer;
+import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
+import org.moosbusch.lumPi.beans.spring.impl.PivotApplicationContextImpl;
+import org.moosbusch.lumPi.beans.spring.impl.SpringAwareBXMLSerializer;
 import org.moosbusch.lumPi.beans.spring.impl.PivotFactoryBean;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 

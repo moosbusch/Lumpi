@@ -5,7 +5,7 @@
 package org.moosbusch.lumPi.beans.spring.spi;
 
 import java.util.Objects;
-import org.moosbusch.lumPi.application.SpringAnnotationInjector;
+import org.moosbusch.lumPi.beans.spring.SpringAnnotationInjector;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 

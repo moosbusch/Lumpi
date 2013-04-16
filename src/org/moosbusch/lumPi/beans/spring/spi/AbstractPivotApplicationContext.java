@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.moosbusch.lumPi.application.spi;
+package org.moosbusch.lumPi.beans.spring.spi;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
@@ -14,45 +14,45 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.moosbusch.lumPi.application.DesktopApplication;
-import org.moosbusch.lumPi.application.PivotApplicationContext;
-import org.moosbusch.lumPi.application.SpringAnnotationInjector;
-import org.moosbusch.lumPi.application.impl.DefaultSpringAnnotationInjector;
-import org.moosbusch.lumPi.application.impl.PivotAnnotationConfigApplicationContext;
-import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
+import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
+import org.moosbusch.lumPi.beans.spring.SpringAnnotationInjector;
+import org.moosbusch.lumPi.beans.spring.impl.PivotAnnotationConfigApplicationContext;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.core.io.Resource;
 
 /**
  *
  * @author moosbusch
  */
-public abstract class AbstractPivotApplicationContext<T extends PivotAnnotationConfigApplicationContext>
-        extends ClassPathXmlApplicationContext implements PivotApplicationContext {
-
-    private SpringAnnotationInjector<?, ?> injector;
+public abstract class AbstractPivotApplicationContext
+        extends GenericXmlApplicationContext implements PivotApplicationContext {
 
     public AbstractPivotApplicationContext(DesktopApplication application) {
         init(application);
     }
 
     private void init(DesktopApplication application) {
+        registerShutdownHook();
+        loadAnnotationConfig(application);
+        loadXmlConfig(application);
+    }
+
+    private void loadAnnotationConfig(DesktopApplication application) {
         Class<?> pivotFactoryBeanClass = Objects.requireNonNull(
                 application.getPivotBeanFactoryClass());
         String[] beanPackages = application.getAnnotatedBeanPackages();
         Class<?>[] annotatedClasses = application.getAnnotatedClasses();
-        registerShutdownHook();
-        setConfigLocations(configLocationsFromURLs(
-                application.getBeanConfigurations()));
-
-        T annoCtx =
+        PivotAnnotationConfigApplicationContext annoCtx =
                 Objects.requireNonNull(createAnnotationContext());
+
         annoCtx.registerShutdownHook();
         annoCtx.setLocation(application.getBXMLConfiguration());
         annoCtx.refresh();
         annoCtx.setChild(this);
         setParent(annoCtx);
-        refresh();
 
         if ((ArrayUtils.isNotEmpty(annotatedClasses))) {
             annoCtx.register(ArrayUtils.add(annotatedClasses, pivotFactoryBeanClass));
@@ -63,6 +63,21 @@ public abstract class AbstractPivotApplicationContext<T extends PivotAnnotationC
         if ((ArrayUtils.isNotEmpty(beanPackages))) {
             annoCtx.scan(beanPackages);
         }
+    }
+
+    private void loadXmlConfig(DesktopApplication application) {
+        String[] configLocations = configLocationsFromURLs(application.getBeanConfigurations());
+        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(this);
+
+        for (int cnt = 0; cnt < configLocations.length; cnt++) {
+            Resource res = getResource(configLocations[cnt]);
+
+            if (res != null) {
+                xmlReader.loadBeanDefinitions(res);
+            }
+        }
+
+        refresh();
     }
 
     private String[] configLocationsFromURLs(URL[] locations) {
@@ -78,16 +93,11 @@ public abstract class AbstractPivotApplicationContext<T extends PivotAnnotationC
         return null;
     }
 
-    protected abstract T createAnnotationContext();
+    protected abstract PivotAnnotationConfigApplicationContext createAnnotationContext();
 
     @Override
-    public SpringAnnotationInjector<?, ?> getInjector() {
-        if (injector == null) {
-            injector = new DefaultSpringAnnotationInjector(
-                    getBeanFactory());
-        }
-
-        return injector;
+    public final SpringAnnotationInjector<?, ?> getInjector() {
+        return getParent().getInjector();
     }
 
     @Override
@@ -110,7 +120,7 @@ public abstract class AbstractPivotApplicationContext<T extends PivotAnnotationC
     }
 
     @Override
-    public final boolean containsBean(String id) {
+    public boolean containsBean(String id) {
         boolean result = false;
 
         if (StringUtils.isNotBlank(id)) {
@@ -129,21 +139,12 @@ public abstract class AbstractPivotApplicationContext<T extends PivotAnnotationC
     }
 
     @Override
-    public final <T> T getBean(Class<T> requiredType) throws BeansException {
-        T result = super.getBean(requiredType);
-
-        if (ClassUtils.isAssignable(result.getClass(), BindableWindow.class)) {
-            SpringAnnotationInjector<?, ?> inj =
-                    Objects.requireNonNull(getInjector());
-
-            inj.inject(result);
-        }
-
-        return result;
+    public <T> T getBean(Class<T> requiredType) throws BeansException {
+        return super.getBean(requiredType);
     }
 
     @Override
-    public final Object getBean(String id) {
+    public Object getBean(String id) {
         Object result = null;
 
         if (StringUtils.isNotBlank(id)) {
@@ -162,7 +163,7 @@ public abstract class AbstractPivotApplicationContext<T extends PivotAnnotationC
     }
 
     @Override
-    public final <T> T getBean(String name, Class<T> requiredType) {
+    public <T> T getBean(String name, Class<T> requiredType) {
         Object result = super.getBean(name, requiredType);
 
         if ((result == null) && (getParent() != null)) {
@@ -183,7 +184,7 @@ public abstract class AbstractPivotApplicationContext<T extends PivotAnnotationC
     }
 
     @Override
-    public final Object getBean(String name, Object... args) throws BeansException {
+    public Object getBean(String name, Object... args) throws BeansException {
         Object result = super.getBean(name, args);
 
         if ((result == null) && (getParent() != null)) {
@@ -220,11 +221,11 @@ public abstract class AbstractPivotApplicationContext<T extends PivotAnnotationC
     }
 
     @Override
-    public final T getParent() {
+    public PivotAnnotationConfigApplicationContext getParent() {
         ApplicationContext result = super.getParent();
 
         if (result != null) {
-            return (T) result;
+            return (PivotAnnotationConfigApplicationContext) result;
         }
 
         return null;

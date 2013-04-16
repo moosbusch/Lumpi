@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.moosbusch.lumPi.application;
+package org.moosbusch.lumPi.beans.spring;
 
+import org.moosbusch.lumPi.beans.spring.SpringAnnotationInjector;
 import org.apache.pivot.beans.Resolvable;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ConfigurableApplicationContext;

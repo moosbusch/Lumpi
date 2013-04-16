@@ -2,15 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.moosbusch.lumPi.application.impl;
+package org.moosbusch.lumPi.beans.spring.impl;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
-import org.moosbusch.lumPi.application.PivotApplicationContext;
-import org.moosbusch.lumPi.application.SpringAnnotationInjector;
+import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
+import org.moosbusch.lumPi.beans.spring.SpringAnnotationInjector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -26,6 +26,7 @@ public class PivotAnnotationConfigApplicationContext
     private Resources resources;
     private Map<String, Object> namespace;
     private Reference<PivotApplicationContext> childContextRef;
+    private SpringAnnotationInjector<?, ?> injector;
 
     @Override
     public final PivotAnnotationConfigApplicationContext getParent() {
@@ -87,8 +88,13 @@ public class PivotAnnotationConfigApplicationContext
     }
 
     @Override
-    public final SpringAnnotationInjector<?, ?> getInjector() {
-        return null;
+    public SpringAnnotationInjector<?, ?> getInjector() {
+        if (injector == null) {
+            injector = new DefaultSpringAnnotationInjector(
+                    getBeanFactory());
+        }
+
+        return injector;
     }
 
 }

@@ -17,7 +17,8 @@ import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.action.ChildWindowAction;
-import org.moosbusch.lumPi.application.PivotApplicationContext;
+import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
+import org.moosbusch.lumPi.beans.spring.SpringAnnotationInjector;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,8 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>, Applicatio
         for (String id : result) {
             Object obj = Objects.requireNonNull(result.get(id));
 
+            obj = injectSpringBeans(obj);
+
             if (obj instanceof Bindable) {
                 bind(serializer, (Bindable) obj);
             }
@@ -61,6 +64,12 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>, Applicatio
         }
 
         return result;
+    }
+
+    private Object injectSpringBeans(Object namespaceObject) {
+        SpringAnnotationInjector<?, ?> inj = getApplicationContext().getInjector();
+        inj.inject(namespaceObject);
+        return namespaceObject;
     }
 
     protected BindableWindow readObject(BXMLSerializer serializer, URL bxmlFileURL, Resources resources)
