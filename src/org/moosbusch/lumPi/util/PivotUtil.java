@@ -321,21 +321,6 @@ public class PivotUtil {
         return false;
     }
 
-    public String getRFC3066Locale(String localeCode) {
-        if (StringUtils.contains(localeCode, "_")) {
-            String[] tokens = StringUtils.split(localeCode, "_");
-
-            if (ArrayUtils.isNotEmpty(tokens)) {
-                String languageCode = tokens[0].toLowerCase();
-                String countryCode = tokens[1].toUpperCase();
-
-                return languageCode + "-" + countryCode;
-            }
-        }
-
-        throw new IllegalArgumentException();
-    }
-
     public static void printComponentStyles(Component cmp) {
         for (String styleKey : cmp.getStyles()) {
             System.out.println(styleKey);
