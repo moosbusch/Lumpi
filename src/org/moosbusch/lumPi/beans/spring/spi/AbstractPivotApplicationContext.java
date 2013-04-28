@@ -130,6 +130,10 @@ public abstract class AbstractPivotApplicationContext
                 result = getParent().containsBean(id);
             }
 
+            if ((!result) && (getChild() != null)) {
+                result = getParent().containsBean(id);
+            }
+
             if ((!result) && (getNamespace() != null)) {
                 result = getNamespace().containsKey(id);
             }
@@ -154,6 +158,10 @@ public abstract class AbstractPivotApplicationContext
                 result = getParent().getBean(id);
             }
 
+            if ((result == null) && (getChild() != null)) {
+                result = getParent().getBean(id);
+            }
+
             if ((result == null) && (getNamespace() != null)) {
                 result = getNamespace().get(id);
             }
@@ -167,6 +175,10 @@ public abstract class AbstractPivotApplicationContext
         Object result = super.getBean(name, requiredType);
 
         if ((result == null) && (getParent() != null)) {
+            result = getParent().getBean(name, requiredType);
+        }
+
+        if ((result == null) && (getChild() != null)) {
             result = getParent().getBean(name, requiredType);
         }
 
@@ -188,6 +200,10 @@ public abstract class AbstractPivotApplicationContext
         Object result = super.getBean(name, args);
 
         if ((result == null) && (getParent() != null)) {
+            result = getParent().getBean(name, args);
+        }
+
+        if ((result == null) && (getChild() != null)) {
             result = getParent().getBean(name, args);
         }
 

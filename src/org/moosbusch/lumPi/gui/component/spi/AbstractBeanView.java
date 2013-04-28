@@ -203,7 +203,7 @@ public abstract class AbstractBeanView<T extends BeanViewTreeView, F extends Abs
             if (StringUtils.equals(propertyName, VALUE_PROPERTY)) {
                 bread.setValue(getValue());
                 tree.setValue(getValue());
-                form.setValue(getValue());
+                form.setValue((Object) getValue());
             } else if (StringUtils.equals(propertyName, SELECTION_PROPERTY)) {
                 Selection<Object> sel = getSelection();
                 Component evtSrc = sel.getEventSource();

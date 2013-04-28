@@ -65,39 +65,10 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
         initDefaultEditors();
     }
 
-    protected void initDefaultEditors() {
-        putEditor(Boolean.class.getName(), CheckboxBooleanFormEditor.class);
-        putEditor(org.apache.pivot.collections.Collection.class.getName(),
-                DefaultCollectionFormEditor.class);
-        putEditor(java.util.Collection.class.getName(), DefaultCollectionFormEditor.class);
-        putEditor(Integer.class.getName(), DefaultIntegerFormEditor.class);
-        putEditor(Byte.class.getName(), DefaultByteFormEditor.class);
-        putEditor(Short.class.getName(), DefaultShortFormEditor.class);
-        putEditor(Float.class.getName(), DefaultFloatFormEditor.class);
-        putEditor(Double.class.getName(), DefaultDoubleFormEditor.class);
-        putEditor(Character.class.getName(), DefaultCharacterFormEditor.class);
-        putEditor(String.class.getName(), DefaultStringFormEditor.class);
-    }
-
-    protected void initDefaultValidators() {
-        putValidator(Boolean.class.getName(), BooleanValidator.class);
-        putValidator(Integer.class.getName(), IntegerNumberValidator.class);
-        putValidator(Byte.class.getName(), ByteNumberValidator.class);
-        putValidator(Short.class.getName(), ShortNumberValidator.class);
-        putValidator(Float.class.getName(), FloatNumberValidator.class);
-        putValidator(Double.class.getName(), DoubleNumberValidator.class);
-    }
-
-    protected ScrollPane createScrollPane() {
-        return new FillScrollPane();
-    }
-
-    protected final Form.Section createSection(Class<?> beanClass)
+    protected final Form.Section createSection(Class<?> beanClass, PropertyDescriptor[] propDescs)
             throws IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
         Form.Section result = new Form.Section();
-        PropertyDescriptor[] propDescs =
-                PropertyUtils.getPropertyDescriptors(beanClass);
         String sectHeading = getSectionHeading();
 
         if ((isShowSectionHeading()) && (StringUtils.isNotBlank(sectHeading))) {
@@ -136,10 +107,6 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
         return result;
     }
 
-    protected boolean isExcludedProperty(Class<?> beanClass, String propertyName) {
-        return FormUtil.isExcludedProperty(beanClass, propertyName, FormUtil.getDefaultIgnoredProperties());
-    }
-
     protected final void removeSections() {
         PivotUtil.clearSequence(getSections());
     }
@@ -150,6 +117,41 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
 
     protected final Map<String, Class<? extends FormEditor<? extends Component>>> getEditorsMap() {
         return editorsMap;
+    }
+
+    protected boolean isExcludedProperty(Class<?> beanClass, String propertyName) {
+        return FormUtil.isExcludedProperty(beanClass, propertyName, FormUtil.getDefaultIgnoredProperties());
+    }
+
+    protected void initDefaultEditors() {
+        putEditor(Boolean.class.getName(), CheckboxBooleanFormEditor.class);
+        putEditor(org.apache.pivot.collections.Collection.class.getName(),
+                DefaultCollectionFormEditor.class);
+        putEditor(java.util.Collection.class.getName(), DefaultCollectionFormEditor.class);
+        putEditor(Integer.class.getName(), DefaultIntegerFormEditor.class);
+        putEditor(Byte.class.getName(), DefaultByteFormEditor.class);
+        putEditor(Short.class.getName(), DefaultShortFormEditor.class);
+        putEditor(Float.class.getName(), DefaultFloatFormEditor.class);
+        putEditor(Double.class.getName(), DefaultDoubleFormEditor.class);
+        putEditor(Character.class.getName(), DefaultCharacterFormEditor.class);
+        putEditor(String.class.getName(), DefaultStringFormEditor.class);
+    }
+
+    protected void initDefaultValidators() {
+        putValidator(Boolean.class.getName(), BooleanValidator.class);
+        putValidator(Integer.class.getName(), IntegerNumberValidator.class);
+        putValidator(Byte.class.getName(), ByteNumberValidator.class);
+        putValidator(Short.class.getName(), ShortNumberValidator.class);
+        putValidator(Float.class.getName(), FloatNumberValidator.class);
+        putValidator(Double.class.getName(), DoubleNumberValidator.class);
+    }
+
+    protected ScrollPane createScrollPane() {
+        return new FillScrollPane();
+    }
+
+    protected PropertyDescriptor[] getPropertyDescriptors(Class<?> beanClass) {
+         return PropertyUtils.getPropertyDescriptors(beanClass);
     }
 
     public final FormEditor<? extends Component> getEditor(String beanClassName,
@@ -247,7 +249,8 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
             Form.Section section = null;
 
             try {
-                section = createSection(context.getClass());
+                section = createSection(context.getClass(),
+                        getPropertyDescriptors(context.getClass()));
             } catch (IllegalAccessException | InvocationTargetException |
                     NoSuchMethodException ex) {
                 Logger.getLogger(AbstractDynamicForm.class.getName()).log(

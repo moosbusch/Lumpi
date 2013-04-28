@@ -73,11 +73,20 @@ public abstract class AbstractDesktopApplication
     private void closeApplicationContext() {
         try (PivotApplicationContext ctx = getApplicationContext()) {
             PivotApplicationContext parentCtx = ctx.getParent();
+            PivotApplicationContext childCtx = ctx.getChild();
 
             if (parentCtx != null) {
                 if (parentCtx.isActive()) {
                     if (parentCtx.isRunning()) {
                         parentCtx.stop();
+                    }
+                }
+            }
+
+            if (childCtx != null) {
+                if (childCtx.isActive()) {
+                    if (childCtx.isRunning()) {
+                        childCtx.stop();
                     }
                 }
             }
