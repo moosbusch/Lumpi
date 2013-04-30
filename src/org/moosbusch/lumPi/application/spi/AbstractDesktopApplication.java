@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.DesktopApplicationContext;
@@ -48,9 +49,10 @@ public abstract class AbstractDesktopApplication
     private void init() {
         PivotFactoryBean pivotFactory =
                 context.getBean(PivotFactoryBean.class);
-        pivotFactory.setBxml(this.getBXMLConfiguration());
-        pivotFactory.setResources(getResources());
-        pivotFactory.setSerializer(getSerializer());
+        BXMLSerializer ser = getSerializer();
+        ser.setLocation(getBXMLConfiguration());
+        ser.setResources(getResources());
+        pivotFactory.setSerializer(ser);
     }
 
     private java.awt.Window getHostWindow() {
@@ -72,30 +74,7 @@ public abstract class AbstractDesktopApplication
 
     private void closeApplicationContext() {
         try (PivotApplicationContext ctx = getApplicationContext()) {
-            PivotApplicationContext parentCtx = ctx.getParent();
-            PivotApplicationContext childCtx = ctx.getChild();
-
-            if (parentCtx != null) {
-                if (parentCtx.isActive()) {
-                    if (parentCtx.isRunning()) {
-                        parentCtx.stop();
-                    }
-                }
-            }
-
-            if (childCtx != null) {
-                if (childCtx.isActive()) {
-                    if (childCtx.isRunning()) {
-                        childCtx.stop();
-                    }
-                }
-            }
-
-            if (ctx.isActive()) {
-                if (ctx.isRunning()) {
-                    ctx.stop();
-                }
-            }
+            ctx.stop();
         }
     }
 

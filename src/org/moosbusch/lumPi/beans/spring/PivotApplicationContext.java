@@ -30,15 +30,4 @@ public interface PivotApplicationContext
     @Override
     public Object getBean(String name, Object... args) throws BeansException;
 
-    @Override
-    public PivotApplicationContext getParent();
-
-    public PivotApplicationContext getChild();
-
-    public void setChild(PivotApplicationContext childContext);
-
-    public boolean isParent();
-
-    public boolean isChild();
-
 }

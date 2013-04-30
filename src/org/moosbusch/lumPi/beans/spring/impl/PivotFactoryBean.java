@@ -5,22 +5,20 @@
 package org.moosbusch.lumPi.beans.spring.impl;
 
 import java.io.IOException;
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
-import java.net.URL;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.serialization.SerializationException;
-import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.action.ChildWindowAction;
 import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,22 +27,19 @@ import org.springframework.context.annotation.Configuration;
  * @author moosbusch
  */
 @Configuration
-public class PivotFactoryBean implements FactoryBean<BindableWindow> {
+public class PivotFactoryBean implements FactoryBean<BindableWindow>,
+        BeanPostProcessor {
 
     @Autowired
     private ApplicationContext applicationContext;
-    private URL bxml;
-    private Resources appResources;
-    private BXMLSerializer windowSerializer;
-    private Reference<BindableWindow> applicationWindowRef;
+    private BindableWindow applicationWindow;
+    private BXMLSerializer serializer;
 
     private Map<String, Object> processNamespace(BXMLSerializer serializer) {
         Map<String, Object> result = serializer.getNamespace();
 
         for (String id : result) {
             Object obj = Objects.requireNonNull(result.get(id));
-
-            obj = injectSpringBeans(id, obj);
 
             if (obj instanceof Bindable) {
                 bind(serializer, (Bindable) obj);
@@ -59,26 +54,24 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow> {
                 BindableWindow window = Objects.requireNonNull(getApplicationWindow());
                 cwa.setApplicationWindow(window);
             }
+
+            applicationContext.getAutowireCapableBeanFactory().autowireBean(obj);
         }
 
         return result;
     }
 
-    private Object injectSpringBeans(String id, Object namespaceObject) {
-        SpringAnnotationInjector<?, ?> inj = getApplicationContext().getInjector();
-        inj.inject(namespaceObject);
-        return namespaceObject;
-    }
-
-    protected BindableWindow readObject(BXMLSerializer serializer, URL bxmlFileURL, Resources resources)
+    protected BindableWindow readObject(BXMLSerializer serializer)
             throws IOException, SerializationException {
         BindableWindow result = getApplicationWindow();
 
         if (result == null) {
-            if (resources != null) {
-                result = (BindableWindow) serializer.readObject(bxmlFileURL, resources);
+            if (serializer.getResources() != null) {
+                result = (BindableWindow) serializer.readObject(
+                        serializer.getLocation(), serializer.getResources());
             } else {
-                result = (BindableWindow) serializer.readObject(bxmlFileURL);
+                result = (BindableWindow) serializer.readObject(
+                        serializer.getLocation());
             }
         }
 
@@ -97,15 +90,22 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow> {
                 serializer.getLocation(), serializer.getResources());
     }
 
+    protected BindableWindow getApplicationWindow() {
+        return applicationWindow;
+    }
+
+    protected void setApplicationWindow(BindableWindow applicationWindow) {
+        this.applicationWindow = applicationWindow;
+    }
+
     @Override
     public final BindableWindow getObject() throws Exception {
-        BXMLSerializer serializer = Objects.requireNonNull(getSerializer());
-        URL bxmlFileURL = Objects.requireNonNull(getBxml());
-        Resources resources = getResources();
-        BindableWindow result = readObject(serializer, bxmlFileURL, resources);
+        BXMLSerializer ser = Objects.requireNonNull(getSerializer());
+        BindableWindow result = readObject(ser);
         setApplicationWindow(Objects.requireNonNull(result));
         getApplicationContext().setNamespace(processNamespace(serializer));
-        getApplicationContext().setResources(resources);
+        getApplicationContext().setLocation(ser.getLocation());
+        getApplicationContext().setResources(ser.getResources());
         return result;
     }
 
@@ -123,42 +123,21 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow> {
         return (PivotApplicationContext) applicationContext;
     }
 
-    public URL getBxml() {
-        return bxml;
-    }
-
-    public void setBxml(URL bxml) {
-        this.bxml = bxml;
-    }
-
-    public Resources getResources() {
-        return appResources;
-    }
-
-    public void setResources(Resources resources) {
-        this.appResources = resources;
-    }
-
     public BXMLSerializer getSerializer() {
-        return windowSerializer;
+        return serializer;
     }
 
     public void setSerializer(BXMLSerializer serializer) {
-        this.windowSerializer = serializer;
+        this.serializer = serializer;
     }
 
-    public BindableWindow getApplicationWindow() {
-        if (applicationWindowRef != null) {
-            return applicationWindowRef.get();
-        }
-
-        return null;
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String id) throws BeansException {
+        return bean;
     }
 
-    public void setApplicationWindow(BindableWindow applicationWindow) {
-        if (applicationWindowRef == null) {
-            this.applicationWindowRef = new WeakReference<>(applicationWindow);
-        }
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String id) throws BeansException {
+        return bean;
     }
-
 }

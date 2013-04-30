@@ -17,9 +17,4 @@ public class PivotApplicationContextImpl extends AbstractPivotApplicationContext
         super(application);
     }
 
-    @Override
-    protected PivotAnnotationConfigApplicationContext createAnnotationContext() {
-        return new PivotAnnotationConfigApplicationContext();
-    }
-
 }

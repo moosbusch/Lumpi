@@ -15,13 +15,9 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.moosbusch.lumPi.application.DesktopApplication;
 import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
-import org.moosbusch.lumPi.beans.spring.impl.PivotAnnotationConfigApplicationContext;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
-import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.io.Resource;
 
 /**
@@ -29,7 +25,11 @@ import org.springframework.core.io.Resource;
  * @author moosbusch
  */
 public abstract class AbstractPivotApplicationContext
-        extends GenericXmlApplicationContext implements PivotApplicationContext {
+        extends AnnotationConfigApplicationContext implements PivotApplicationContext {
+
+    private URL location;
+    private Resources resources;
+    private Map<String, Object> namespace;
 
     public AbstractPivotApplicationContext(DesktopApplication application) {
         init(application);
@@ -37,10 +37,13 @@ public abstract class AbstractPivotApplicationContext
 
     private void init(DesktopApplication application) {
         registerShutdownHook();
-        getBeanFactory().addBeanPostProcessor(new CommonAnnotationBeanPostProcessor());
-        getBeanFactory().addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
-        loadAnnotationConfig(application);
-        loadXmlConfig(application);
+
+        try {
+            loadAnnotationConfig(application);
+            loadXmlConfig(application);
+        } finally {
+            refresh();
+        }
     }
 
     private void loadAnnotationConfig(DesktopApplication application) {
@@ -48,23 +51,15 @@ public abstract class AbstractPivotApplicationContext
                 application.getPivotBeanFactoryClass());
         String[] beanPackages = application.getAnnotatedBeanPackages();
         Class<?>[] annotatedClasses = application.getAnnotatedClasses();
-        PivotAnnotationConfigApplicationContext annoCtx =
-                Objects.requireNonNull(createAnnotationContext());
-
-        annoCtx.registerShutdownHook();
-        annoCtx.setLocation(application.getBXMLConfiguration());
-        annoCtx.refresh();
-        annoCtx.setChild(this);
-        setParent(annoCtx);
 
         if ((ArrayUtils.isNotEmpty(annotatedClasses))) {
-            annoCtx.register(ArrayUtils.add(annotatedClasses, pivotFactoryBeanClass));
+            register(ArrayUtils.add(annotatedClasses, pivotFactoryBeanClass));
         } else {
-            annoCtx.register(pivotFactoryBeanClass);
+            register(pivotFactoryBeanClass);
         }
 
         if ((ArrayUtils.isNotEmpty(beanPackages))) {
-            annoCtx.scan(beanPackages);
+            scan(beanPackages);
         }
     }
 
@@ -80,8 +75,6 @@ public abstract class AbstractPivotApplicationContext
                 xmlReader.loadBeanDefinitions(res);
             }
         }
-
-        refresh();
     }
 
     private String[] configLocationsFromURLs(URL[] locations) {
@@ -97,27 +90,6 @@ public abstract class AbstractPivotApplicationContext
         return null;
     }
 
-    protected abstract PivotAnnotationConfigApplicationContext createAnnotationContext();
-
-    @Override
-    public final PivotApplicationContext getChild() {
-        return null;
-    }
-
-    @Override
-    public final void setChild(PivotApplicationContext childContext) {
-    }
-
-    @Override
-    public final boolean isParent() {
-        return false;
-    }
-
-    @Override
-    public final boolean isChild() {
-        return true;
-    }
-
     @Override
     public boolean containsBean(String id) {
         boolean result = false;
@@ -126,8 +98,6 @@ public abstract class AbstractPivotApplicationContext
             result = super.containsBean(id);
 
             if ((!result) && (getParent() != null)) {
-                result = getParent().containsBean(id);
-            } else if ((!result) && (getChild() != null)) {
                 result = getParent().containsBean(id);
             }
 
@@ -143,14 +113,6 @@ public abstract class AbstractPivotApplicationContext
     public <T> T getBean(Class<T> requiredType) throws BeansException {
         T result = super.getBean(requiredType);
 
-        if (result == null) {
-            if ((result == null) && (getParent() != null)) {
-                result = getParent().getBean(requiredType);
-            } else if ((result == null) && (getChild() != null)) {
-                result = getParent().getBean(requiredType);
-            }
-        }
-
         return result;
     }
 
@@ -160,12 +122,6 @@ public abstract class AbstractPivotApplicationContext
 
         if (StringUtils.isNotBlank(id)) {
             result = super.getBean(id);
-
-            if ((result == null) && (getParent() != null)) {
-                result = getParent().getBean(id);
-            } else if ((result == null) && (getChild() != null)) {
-                result = getParent().getBean(id);
-            }
 
             if ((result == null) && (getNamespace() != null)) {
                 result = getNamespace().get(id);
@@ -178,12 +134,6 @@ public abstract class AbstractPivotApplicationContext
     @Override
     public <T> T getBean(String name, Class<T> requiredType) {
         Object result = super.getBean(name, requiredType);
-
-        if ((result == null) && (getParent() != null)) {
-            result = getParent().getBean(name, requiredType);
-        } else if ((result == null) && (getChild() != null)) {
-            result = getParent().getBean(name, requiredType);
-        }
 
         if ((result == null) && (getNamespace() != null)) {
             result = getNamespace().get(name);
@@ -202,13 +152,7 @@ public abstract class AbstractPivotApplicationContext
     public Object getBean(String name, Object... args) throws BeansException {
         Object result = super.getBean(name, args);
 
-        if ((result == null) && (getParent() != null)) {
-            result = getParent().getBean(name, args);
-        } else if ((result == null) && (getChild() != null)) {
-            result = getParent().getBean(name, args);
-        }
-
-        if ((result == null) && (getNamespace() != null)) {
+        if (result == null) {
             result = getNamespace().get(name);
 
             if (result != null) {
@@ -238,43 +182,32 @@ public abstract class AbstractPivotApplicationContext
     }
 
     @Override
-    public PivotAnnotationConfigApplicationContext getParent() {
-        ApplicationContext result = super.getParent();
-
-        if (result != null) {
-            return (PivotAnnotationConfigApplicationContext) result;
-        }
-
-        return null;
-    }
-
-    @Override
-    public final Map<String, Object> getNamespace() {
-        return getParent().getNamespace();
-    }
-
-    @Override
-    public final void setNamespace(Map<String, Object> pivotNamespace) {
-        getParent().setNamespace(pivotNamespace);
-    }
-
-    @Override
-    public final Resources getResources() {
-        return getParent().getResources();
-    }
-
-    @Override
-    public final void setResources(Resources resources) {
-        getParent().setResources(resources);
-    }
-
-    @Override
     public URL getLocation() {
-        return getParent().getLocation();
+        return location;
     }
 
     @Override
     public void setLocation(URL location) {
-        getParent().setLocation(location);
+        this.location = location;
+    }
+
+    @Override
+    public Map<String, Object> getNamespace() {
+        return namespace;
+    }
+
+    @Override
+    public void setNamespace(Map<String, Object> pivotNamespace) {
+        this.namespace = pivotNamespace;
+    }
+
+    @Override
+    public Resources getResources() {
+        return resources;
+    }
+
+    @Override
+    public void setResources(Resources resources) {
+        this.resources = resources;
     }
 }
