@@ -4,7 +4,6 @@
  */
 package org.moosbusch.lumPi.beans.spring;
 
-import org.moosbusch.lumPi.beans.spring.SpringAnnotationInjector;
 import org.apache.pivot.beans.Resolvable;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,7 +40,5 @@ public interface PivotApplicationContext
     public boolean isParent();
 
     public boolean isChild();
-
-    public SpringAnnotationInjector<?, ?> getInjector();
 
 }

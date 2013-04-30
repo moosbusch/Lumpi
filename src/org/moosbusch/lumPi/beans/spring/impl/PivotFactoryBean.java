@@ -18,12 +18,10 @@ import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.action.ChildWindowAction;
 import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
-import org.moosbusch.lumPi.beans.spring.SpringAnnotationInjector;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -31,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
  * @author moosbusch
  */
 @Configuration
-public class PivotFactoryBean implements FactoryBean<BindableWindow>, ApplicationContextAware {
+public class PivotFactoryBean implements FactoryBean<BindableWindow> {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -46,7 +44,7 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>, Applicatio
         for (String id : result) {
             Object obj = Objects.requireNonNull(result.get(id));
 
-            obj = injectSpringBeans(obj);
+            obj = injectSpringBeans(id, obj);
 
             if (obj instanceof Bindable) {
                 bind(serializer, (Bindable) obj);
@@ -66,7 +64,7 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>, Applicatio
         return result;
     }
 
-    private Object injectSpringBeans(Object namespaceObject) {
+    private Object injectSpringBeans(String id, Object namespaceObject) {
         SpringAnnotationInjector<?, ?> inj = getApplicationContext().getInjector();
         inj.inject(namespaceObject);
         return namespaceObject;
@@ -125,15 +123,6 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>, Applicatio
         return (PivotApplicationContext) applicationContext;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        if (applicationContext instanceof PivotApplicationContext) {
-            this.applicationContext = applicationContext;
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public URL getBxml() {
         return bxml;
     }
@@ -171,4 +160,5 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>, Applicatio
             this.applicationWindowRef = new WeakReference<>(applicationWindow);
         }
     }
+
 }
