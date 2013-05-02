@@ -47,11 +47,12 @@ public abstract class AbstractDesktopApplication
 
     private void init() {
         PivotFactoryBean pivotFactory =
-                context.getBean(PivotFactoryBean.class);
+                getApplicationContext().getBean(PivotFactoryBean.class);
         BXMLSerializer ser = getSerializer();
         ser.setLocation(getBXMLConfiguration());
         ser.setResources(getResources());
         pivotFactory.setSerializer(ser);
+        getApplicationContext().getAutowireCapableBeanFactory().autowireBean(this);
     }
 
     private java.awt.Window getHostWindow() {

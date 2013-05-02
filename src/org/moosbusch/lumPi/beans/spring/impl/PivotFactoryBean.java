@@ -16,10 +16,8 @@ import org.moosbusch.lumPi.action.ChildWindowAction;
 import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
 import org.moosbusch.lumPi.beans.spring.annotation.Autowire;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,8 +26,7 @@ import org.springframework.context.annotation.Configuration;
  * @author moosbusch
  */
 @Configuration
-public class PivotFactoryBean implements FactoryBean<BindableWindow>,
-        BeanPostProcessor {
+public class PivotFactoryBean implements FactoryBean<BindableWindow> {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -57,7 +54,7 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
             }
 
             if (obj.getClass().isAnnotationPresent(Autowire.class)) {
-                applicationContext.getAutowireCapableBeanFactory().autowireBean(obj);
+                getApplicationContext().getAutowireCapableBeanFactory().autowireBean(obj);
             }
         }
 
@@ -134,13 +131,4 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
         this.serializer = serializer;
     }
 
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String id) throws BeansException {
-        return bean;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String id) throws BeansException {
-        return bean;
-    }
 }
