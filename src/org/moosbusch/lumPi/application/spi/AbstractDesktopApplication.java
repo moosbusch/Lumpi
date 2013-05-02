@@ -19,7 +19,6 @@ import org.apache.pivot.wtk.Window;
 import org.moosbusch.lumPi.application.DesktopApplication;
 import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
 import org.moosbusch.lumPi.beans.spring.impl.PivotApplicationContextImpl;
-import org.moosbusch.lumPi.beans.spring.impl.SpringAwareBXMLSerializer;
 import org.moosbusch.lumPi.beans.spring.impl.PivotFactoryBean;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 
@@ -31,7 +30,7 @@ public abstract class AbstractDesktopApplication
         extends Application.Adapter implements DesktopApplication {
 
     private Display display = null;
-    private final SpringAwareBXMLSerializer serializer;
+    private final BXMLSerializer serializer;
     private final PivotApplicationContext context;
     private final HostWindowResizeListener windowListener;
 
@@ -42,7 +41,7 @@ public abstract class AbstractDesktopApplication
         init();
     }
 
-    private SpringAwareBXMLSerializer initSerializer() {
+    private BXMLSerializer initSerializer() {
         return Objects.requireNonNull(createSerializer());
     }
 
@@ -78,7 +77,7 @@ public abstract class AbstractDesktopApplication
         }
     }
 
-    protected abstract SpringAwareBXMLSerializer createSerializer();
+    protected abstract BXMLSerializer createSerializer();
 
     protected abstract void startupImpl(Display display, Map<String, String> namespace)
             throws Exception;
@@ -105,7 +104,7 @@ public abstract class AbstractDesktopApplication
     }
 
     @Override
-    public final SpringAwareBXMLSerializer getSerializer() {
+    public final BXMLSerializer getSerializer() {
         return serializer;
     }
 
