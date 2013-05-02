@@ -14,6 +14,7 @@ import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.action.ChildWindowAction;
 import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
+import org.moosbusch.lumPi.beans.spring.annotation.Autowire;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
@@ -55,9 +56,9 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
                 cwa.setApplicationWindow(window);
             }
 
-//            if (obj.getClass().isAnnotationPresent(Autowired.class)) {
+            if (obj.getClass().isAnnotationPresent(Autowire.class)) {
                 applicationContext.getAutowireCapableBeanFactory().autowireBean(obj);
-//            }
+            }
         }
 
         return result;
