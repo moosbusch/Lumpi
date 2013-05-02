@@ -39,8 +39,8 @@ public abstract class AbstractPivotApplicationContext
         registerShutdownHook();
 
         try {
-            loadAnnotationConfig(application);
             loadXmlConfig(application);
+            loadAnnotationConfig(application);
         } finally {
             refresh();
         }

@@ -4,29 +4,12 @@
  */
 package org.moosbusch.lumPi.gui.form.editor.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.commons.beanutils.MethodUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.pivot.collections.Sequence;
-import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ListButton;
-import org.apache.pivot.wtk.Menu;
-import org.apache.pivot.wtk.MenuHandler;
-import org.moosbusch.lumPi.action.spi.LabelableAction;
-import org.moosbusch.lumPi.collections.CollectionHandler;
-import org.moosbusch.lumPi.gui.component.impl.BeanViewBreadCrumbBar;
-import org.moosbusch.lumPi.gui.component.spi.AbstractBeanView;
 import org.moosbusch.lumPi.gui.form.editor.binding.FormEditorBindMapping;
 import org.moosbusch.lumPi.gui.form.editor.binding.impl.DefaultListButtonBindMapping;
 import org.moosbusch.lumPi.gui.form.editor.io.StoreValueDelegate;
 import org.moosbusch.lumPi.gui.form.editor.io.spi.ListButtonStoreValueDelegate;
 import org.moosbusch.lumPi.gui.form.editor.spi.AbstractListButtonFormEditor;
-import org.moosbusch.lumPi.util.PivotUtil;
 
 /**
  *

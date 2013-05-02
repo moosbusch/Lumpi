@@ -55,7 +55,9 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
                 cwa.setApplicationWindow(window);
             }
 
-            applicationContext.getAutowireCapableBeanFactory().autowireBean(obj);
+//            if (obj.getClass().isAnnotationPresent(Autowired.class)) {
+                applicationContext.getAutowireCapableBeanFactory().autowireBean(obj);
+//            }
         }
 
         return result;
