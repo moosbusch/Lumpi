@@ -4,8 +4,11 @@
  */
 package org.moosbusch.lumPi.gui.renderer;
 
+import java.net.URL;
+import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.ImageView;
 import org.apache.pivot.wtk.Label;
+import org.apache.pivot.wtk.media.Image;
 
 /**
  *
@@ -39,4 +42,7 @@ public interface LabelableComponentRenderer extends LabelableRenderer {
 
     public void setFillIcon(boolean fillIcon);
 
-}
+    public Map<URL, Image> getIcons();
+
+
+    }

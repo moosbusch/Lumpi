@@ -66,13 +66,16 @@ public abstract class AbstractPivotApplicationContext
     private void loadXmlConfig(DesktopApplication application) {
         String[] configLocations = configLocationsFromURLs(
                 application.getBeanConfigurations());
-        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(this);
 
-        for (int cnt = 0; cnt < configLocations.length; cnt++) {
-            Resource res = getResource(configLocations[cnt]);
+        if (ArrayUtils.isNotEmpty(configLocations)) {
+            XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(this);
 
-            if (res != null) {
-                xmlReader.loadBeanDefinitions(res);
+            for (int cnt = 0; cnt < configLocations.length; cnt++) {
+                Resource res = getResource(configLocations[cnt]);
+
+                if (res != null) {
+                    xmlReader.loadBeanDefinitions(res);
+                }
             }
         }
     }
@@ -87,6 +90,7 @@ public abstract class AbstractPivotApplicationContext
 
             return result;
         }
+
         return null;
     }
 

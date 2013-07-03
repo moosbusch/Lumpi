@@ -5,7 +5,9 @@
 package org.moosbusch.lumPi.beans.spring.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.beans.Bindable;
@@ -85,6 +87,15 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow> {
     }
 
     protected void bind(BXMLSerializer serializer, Bindable bindable) {
+        List<Class<?>> superClasses =
+                ClassUtils.getAllSuperclasses(bindable.getClass());
+
+        for (Class<?> superClass : superClasses) {
+            if (Bindable.class.isAssignableFrom(superClass)) {
+                serializer.bind(bindable, superClass);
+            }
+        }
+
         serializer.bind(bindable);
         bindable.initialize(serializer.getNamespace(),
                 serializer.getLocation(), serializer.getResources());

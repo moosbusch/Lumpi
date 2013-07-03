@@ -5,6 +5,8 @@
 package org.moosbusch.lumPi.gui.renderer.spi;
 
 import java.net.URL;
+import org.apache.pivot.collections.HashMap;
+import org.apache.pivot.collections.Map;
 import org.moosbusch.lumPi.gui.renderer.LabelableComponentRenderer;
 import org.moosbusch.lumPi.util.RendererUtil;
 import org.apache.pivot.wtk.ImageView;
@@ -20,11 +22,12 @@ import org.apache.pivot.wtk.media.Image;
 public abstract class AbstractListItemRenderer
         extends ListViewItemRenderer implements LabelableComponentRenderer {
 
-    private Image icon = null;
+    private final Map<URL, Image> icons;
     private boolean showText = true;
     private int iconSize = 16;
 
     public AbstractListItemRenderer() {
+        this.icons = new HashMap<>();
         init();
     }
 
@@ -33,13 +36,20 @@ public abstract class AbstractListItemRenderer
     }
 
     @Override
-    public int getIconSize() {
+    public Map<URL, Image> getIcons() {
+        return icons;
+    }
+
+    @Override
+    public final int getIconSize() {
         return iconSize;
     }
 
     @Override
-    public void setIconSize(int iconSize) {
+    public final void setIconSize(int iconSize) {
         this.iconSize = iconSize;
+        setIconWidth(iconSize);
+        setIconHeight(iconSize);
     }
 
     @Override
@@ -64,21 +74,21 @@ public abstract class AbstractListItemRenderer
 
     @Override
     public Image getIcon(Object item) {
-        if (icon == null) {
-            URL iconUrl = getIconUrl(item);
+        URL iconUrl = getIconUrl(item);
 
-            if (iconUrl != null) {
+        if (iconUrl != null) {
+            Image result = getIcons().get(iconUrl);
+
+            if (result != null) {
+                getImageView().setImage(result);
+                return result;
+            } else {
                 getImageView().setImage(iconUrl);
-                icon = getImageView().getImage();
+                return getImageView().getImage();
             }
         }
 
-        return icon;
-    }
-
-    @Override
-    public String getText(Object item) {
-        return item.toString();
+        return null;
     }
 
     @Override

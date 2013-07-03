@@ -5,17 +5,15 @@
 package org.moosbusch.lumPi.gui.renderer.spi;
 
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.pivot.collections.HashMap;
+import org.apache.pivot.collections.Map;
 import org.moosbusch.lumPi.gui.renderer.LabelableComponentRenderer;
 import org.moosbusch.lumPi.util.RendererUtil;
-import org.apache.pivot.util.concurrent.TaskExecutionException;
 import org.apache.pivot.wtk.Button;
 import org.apache.pivot.wtk.ImageView;
 import org.apache.pivot.wtk.Label;
 import org.apache.pivot.wtk.content.ButtonData;
 import org.apache.pivot.wtk.content.ButtonDataRenderer;
-import org.apache.pivot.wtk.media.Drawing;
 import org.apache.pivot.wtk.media.Image;
 
 /**
@@ -25,11 +23,12 @@ import org.apache.pivot.wtk.media.Image;
 public abstract class AbstractButtonDataRenderer extends ButtonDataRenderer
         implements LabelableComponentRenderer {
 
-    private Image icon = null;
+    private final Map<URL, Image> icons;
     private boolean showText = true;
     private int iconSize = 16;
 
     public AbstractButtonDataRenderer() {
+        this.icons = new HashMap<>();
         init();
     }
 
@@ -38,13 +37,20 @@ public abstract class AbstractButtonDataRenderer extends ButtonDataRenderer
     }
 
     @Override
-    public int getIconSize() {
+    public Map<URL, Image> getIcons() {
+        return icons;
+    }
+
+    @Override
+    public final int getIconSize() {
         return iconSize;
     }
 
     @Override
-    public void setIconSize(int iconSize) {
+    public final void setIconSize(int iconSize) {
         this.iconSize = iconSize;
+        setIconWidth(iconSize);
+        setIconHeight(iconSize);
     }
 
     @Override
@@ -55,15 +61,6 @@ public abstract class AbstractButtonDataRenderer extends ButtonDataRenderer
     @Override
     public void setShowText(boolean showText) {
         this.showText = showText;
-    }
-
-    @Override
-    public void render(Object data, Button button, boolean highlighted) {
-        if (data != null) {
-            RendererUtil.renderData(this, data);
-        } else {
-            super.render(data, button, highlighted);
-        }
     }
 
     @Override
@@ -78,30 +75,21 @@ public abstract class AbstractButtonDataRenderer extends ButtonDataRenderer
 
     @Override
     public Image getIcon(Object item) {
-        if (icon == null) {
-            if (item instanceof ButtonData) {
-                Image img = ((ButtonData) item).getIcon();
+        URL iconUrl = getIconUrl(item);
 
-                if (img instanceof Drawing) {
-                    ((Drawing) img).setSize(getIconSize(), getIconSize());
-                }
+        if (iconUrl != null) {
+            Image result = getIcons().get(iconUrl);
 
-                return img;
-            }
-
-            URL iconUrl = getIconUrl(item);
-
-            if (iconUrl != null) {
-                try {
-                    icon = Image.load(iconUrl);
-                } catch (TaskExecutionException ex) {
-                    Logger.getLogger(AbstractButtonDataRenderer.class.getName()).log(
-                            Level.SEVERE, null, ex);
-                }
+            if (result != null) {
+                getImageView().setImage(result);
+                return result;
+            } else {
+                getImageView().setImage(iconUrl);
+                return getImageView().getImage();
             }
         }
 
-        return icon;
+        return null;
     }
 
     @Override
@@ -115,5 +103,14 @@ public abstract class AbstractButtonDataRenderer extends ButtonDataRenderer
         }
 
         return null;
+    }
+
+    @Override
+    public void render(Object data, Button button, boolean highlighted) {
+        if (data != null) {
+            RendererUtil.renderData(this, data);
+        } else {
+            super.render(data, button, highlighted);
+        }
     }
 }

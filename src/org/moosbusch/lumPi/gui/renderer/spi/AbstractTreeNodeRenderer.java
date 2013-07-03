@@ -5,6 +5,8 @@
 package org.moosbusch.lumPi.gui.renderer.spi;
 
 import java.net.URL;
+import org.apache.pivot.collections.HashMap;
+import org.apache.pivot.collections.Map;
 import org.apache.pivot.collections.Sequence.Tree.Path;
 import org.apache.pivot.wtk.ImageView;
 import org.apache.pivot.wtk.Label;
@@ -22,16 +24,22 @@ import org.moosbusch.lumPi.util.RendererUtil;
 public abstract class AbstractTreeNodeRenderer
         extends TreeViewNodeRenderer implements LabelableComponentRenderer {
 
-    private Image icon = null;
+    private final Map<URL, Image> icons;
     private boolean showText = true;
     private int iconSize = 16;
 
     public AbstractTreeNodeRenderer() {
+        this.icons = new HashMap<>();
         init();
     }
 
     private void init() {
         RendererUtil.initRenderer(this);
+    }
+
+    @Override
+    public Map<URL, Image> getIcons() {
+        return icons;
     }
 
     @Override
@@ -68,16 +76,21 @@ public abstract class AbstractTreeNodeRenderer
 
     @Override
     public Image getIcon(Object item) {
-        if (icon == null) {
-            URL iconUrl = getIconUrl(item);
+        URL iconUrl = getIconUrl(item);
 
-            if (iconUrl != null) {
+        if (iconUrl != null) {
+            Image result = getIcons().get(iconUrl);
+
+            if (result != null) {
+                getImageView().setImage(result);
+                return result;
+            } else {
                 getImageView().setImage(iconUrl);
-                icon = getImageView().getImage();
+                return getImageView().getImage();
             }
         }
 
-        return icon;
+        return null;
     }
 
     @Override
