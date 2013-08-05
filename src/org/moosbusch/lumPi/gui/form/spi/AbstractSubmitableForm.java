@@ -1,16 +1,29 @@
 /*
+ Copyright 2013 Gunnar Kappei
 
- *
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
  */
 package org.moosbusch.lumPi.gui.form.spi;
 
+import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pivot.beans.BeanMonitor;
+import org.apache.pivot.beans.PropertyChangeListener;
 import org.apache.pivot.collections.HashMap;
 import org.apache.pivot.collections.Map;
+import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Form;
 import org.apache.pivot.wtk.validation.Validator;
-import org.moosbusch.lumPi.gui.Monitorable;
 import org.moosbusch.lumPi.gui.component.Submitable;
 import org.moosbusch.lumPi.util.PivotUtil;
 
@@ -21,16 +34,14 @@ import org.moosbusch.lumPi.util.PivotUtil;
 public abstract class AbstractSubmitableForm<T extends Object> extends Form
         implements Submitable<T> {
 
-    private final BeanMonitor monitor;
     private final Map<String, String> helpFlags;
     private final Map<String, String> errorFlags;
     private final Map<String, Class<? extends Validator>> validators;
+    private final Submitable<T> submitable;
     private boolean storeOldValue = true;
-    private boolean canceled = false;
-    private T value;
 
     public AbstractSubmitableForm() {
-        this.monitor = new BeanMonitor(this);
+        this.submitable = new SubmitableImpl();
         this.helpFlags = new HashMap<>();
         this.errorFlags = new HashMap<>();
         this.validators = new HashMap<>();
@@ -44,10 +55,6 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
         PivotUtil.setComponentStyle(this, "verticalSpacing", "10");
         PivotUtil.setComponentStyle(this, "padding", "10");
     }
-
-    protected abstract void onCancel();
-
-    protected abstract void onSubmit(T value);
 
     public static String createFormFieldName(Class<?> beanClass, String propertyName) {
         return createFormFieldName(beanClass.getName(), propertyName);
@@ -63,25 +70,20 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
 
     @Override
     public final void cancel() {
-        setCanceled(true);
-        onCancel();
+        submitable.cancel();
         clear();
     }
 
     @Override
     public final void submit() {
-        final T val = getValue();
-
-        if (canSubmit(val)) {
-            store(val);
-            setCanceled(false);
-            onSubmit(val);
-            clear();
-        }
+        submitable.submit();
+        clear();
     }
 
     @Override
     public final T getValue() {
+        T value = submitable.getValue();
+
         if (isStoreCurrentValue()) {
             if (value != null) {
                 store(value);
@@ -93,20 +95,56 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
 
     @Override
     public final void setValue(T val) {
+        T value = submitable.getValue();
+
         if (isStoreCurrentValue()) {
             if (value != null) {
                 store(value);
             }
         }
 
-        this.value = val;
+        submitable.setValue(val);
         load(val);
-        PivotUtil.firePropertyChangeListeners(this, VALUE_PROPERTY, getMonitor());
+    }
+
+    @Override
+    public final boolean isSubmitted() {
+        return submitable.isSubmitted();
+    }
+
+    @Override
+    public final void setSubmitted(boolean submitted) {
+        submitable.setSubmitted(submitted);
+    }
+
+    @Override
+    public final void addPropertyChangeListener(PropertyChangeListener pcl) {
+        submitable.addPropertyChangeListener(pcl);
+    }
+
+    @Override
+    public final void removePropertyChangeListener(PropertyChangeListener pcl) {
+        submitable.removePropertyChangeListener(pcl);
+    }
+
+    @Override
+    public final void firePropertyChange(String propertyName) {
+        submitable.firePropertyChange(propertyName);
     }
 
     @Override
     public final BeanMonitor getMonitor() {
-        return monitor;
+        return submitable.getMonitor();
+    }
+
+    @Override
+    public boolean isCanceled() {
+        return submitable.isCanceled();
+    }
+
+    @Override
+    public void setCanceled(boolean canceled) {
+        submitable.setCanceled(canceled);
     }
 
     public boolean isStoreCurrentValue() {
@@ -115,16 +153,6 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
 
     public void setStoreCurrentValue(boolean storeOldValue) {
         this.storeOldValue = storeOldValue;
-    }
-
-    @Override
-    public boolean isCanceled() {
-        return canceled;
-    }
-
-    @Override
-    public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
     }
 
     public String getErrorFlag(String fieldName) {
@@ -162,5 +190,27 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
 
     public Class<? extends Validator> removeValidator(String fieldName) {
         return validators.remove(fieldName);
+    }
+
+    @Override
+    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
+    }
+
+    private class SubmitableImpl extends Submitable.Adapter<T> {
+
+        @Override
+        public boolean canSubmit(T value) {
+            return AbstractSubmitableForm.this.canSubmit(value);
+        }
+
+        @Override
+        public void onCancel() {
+            AbstractSubmitableForm.this.onCancel();
+        }
+
+        @Override
+        public void onSubmit(T value) {
+            AbstractSubmitableForm.this.onSubmit(value);
+        }
     }
 }

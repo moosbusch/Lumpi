@@ -1,6 +1,17 @@
 /*
+Copyright 2013 Gunnar Kappei
 
- *
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
  */
 package org.moosbusch.lumPi.beans.spring.impl;
 
@@ -16,10 +27,10 @@ import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.action.ChildWindowAction;
 import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
-import org.moosbusch.lumPi.beans.spring.annotation.Autowire;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
@@ -54,10 +65,6 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow> {
                 BindableWindow window = Objects.requireNonNull(getApplicationWindow());
                 cwa.setApplicationWindow(window);
             }
-
-            if (obj.getClass().isAnnotationPresent(Autowire.class)) {
-                getApplicationContext().getAutowireCapableBeanFactory().autowireBean(obj);
-            }
         }
 
         return result;
@@ -87,16 +94,21 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow> {
     }
 
     protected void bind(BXMLSerializer serializer, Bindable bindable) {
+        AutowireCapableBeanFactory autowireBeanFactory =
+                getApplicationContext().getAutowireCapableBeanFactory();
         List<Class<?>> superClasses =
                 ClassUtils.getAllSuperclasses(bindable.getClass());
 
         for (Class<?> superClass : superClasses) {
             if (Bindable.class.isAssignableFrom(superClass)) {
+                Object obj = superClass.cast(bindable);
                 serializer.bind(bindable, superClass);
+                autowireBeanFactory.autowireBean(obj);
             }
         }
 
         serializer.bind(bindable);
+        autowireBeanFactory.autowireBean(bindable);
         bindable.initialize(serializer.getNamespace(),
                 serializer.getLocation(), serializer.getResources());
     }
@@ -141,5 +153,4 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow> {
     public void setSerializer(BXMLSerializer serializer) {
         this.serializer = serializer;
     }
-
 }
