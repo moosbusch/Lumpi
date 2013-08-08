@@ -36,8 +36,8 @@ public interface PropertyChangeAware {
 
         private final BeanMonitor monitor;
 
-        public Adapter() {
-            this.monitor = new BeanMonitor(this);
+        public Adapter(Object bean) {
+            this.monitor = new BeanMonitor(bean);
         }
 
         @Override
@@ -57,8 +57,8 @@ public interface PropertyChangeAware {
 
         @Override
         public void firePropertyChange(String propertyName) {
-            for (PropertyChangeListener pcl :getMonitor().getPropertyChangeListeners()) {
-                pcl.propertyChanged(this, propertyName);
+            for (PropertyChangeListener pcl : getMonitor().getPropertyChangeListeners()) {
+                pcl.propertyChanged(getMonitor(), propertyName);
             }
         }
 

@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.DesktopApplicationContext;
@@ -41,29 +40,12 @@ public abstract class AbstractDesktopApplication
         extends Application.Adapter implements DesktopApplication {
 
     private Display display = null;
-    private final BXMLSerializer serializer;
     private final PivotApplicationContext context;
     private final HostWindowResizeListener windowListener;
 
     public AbstractDesktopApplication() {
         this.context = new PivotApplicationContextImpl(this);
-        this.serializer = initSerializer();
         this.windowListener = new HostWindowResizeListener();
-        init();
-    }
-
-    private BXMLSerializer initSerializer() {
-        return Objects.requireNonNull(createSerializer());
-    }
-
-    private void init() {
-        PivotFactoryBean pivotFactory =
-                getApplicationContext().getBean(PivotFactoryBean.class);
-        BXMLSerializer ser = getSerializer();
-        ser.setLocation(getBXMLConfiguration());
-        ser.setResources(getResources());
-        pivotFactory.setSerializer(ser);
-        getApplicationContext().getAutowireCapableBeanFactory().autowireBean(this);
     }
 
     private java.awt.Window getHostWindow() {
@@ -89,8 +71,6 @@ public abstract class AbstractDesktopApplication
         }
     }
 
-    protected abstract BXMLSerializer createSerializer();
-
     protected abstract void startupImpl(Display display, Map<String, String> namespace)
             throws Exception;
 
@@ -113,11 +93,6 @@ public abstract class AbstractDesktopApplication
     @Override
     public final PivotApplicationContext getApplicationContext() {
         return context;
-    }
-
-    @Override
-    public final BXMLSerializer getSerializer() {
-        return serializer;
     }
 
     @Override

@@ -15,6 +15,8 @@
  */
 package org.moosbusch.lumPi.gui.component;
 
+import org.apache.pivot.beans.BeanMonitor;
+import org.apache.pivot.beans.PropertyChangeListener;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
 
 /**
@@ -29,10 +31,15 @@ public interface ValueHolder<T extends Object> extends PropertyChangeAware {
 
     public void setValue(T val);
 
-    public abstract class Adapter<T extends Object> extends PropertyChangeAware.Adapter
+    public abstract class Adapter<T extends Object>
             implements ValueHolder<T> {
 
         private T value;
+        private final PropertyChangeAware pca;
+
+        public Adapter() {
+            this.pca = new PropertyChangeAware.Adapter(this);
+        }
 
         @Override
         public T getValue() {
@@ -45,6 +52,27 @@ public interface ValueHolder<T extends Object> extends PropertyChangeAware {
             firePropertyChange(VALUE_PROPERTY);
         }
 
+        @Override
+        public BeanMonitor getMonitor() {
+            return pca.getMonitor();
+        }
+
+        @Override
+        public void addPropertyChangeListener(PropertyChangeListener pcl) {
+            pca.addPropertyChangeListener(pcl);
+        }
+
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener pcl) {
+            pca.removePropertyChangeListener(pcl);
+        }
+
+        @Override
+        public void firePropertyChange(String propertyName) {
+            if (pca != null) {
+                pca.firePropertyChange(propertyName);
+            }
+        }
 
     }
 }

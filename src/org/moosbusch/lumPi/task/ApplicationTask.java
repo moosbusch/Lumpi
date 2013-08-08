@@ -20,8 +20,6 @@ import java.util.concurrent.ExecutorService;
 import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
-import org.apache.pivot.collections.ArrayList;
-import org.apache.pivot.collections.List;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.util.concurrent.Task;
@@ -57,31 +55,27 @@ public interface ApplicationTask<T extends Object>
             implements ApplicationTask<T> {
 
         private final boolean forwardEventsToEDT;
-        private final List<TaskListener<T>> listenerList;
-        private final PropertyChangeAware.Adapter pca;
+        private final PropertyChangeAware pca;
 
         public Adapter() {
             this(true);
         }
 
         public Adapter(boolean forwardEventsToEDT) {
-            this.forwardEventsToEDT = forwardEventsToEDT;
-            this.listenerList = new ArrayList<>();
-            this.pca = new PropertyChangeAware.Adapter();
+            this.forwardEventsToEDT = true;
+            this.pca = new PropertyChangeAware.Adapter(this);
         }
 
         public Adapter(ExecutorService executorService) {
             super(executorService);
             this.forwardEventsToEDT = true;
-            this.listenerList = new ArrayList<>();
-            this.pca = new PropertyChangeAware.Adapter();
+            this.pca = new PropertyChangeAware.Adapter(this);
         }
 
         public Adapter(ExecutorService executorService, boolean forwardEventsToEDT) {
             super(executorService);
             this.forwardEventsToEDT = forwardEventsToEDT;
-            this.listenerList = new ArrayList<>();
-            this.pca = new PropertyChangeAware.Adapter();
+            this.pca = new PropertyChangeAware.Adapter(this);
         }
 
         @Override
@@ -116,7 +110,9 @@ public interface ApplicationTask<T extends Object>
 
         @Override
         public void firePropertyChange(String propertyName) {
-            pca.firePropertyChange(propertyName);
+            if (pca != null) {
+                pca.firePropertyChange(propertyName);
+            }
         }
 
         @Override

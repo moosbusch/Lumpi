@@ -118,16 +118,6 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
     }
 
     @Override
-    public final void addPropertyChangeListener(PropertyChangeListener pcl) {
-        submitable.addPropertyChangeListener(pcl);
-    }
-
-    @Override
-    public final void removePropertyChangeListener(PropertyChangeListener pcl) {
-        submitable.removePropertyChangeListener(pcl);
-    }
-
-    @Override
     public final void firePropertyChange(String propertyName) {
         submitable.firePropertyChange(propertyName);
     }
@@ -177,6 +167,16 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
 
     public String removeHelpFlag(String fieldName) {
         return helpFlags.remove(fieldName);
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener pcl) {
+        submitable.addPropertyChangeListener(pcl);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
+        submitable.removePropertyChangeListener(pcl);
     }
 
     public Class<? extends Validator> getValidator(String fieldName) {

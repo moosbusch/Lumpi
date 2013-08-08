@@ -39,26 +39,26 @@ public interface ApplicationIOTask<T extends Object> extends TaskListener<T>, Pr
             implements ApplicationIOTask<T> {
 
         private boolean forwardEventsToEDT = false;
-        private final PropertyChangeAware.Adapter pca;
+        private final PropertyChangeAware pca;
 
         public Adapter() {
-            this.pca = new PropertyChangeAware.Adapter();
+            this.pca = new PropertyChangeAware.Adapter(this);
         }
 
         public Adapter(boolean forwardEventsToEDT) {
             this.forwardEventsToEDT = forwardEventsToEDT;
-            this.pca = new PropertyChangeAware.Adapter();
+            this.pca = new PropertyChangeAware.Adapter(this);
         }
 
         public Adapter(ExecutorService executorService) {
             super(executorService);
-            this.pca = new PropertyChangeAware.Adapter();
+            this.pca = new PropertyChangeAware.Adapter(this);
         }
 
         public Adapter(ExecutorService executorService, boolean forwardEventsToEDT) {
             super(executorService);
             this.forwardEventsToEDT = forwardEventsToEDT;
-            this.pca = new PropertyChangeAware.Adapter();
+            this.pca = new PropertyChangeAware.Adapter(this);
         }
 
         @Override

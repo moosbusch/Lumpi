@@ -6,6 +6,9 @@ package org.moosbusch.lumPi.gui;
 
 import java.net.URL;
 import java.util.Objects;
+import org.apache.pivot.beans.BeanMonitor;
+import org.apache.pivot.beans.PropertyChangeListener;
+import org.apache.pivot.util.ListenerList;
 import org.apache.pivot.wtk.content.ButtonData;
 import org.apache.pivot.wtk.media.Image;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
@@ -43,13 +46,14 @@ public interface Labelable extends PropertyChangeAware {
 
     public Image getIcon();
 
-    public static abstract class Adapter extends PropertyChangeAware.Adapter
-            implements Labelable {
+    public static abstract class Adapter implements Labelable {
 
         private ButtonData buttonData;
+        private final PropertyChangeAware pca;
 
         public Adapter(ButtonData buttonData) {
             this.buttonData = buttonData;
+            this.pca = new PropertyChangeAware.Adapter(this);
         }
 
         public Adapter() {
@@ -128,5 +132,28 @@ public interface Labelable extends PropertyChangeAware {
             getButtonData().setIcon(icon);
             firePropertyChange(ICON_PROPERTY_NAME);
         }
+
+        @Override
+        public BeanMonitor getMonitor() {
+            return pca.getMonitor();
+        }
+
+        @Override
+        public void addPropertyChangeListener(PropertyChangeListener pcl) {
+            pca.addPropertyChangeListener(pcl);
+        }
+
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener pcl) {
+            pca.removePropertyChangeListener(pcl);
+        }
+
+        @Override
+        public void firePropertyChange(String propertyName) {
+            if (pca != null) {
+                pca.firePropertyChange(propertyName);
+            }
+        }
+
     }
 }

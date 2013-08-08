@@ -15,7 +15,11 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.beans.spring;
 
+import org.apache.pivot.beans.BXMLSerializer;
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.Resolvable;
+import org.moosbusch.lumPi.beans.PropertyChangeAware;
+import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -24,7 +28,9 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author moosbusch
  */
 public interface PivotApplicationContext
-    extends ConfigurableApplicationContext, Resolvable {
+    extends ConfigurableApplicationContext, Resolvable, PropertyChangeAware {
+
+    public static final String APPLICATION_WINDOW_PROPERTYNAME = "applicationWindow";
 
     @Override
     public <T> T getBean(Class<T> requiredType) throws BeansException;
@@ -40,5 +46,13 @@ public interface PivotApplicationContext
 
     @Override
     public Object getBean(String name, Object... args) throws BeansException;
+
+    public void bindBean(Bindable bindable);
+
+    public BXMLSerializer getSerializer();
+
+    public BindableWindow getApplicationWindow();
+
+    public void setApplicationWindow(BindableWindow window);
 
 }

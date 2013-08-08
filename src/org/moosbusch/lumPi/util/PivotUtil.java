@@ -58,6 +58,14 @@ public class PivotUtil {
     private PivotUtil() {
     }
 
+    public static boolean pathEndsWith(java.nio.file.Path p, String end) {
+        return p.getFileName().toString().endsWith(end);
+    }
+
+    public static boolean pathStartsWith(java.nio.file.Path p, String start) {
+        return p.getFileName().toString().startsWith(start);
+    }
+
     public static String getNamespaceIdForBean(Object bean, Resolvable resolvable) {
         return getNamespaceIdForBean(bean, resolvable.getNamespace());
     }

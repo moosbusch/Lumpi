@@ -27,16 +27,10 @@ import org.apache.pivot.wtk.content.ButtonData;
 public interface TaskAction<T extends Object>
         extends ApplicationAction, TaskListener<T> {
 
-    public static final String TASK_PROPERTY_NAME = "task";
-
     public Task<T> getTask();
 
-    public void setTask(Task<T> task);
-
-    public static class Adapter<T extends Object>
+    public static abstract class Adapter<T extends Object>
             extends ApplicationAction.Adapter implements TaskAction<T> {
-
-        private Task<T> task;
 
         public Adapter(boolean enabled) {
             super(enabled);
@@ -59,17 +53,6 @@ public interface TaskAction<T extends Object>
 
         @Override
         public void executeFailed(Task<T> task) {
-        }
-
-        @Override
-        public Task<T> getTask() {
-            return task;
-        }
-
-        @Override
-        public void setTask(Task<T> task) {
-            this.task = task;
-            firePropertyChange(TASK_PROPERTY_NAME);
         }
 
         @Override

@@ -105,18 +105,20 @@ public abstract class AbstractSubmitableDialog<T extends Object> extends Dialog
     }
 
     @Override
-    public final void addPropertyChangeListener(PropertyChangeListener pcl) {
+    public void addPropertyChangeListener(PropertyChangeListener pcl) {
         submitable.addPropertyChangeListener(pcl);
     }
 
     @Override
-    public final void removePropertyChangeListener(PropertyChangeListener pcl) {
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
         submitable.removePropertyChangeListener(pcl);
     }
 
     @Override
     public final void firePropertyChange(String propertyName) {
-        submitable.firePropertyChange(propertyName);
+        if (submitable != null) {
+            submitable.firePropertyChange(propertyName);
+        }
     }
 
     @Override

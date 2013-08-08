@@ -19,7 +19,6 @@ import java.net.URL;
 import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.PropertyChangeListener;
 import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.ListenerList;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Sheet;
@@ -78,18 +77,20 @@ public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
     }
 
     @Override
-    public final void addPropertyChangeListener(PropertyChangeListener pcl) {
+    public void addPropertyChangeListener(PropertyChangeListener pcl) {
         submitable.addPropertyChangeListener(pcl);
     }
 
     @Override
-    public final void removePropertyChangeListener(PropertyChangeListener pcl) {
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
         submitable.removePropertyChangeListener(pcl);
     }
 
     @Override
     public final void firePropertyChange(String propertyName) {
-        submitable.firePropertyChange(propertyName);
+        if (submitable != null) {
+            submitable.firePropertyChange(propertyName);
+        }
     }
 
     @Override

@@ -18,7 +18,6 @@ package org.moosbusch.lumPi.application;
 import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
 import java.net.URL;
 import java.util.prefs.Preferences;
-import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Application;
@@ -47,8 +46,6 @@ public interface DesktopApplication extends Application {
 
     public Resources getResources();
 
-    public BXMLSerializer getSerializer();
-
     public PivotApplicationContext getApplicationContext();
 
     public BindableWindow getApplicationWindow();
@@ -65,11 +62,6 @@ public interface DesktopApplication extends Application {
         @Override
         protected boolean shutdownImpl(boolean optional) {
             return false;
-        }
-
-        @Override
-        protected BXMLSerializer createSerializer() {
-            return new BXMLSerializer();
         }
 
         @Override
