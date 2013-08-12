@@ -1,4 +1,4 @@
 LumPi
 =====
 
-A framework for building desktop-applications in Java, built upon Spring and Pivot
+A framework for creating visual appealing desktop-applications in Java, built upon the Spring framework and Apache Pivot
