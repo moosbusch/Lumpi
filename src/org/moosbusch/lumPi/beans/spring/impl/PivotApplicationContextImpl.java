@@ -16,13 +16,13 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.beans.spring.impl;
 
 import org.moosbusch.lumPi.application.DesktopApplication;
-import org.moosbusch.lumPi.beans.spring.spi.AbstractPivotApplicationContext;
+import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
 
 /**
  *
  * @author moosbusch
  */
-public class PivotApplicationContextImpl extends AbstractPivotApplicationContext {
+public class PivotApplicationContextImpl extends PivotApplicationContext.Adapter {
 
     public PivotApplicationContextImpl(DesktopApplication application) {
         super(application);

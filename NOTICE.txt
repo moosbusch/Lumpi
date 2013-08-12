@@ -4,13 +4,13 @@ Copyright 2013 Gunnar Kappei
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
-    Apache Commons BeanUtils 1.8.3 -> http://www.commons.apache.org
+    Apache Commons BeanUtils 1.8.3 -> http://www.commons.apache.org/beanutils/
     [ASL 2.0, http://www.apache.org/licenses/]
 
-    Apache Commons Lang 3-3.1 -> http://www.commons.apache.org
+    Apache Commons Lang 3-3.1 -> http://www.commons.apache.org/lang/
     [ASL 2.0, http://www.apache.org/licenses/]
 
-    Apache Commons Logging 1.1.3 -> http://www.commons.apache.org
+    Apache Commons Logging 1.1.3 -> http://www.commons.apache.org/logging/
     [ASL 2.0, http://www.apache.org/licenses/]
 
     Apache Felix 4.2.1 -> http://www.felix.apache.org
@@ -22,7 +22,7 @@ The Apache Software Foundation (http://www.apache.org/).
 This product includes software developed by
 SpringSource (http://www.springsource.org), a division of VMware, Inc.
 
-    Spring Framework 3.2.2 -> http://www.springsource.org
+    Spring Framework 3.2.4 -> http://www.springsource.org/spring-framework
     [ASL 2.0, http://www.apache.org/licenses/]
 
 This product is licensed to you under the Apache License, Version 2.0
