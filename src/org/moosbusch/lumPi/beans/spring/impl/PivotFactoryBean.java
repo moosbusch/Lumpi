@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Objects;
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.serialization.SerializationException;
-import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
+import org.moosbusch.lumPi.application.PivotApplicationContext;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;

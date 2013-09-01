@@ -15,6 +15,7 @@
  */
 package org.moosbusch.lumPi.action;
 
+import java.util.Objects;
 import org.apache.pivot.util.concurrent.Task;
 import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.wtk.Component;
@@ -26,6 +27,8 @@ import org.apache.pivot.wtk.content.ButtonData;
  */
 public interface TaskAction<T extends Object>
         extends ApplicationAction, TaskListener<T> {
+
+    public void initializeTask(Task<T> task);
 
     public Task<T> getTask();
 
@@ -56,9 +59,15 @@ public interface TaskAction<T extends Object>
         }
 
         @Override
+        public void initializeTask(Task<T> task) {
+        }
+
+        @Override
         @SuppressWarnings("unchecked")
         public final void doPerform(Component source) {
-            getTask().execute(this);
+            Task<T> tsk = Objects.requireNonNull(getTask());
+            initializeTask(tsk);
+            tsk.execute(this);
         }
     }
 }

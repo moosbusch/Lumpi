@@ -17,31 +17,24 @@ package org.moosbusch.lumPi.application;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import org.moosbusch.lumPi.beans.spring.PivotApplicationContext;
 import java.net.URL;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.Display;
 import org.apache.pivot.wtk.Window;
-import org.moosbusch.lumPi.beans.spring.impl.PivotApplicationContextImpl;
-import org.moosbusch.lumPi.beans.spring.impl.PivotFactoryBean;
+import org.moosbusch.lumPi.application.impl.DefaultPivotApplicationContext;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 
 /**
  *
  * @author moosbusch
  */
-public interface DesktopApplication extends Application {
-
-    public Preferences getPreferences();
-
-    public Class<? extends PivotFactoryBean> getPivotBeanFactoryClass();
+public interface DesktopApplication<T extends PivotApplicationContext> extends Application {
 
     public Class<?>[] getAnnotatedClasses();
 
@@ -53,21 +46,21 @@ public interface DesktopApplication extends Application {
 
     public Resources getResources();
 
-    public PivotApplicationContext getApplicationContext();
+    public T getApplicationContext();
 
     public BindableWindow getApplicationWindow();
 
     public Display getDisplay();
 
     public abstract class Adapter
-            extends Application.Adapter implements DesktopApplication {
+            extends Application.Adapter implements DesktopApplication<PivotApplicationContext> {
 
         private Display display = null;
         private final PivotApplicationContext context;
         private final HostWindowResizeListener windowListener;
 
         public Adapter() {
-            this.context = new PivotApplicationContextImpl(this);
+            this.context = initApplicationContext();
             this.windowListener = new HostWindowResizeListener();
         }
 
@@ -92,6 +85,14 @@ public interface DesktopApplication extends Application {
             try (PivotApplicationContext ctx = getApplicationContext()) {
                 ctx.stop();
             }
+        }
+
+        private PivotApplicationContext initApplicationContext() {
+            return Objects.requireNonNull(createApplicationContext());
+        }
+
+        protected PivotApplicationContext createApplicationContext() {
+            return new DefaultPivotApplicationContext(this);
         }
 
         protected void startupImpl(Display display, Map<String, String> namespace) throws Exception {
@@ -148,16 +149,6 @@ public interface DesktopApplication extends Application {
             }
 
             return result;
-        }
-
-        @Override
-        public Preferences getPreferences() {
-            return Preferences.userNodeForPackage(getClass());
-        }
-
-        @Override
-        public Class<? extends PivotFactoryBean> getPivotBeanFactoryClass() {
-            return PivotFactoryBean.class;
         }
 
         @Override
