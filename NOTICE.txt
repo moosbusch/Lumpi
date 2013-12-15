@@ -4,11 +4,8 @@ Copyright 2013 Gunnar Kappei
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
-<<<<<<< HEAD
-    Apache Commons BeanUtils 1.8.3 -> http://www.commons.apache.org/beanutils/
-=======
     Apache Commons BeanUtils 1.8.3 -> https://commons.apache.org/beanutils/
->>>>>>> 3ab412240602851378a28b576e7fe00ec01d4996
+
     [ASL 2.0, http://www.apache.org/licenses/]
 
     Apache Commons Lang 3-3.1 -> http://www.commons.apache.org/lang/
@@ -26,11 +23,8 @@ The Apache Software Foundation (http://www.apache.org/).
 This product includes software developed by
 SpringSource (http://www.springsource.org), a division of VMware, Inc.
 
-<<<<<<< HEAD
-    Spring Framework 3.2.4 -> http://www.springsource.org/spring-framework
-=======
-    Spring Framework 3.2.2 -> http://www.springsource.org/spring-framework
->>>>>>> 3ab412240602851378a28b576e7fe00ec01d4996
+    Spring Framework 3.2.5 -> http://www.springsource.org/spring-framework
+
     [ASL 2.0, http://www.apache.org/licenses/]
 
 This product is licensed to you under the Apache License, Version 2.0
