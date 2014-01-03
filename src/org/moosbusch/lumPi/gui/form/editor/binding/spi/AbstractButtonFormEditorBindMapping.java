@@ -101,7 +101,6 @@ public abstract class AbstractButtonFormEditorBindMapping<T extends Button>
                 }
             } else if (value instanceof Number) {
                 Number n = (Number) value;
-
                 if (n.intValue() == -1) {
                     return State.UNSELECTED;
                 } else if (n.intValue() == 0) {

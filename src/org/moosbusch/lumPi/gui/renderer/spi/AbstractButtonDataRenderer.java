@@ -18,6 +18,7 @@ package org.moosbusch.lumPi.gui.renderer.spi;
 import java.net.URL;
 import org.apache.pivot.collections.HashMap;
 import org.apache.pivot.collections.Map;
+import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.gui.renderer.LabelableComponentRenderer;
 import org.moosbusch.lumPi.util.RendererUtil;
 import org.apache.pivot.wtk.Button;
@@ -26,6 +27,7 @@ import org.apache.pivot.wtk.Label;
 import org.apache.pivot.wtk.content.ButtonData;
 import org.apache.pivot.wtk.content.ButtonDataRenderer;
 import org.apache.pivot.wtk.media.Image;
+import org.moosbusch.lumPi.action.ApplicationAction;
 
 /**
  *
@@ -121,6 +123,20 @@ public abstract class AbstractButtonDataRenderer extends ButtonDataRenderer
         if (data != null) {
             RendererUtil.renderData(this, data);
         } else {
+            data = button.getButtonData();
+
+            if (data == null) {
+                Action action = button.getAction();
+
+                if (action != null) {
+                    if (action instanceof ApplicationAction) {
+                        ApplicationAction appAction = (ApplicationAction) action;
+                        data = appAction.getButtonData();
+                    }
+                }
+
+            }
+
             super.render(data, button, highlighted);
         }
     }

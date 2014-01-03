@@ -63,11 +63,13 @@ public interface ApplicationAction extends Bindable, Labelable {
 
         public Adapter() {
             this.pca = new PropertyChangeAware.Adapter(this);
+            initButtonData();
         }
 
         public Adapter(boolean enabled) {
             super(enabled);
             this.pca = new PropertyChangeAware.Adapter(this);
+            initButtonData();
         }
 
         public Adapter(ButtonData buttonData, boolean enabled) {
@@ -79,6 +81,10 @@ public interface ApplicationAction extends Bindable, Labelable {
         public Adapter(ButtonData buttonData) {
             this();
             this.buttonData = Objects.requireNonNull(buttonData);
+        }
+
+        private void initButtonData() {
+            setButtonData(Objects.requireNonNull(createDefaultButtonData()));
         }
 
         protected ButtonData createDefaultButtonData() {

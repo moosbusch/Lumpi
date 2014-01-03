@@ -58,7 +58,7 @@ public interface PropertyChangeAware {
         @Override
         public void firePropertyChange(String propertyName) {
             for (PropertyChangeListener pcl : getMonitor().getPropertyChangeListeners()) {
-                pcl.propertyChanged(getMonitor(), propertyName);
+                pcl.propertyChanged(getMonitor().getBean(), propertyName);
             }
         }
 
