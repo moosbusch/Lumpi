@@ -13,7 +13,7 @@ The Apache Software Foundation (http://www.apache.org/).
     Apache Commons Logging 1.1.3 -> http://www.commons.apache.org/logging/
     [ASL 2.0, http://www.apache.org/licenses/]
 
-    Apache Commons Validator 1.8.3 -> https://commons.apache.org/beanutils/
+    Apache Commons Validator 1.4.0 -> https://commons.apache.org/beanutils/
     [ASL 2.0, http://www.apache.org/licenses/]
 
     Apache Felix 4.4.0 -> http://www.felix.apache.org
