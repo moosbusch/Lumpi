@@ -17,7 +17,6 @@ package org.moosbusch.lumPi.application.impl;
 
 import org.moosbusch.lumPi.application.DesktopApplication;
 import org.moosbusch.lumPi.application.PivotApplicationContext;
-import org.moosbusch.lumPi.beans.spring.impl.PivotFactoryBean;
 
 /**
  *
@@ -30,7 +29,7 @@ public class DefaultPivotApplicationContext extends PivotApplicationContext.Adap
     }
 
     @Override
-    public Class<? extends PivotFactoryBean> getPivotBeanFactoryClass() {
-        return PivotFactoryBean.class;
+    public void shutdownContext() {
     }
+
 }

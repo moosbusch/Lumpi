@@ -16,12 +16,12 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.gui.form.editor.impl;
 
 import org.moosbusch.lumPi.gui.form.editor.spi.AbstractNumberFormEditor;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.FloatNumberValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.FloatValidator;
 
 /**
  *
  * @author moosbusch
  */
-public class DefaultFloatFormEditor extends AbstractNumberFormEditor<Float, FloatNumberValidator> {
+public class DefaultFloatFormEditor extends AbstractNumberFormEditor<FloatValidator> {
 
 }

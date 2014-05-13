@@ -35,7 +35,7 @@ import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.TablePane.Column;
 import org.apache.pivot.wtk.TablePane.Row;
 import org.moosbusch.lumPi.gui.component.Submitable;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -74,8 +74,8 @@ public abstract class AbstractSubmitableFileBrowserSheet
         buttonBoxPane.setOrientation(Orientation.HORIZONTAL);
         buttonBoxPane.add(okButton);
         buttonBoxPane.add(cancelButton);
-        PivotUtil.setComponentStyle(buttonBoxPane, "horizontalAlignment", "right");
-        PivotUtil.setComponentStyle(buttonBoxPane, "verticalAlignment", "bottom");
+        LumPiUtil.setComponentStyle(buttonBoxPane, "horizontalAlignment", "right");
+        LumPiUtil.setComponentStyle(buttonBoxPane, "verticalAlignment", "bottom");
 
         fileBrowser.setPreferredHeight(300);
         column.setWidth("1*");

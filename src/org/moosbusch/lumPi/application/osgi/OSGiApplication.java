@@ -22,6 +22,7 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Display;
 import org.moosbusch.lumPi.application.DesktopApplication;
 import org.moosbusch.lumPi.application.PivotApplicationContext;
+import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.osgi.framework.BundleActivator;
 
 /**
@@ -42,8 +43,14 @@ public interface OSGiApplication<T extends PivotApplicationContext> extends Desk
         private final OSGiController oSGiController;
 
         public Adapter() {
-            this.oSGiController = new OSGiController.Adapter();
+            this.oSGiController = initOSGiController();
         }
+
+        private OSGiController initOSGiController() {
+            return createOSGiController();
+        }
+
+        protected abstract OSGiController createOSGiController();
 
         protected void startupImplExt(Display display, Map<String, String> namespace) throws Exception {
         }
@@ -53,7 +60,8 @@ public interface OSGiApplication<T extends PivotApplicationContext> extends Desk
         }
 
         @Override
-        protected final void startupImpl(Display display, Map<String, String> namespace) throws Exception {
+        protected final void startupImpl(Display display, BindableWindow applicationWindow,
+                Map<String, String> namespace) throws Exception {
             OSGiController controller = Objects.requireNonNull(getOSGiController());
             controller.startFramework(getBundleActivators());
             startupImplExt(display, namespace);

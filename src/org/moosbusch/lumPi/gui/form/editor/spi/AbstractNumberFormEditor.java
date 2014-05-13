@@ -1,33 +1,32 @@
 /*
-Copyright 2013 Gunnar Kappei
+ Copyright 2013 Gunnar Kappei
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
  */
 package org.moosbusch.lumPi.gui.form.editor.spi;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pivot.util.Vote;
 import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.TextInputContentListener;
 import org.apache.pivot.wtk.validation.Validator;
-import org.moosbusch.lumPi.gui.form.editor.validator.spi.AbstractNumberValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.FormValidator;
 import org.moosbusch.lumPi.gui.form.spi.AbstractDynamicForm;
 
 /**
  *
  * @author moosbusch
  */
-public abstract class AbstractNumberFormEditor<T extends Number, V extends AbstractNumberValidator<T>>
+public abstract class AbstractNumberFormEditor<V extends FormValidator>
         extends AbstractTextInputFormEditor<TextInput> {
 
     @Override
@@ -44,7 +43,7 @@ public abstract class AbstractNumberFormEditor<T extends Number, V extends Abstr
         Validator result = super.getValidator(form);
 
         if (result != null) {
-            if (result instanceof AbstractNumberValidator<?>) {
+            if (result instanceof FormValidator) {
                 return (V) result;
             }
         }
@@ -56,10 +55,11 @@ public abstract class AbstractNumberFormEditor<T extends Number, V extends Abstr
 
         @Override
         public Vote previewInsertText(TextInput textInput, CharSequence text, int index) {
-            if (StringUtils.isNotBlank(text)) {
-                if (textInput.getValidator().isValid(text.toString())) {
-                    return Vote.APPROVE;
-                }
+            String oldText = textInput.getText();
+            String newText = new StringBuilder(oldText).insert(index, text).toString();
+
+            if (textInput.getValidator().isValid(newText)) {
+                return Vote.APPROVE;
             }
 
             return Vote.DENY;

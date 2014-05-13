@@ -95,11 +95,8 @@ public interface ApplicationAction extends Bindable, Labelable {
 
         @Override
         public final void perform(final Component source) {
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    doPerform(source);
-                }
+            EventQueue.invokeLater(() -> {
+                doPerform(source);
             });
         }
 

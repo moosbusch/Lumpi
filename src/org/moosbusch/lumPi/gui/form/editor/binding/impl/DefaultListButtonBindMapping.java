@@ -19,7 +19,7 @@ import org.apache.pivot.collections.List;
 import org.apache.pivot.wtk.ListButton;
 import org.moosbusch.lumPi.gui.form.editor.FormEditor;
 import org.moosbusch.lumPi.gui.form.editor.binding.spi.AbstractListButtonFormEditorBindMapping;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -34,7 +34,7 @@ public class DefaultListButtonBindMapping<T extends ListButton> extends
 
     @Override
     public List<?> toListData(Object value) {
-        return PivotUtil.toListData(value);
+        return LumPiUtil.toListData(value);
     }
 
     @Override

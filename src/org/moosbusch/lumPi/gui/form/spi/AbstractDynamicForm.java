@@ -17,6 +17,7 @@ package org.moosbusch.lumPi.gui.form.spi;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,13 +47,13 @@ import org.moosbusch.lumPi.gui.form.editor.impl.DefaultStringFormEditor;
 import org.moosbusch.lumPi.gui.form.editor.io.StoreValueDelegate;
 import org.moosbusch.lumPi.gui.form.editor.spi.AbstractNumberFormEditor;
 import org.moosbusch.lumPi.gui.form.editor.validator.impl.BooleanValidator;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.ByteNumberValidator;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.DoubleNumberValidator;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.FloatNumberValidator;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.IntegerNumberValidator;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.ShortNumberValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.ByteValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.DoubleValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.FloatValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.IntegerValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.ShortValidator;
 import org.moosbusch.lumPi.util.FormUtil;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -81,15 +82,21 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
             NoSuchMethodException {
         Form.Section result = new Form.Section();
         String sectHeading = getSectionHeading();
+        Map<String, Class<?>> propertyMap = new HashMap<>();
+        propertyMap.setComparator(Comparator.naturalOrder());
 
         if ((isShowSectionHeading()) && (StringUtils.isNotBlank(sectHeading))) {
             result.setHeading(sectHeading);
         }
 
         for (PropertyDescriptor propDesc : propDescs) {
+            propertyMap.put(propDesc.getName(), propDesc.getPropertyType());
+        }
+
+        for (String propertyName : propertyMap) {
             Class<?> propertyClass = ClassUtils.primitiveToWrapper(
-                    propDesc.getPropertyType());
-            String propertyName = propDesc.getName();
+                    propertyMap.get(propertyName));
+
             FormEditor<? extends Component> editor;
 
             if (!isExcludedProperty(beanClass, propertyName)) {
@@ -119,7 +126,7 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
     }
 
     protected final void removeSections() {
-        PivotUtil.clearSequence(getSections());
+        LumPiUtil.clearSequence(getSections());
     }
 
     protected final Map<String, FormEditor<? extends Component>> getEditors() {
@@ -150,11 +157,11 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
 
     protected void initDefaultValidators() {
         putValidator(Boolean.class.getName(), BooleanValidator.class);
-        putValidator(Integer.class.getName(), IntegerNumberValidator.class);
-        putValidator(Byte.class.getName(), ByteNumberValidator.class);
-        putValidator(Short.class.getName(), ShortNumberValidator.class);
-        putValidator(Float.class.getName(), FloatNumberValidator.class);
-        putValidator(Double.class.getName(), DoubleNumberValidator.class);
+        putValidator(Integer.class.getName(), IntegerValidator.class);
+        putValidator(Byte.class.getName(), ByteValidator.class);
+        putValidator(Short.class.getName(), ShortValidator.class);
+        putValidator(Float.class.getName(), FloatValidator.class);
+        putValidator(Double.class.getName(), DoubleValidator.class);
     }
 
     protected ScrollPane createScrollPane() {
@@ -204,7 +211,7 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
             java.util.Set<Class<?>> superTypes = null;
 
             try {
-                superTypes = PivotUtil.getSuperTypes(
+                superTypes = LumPiUtil.getSuperTypes(
                         Class.forName(propertyClassName), false, true, true);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(AbstractDynamicForm.class.getName()).log(
@@ -238,9 +245,9 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
         editor.getComponent().getComponentKeyListeners().add(
                 new HelpListener(formFieldName));
 
-        if (editor instanceof AbstractNumberFormEditor<?, ?>) {
-            AbstractNumberFormEditor<?, ?> numberEditor =
-                    (AbstractNumberFormEditor<?, ?>) editor;
+        if (editor instanceof AbstractNumberFormEditor<?>) {
+            AbstractNumberFormEditor<?> numberEditor =
+                    (AbstractNumberFormEditor<?>) editor;
             TextInput numberTextInput = numberEditor.getComponent();
             numberTextInput.setValidator(numberEditor.getValidator(this));
         }

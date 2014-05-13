@@ -19,7 +19,7 @@ import org.apache.pivot.collections.List;
 import org.apache.pivot.wtk.ListView;
 import org.moosbusch.lumPi.gui.form.editor.FormEditor;
 import org.moosbusch.lumPi.gui.form.editor.binding.spi.AbstractListViewFormEditorBindMapping;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -33,7 +33,7 @@ public class DefaultListViewBindMapping extends AbstractListViewFormEditorBindMa
 
     @Override
     public List<?> toListData(Object value) {
-        return PivotUtil.toListData(value);
+        return LumPiUtil.toListData(value);
     }
 
     @Override

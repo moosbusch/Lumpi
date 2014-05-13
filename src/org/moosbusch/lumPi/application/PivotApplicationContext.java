@@ -17,14 +17,12 @@ package org.moosbusch.lumPi.application;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
-import java.util.List;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
@@ -33,12 +31,19 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.action.ChildWindowAction;
+import org.moosbusch.lumPi.application.impl.DefaultSpringBXMLSerializer;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
+import org.moosbusch.lumPi.beans.spring.impl.LumPiMiscBean;
+import org.moosbusch.lumPi.beans.spring.impl.PivotContentsBean;
+import org.moosbusch.lumPi.beans.spring.impl.PivotEffectsBean;
 import org.moosbusch.lumPi.beans.spring.impl.PivotFactoryBean;
+import org.moosbusch.lumPi.beans.spring.impl.PivotMiscBean;
+import org.moosbusch.lumPi.beans.spring.impl.PivotSerializersBean;
+import org.moosbusch.lumPi.beans.spring.impl.PivotTextBean;
+import org.moosbusch.lumPi.beans.spring.impl.PivotValidatorsBean;
 import org.moosbusch.lumPi.beans.spring.impl.PreferencesFactoryBean;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -49,7 +54,8 @@ import org.springframework.core.io.Resource;
  * @author moosbusch
  */
 public interface PivotApplicationContext
-        extends ConfigurableApplicationContext, Resolvable, PropertyChangeAware {
+        extends ConfigurableApplicationContext, Resolvable,
+        PropertyChangeAware {
 
     public static final String APPLICATION_WINDOW_PROPERTYNAME = "applicationWindow";
 
@@ -68,11 +74,9 @@ public interface PivotApplicationContext
     @Override
     public Object getBean(String name, Object... args) throws BeansException;
 
-    public Class<? extends PivotFactoryBean> getPivotBeanFactoryClass();
+    public void bindBean(Bindable bindable, SpringBXMLSerializer ser);
 
-    public void bindBean(Bindable bindable);
-
-    public BXMLSerializer getSerializer();
+    public SpringBXMLSerializer getSerializer();
 
     public Preferences getPreferences();
 
@@ -80,11 +84,13 @@ public interface PivotApplicationContext
 
     public void setApplicationWindow(BindableWindow window);
 
+    public void shutdownContext();
+
     public abstract class Adapter
             extends AnnotationConfigApplicationContext
             implements PivotApplicationContext {
 
-        private final BXMLSerializer serializer;
+        private final SpringBXMLSerializer bxmlSerializer;
         private final PropertyChangeAware pca;
         private BindableWindow applicationWindow;
         private final Preferences preferences;
@@ -92,7 +98,7 @@ public interface PivotApplicationContext
         public Adapter(DesktopApplication<? extends PivotApplicationContext> application) {
             this.pca = new PropertyChangeAware.Adapter(this);
             this.preferences = Preferences.userNodeForPackage(application.getClass());
-            this.serializer = initSerializer(Objects.requireNonNull(application));
+            this.bxmlSerializer = initSerializer(Objects.requireNonNull(application));
             init(application);
         }
 
@@ -110,8 +116,8 @@ public interface PivotApplicationContext
         }
 
         private void loadAnnotationConfig(DesktopApplication<? extends PivotApplicationContext> application) {
-            String[] beanPackages = application.getAnnotatedBeanPackages();
-            Class<?>[] annotatedClasses = application.getAnnotatedClasses();
+            String[] beanPackages = application.getConfigurationPackages();
+            Class<?>[] annotatedClasses = application.getConfigurationClasses();
 
             if ((ArrayUtils.isNotEmpty(annotatedClasses))) {
                 register(annotatedClasses);
@@ -124,13 +130,13 @@ public interface PivotApplicationContext
 
         private void loadXmlConfig(DesktopApplication<? extends PivotApplicationContext> application) {
             String[] configLocations = configLocationsFromURLs(
-                    application.getBeanConfigurations());
+                    application.getBeanConfigurationFiles());
 
             if (ArrayUtils.isNotEmpty(configLocations)) {
                 XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(this);
 
-                for (int cnt = 0; cnt < configLocations.length; cnt++) {
-                    Resource res = getResource(configLocations[cnt]);
+                for (String configLocation : configLocations) {
+                    Resource res = getResource(configLocation);
 
                     if (res != null) {
                         xmlReader.loadBeanDefinitions(res);
@@ -139,11 +145,21 @@ public interface PivotApplicationContext
             }
         }
 
+        private Class<?>[] getPivotCoreConfigurationClasses() {
+            return new Class<?>[]{PreferencesFactoryBean.class,
+                PivotFactoryBean.class, PivotSerializersBean.class,
+                PivotContentsBean.class, PivotTextBean.class,
+                PivotValidatorsBean.class, PivotEffectsBean.class,
+                PivotMiscBean.class, LumPiMiscBean.class};
+        }
+
         private void registerFactoryBeans() {
-            Class<?> pivotFactoryBeanClass = Objects.requireNonNull(
-                    getPivotBeanFactoryClass());
-            register(pivotFactoryBeanClass);
-            register(PreferencesFactoryBean.class);
+            Class<?>[] corePivotConfigurationClasses = Objects.requireNonNull(
+                    getPivotCoreConfigurationClasses());
+
+            for (Class<?> pivotFactoryBeanClass : corePivotConfigurationClasses) {
+                register(pivotFactoryBeanClass);
+            }
         }
 
         private String[] configLocationsFromURLs(URL[] locations) {
@@ -160,21 +176,22 @@ public interface PivotApplicationContext
             return null;
         }
 
-        private BXMLSerializer initSerializer(DesktopApplication<? extends PivotApplicationContext> application) {
-            BXMLSerializer result = Objects.requireNonNull(createSerializer());
-            result.setLocation(application.getBXMLConfiguration());
+        private SpringBXMLSerializer initSerializer(DesktopApplication<? extends PivotApplicationContext> application) {
+            SpringBXMLSerializer result = Objects.requireNonNull(createSerializer());
+            result.setLocation(application.getBXMLConfigurationFile());
             result.setResources(application.getResources());
             return result;
         }
 
-        private void processNamespace() {
-            Map<String, Object> result = getNamespace();
+        protected void processNamespace(Map<String, Object> namespace) {
+            SpringBXMLSerializer ser = getSerializer();
+            ser.setNamespace(getNamespace());
 
-            for (String id : result) {
-                Object obj = Objects.requireNonNull(result.get(id));
+            for (String id : namespace) {
+                Object obj = Objects.requireNonNull(namespace.get(id));
 
                 if (obj instanceof Bindable) {
-                    bindBean((Bindable) obj);
+                    bindBean((Bindable) obj, ser);
                 }
 
                 if (obj instanceof Action) {
@@ -183,20 +200,28 @@ public interface PivotApplicationContext
 
                 if (obj instanceof ChildWindowAction) {
                     ChildWindowAction cwa = (ChildWindowAction) obj;
-                    BindableWindow window = Objects.requireNonNull(getApplicationWindow());
+                    BindableWindow window = Objects.requireNonNull(
+                            getApplicationWindow());
                     cwa.setApplicationWindow(window);
                 }
             }
         }
 
-        private void registerAction(String actionNameKey, Action action) {
+        protected void registerAction(String actionNameKey, Action action) {
             if (StringUtils.isNotBlank(actionNameKey)) {
                 Action.getNamedActions().put(actionNameKey, action);
             }
         }
 
-        protected BXMLSerializer createSerializer() {
-            return new BXMLSerializer();
+        protected SpringBXMLSerializer createSerializer() {
+            return new DefaultSpringBXMLSerializer(this);
+        }
+
+        @Override
+        public void bindBean(Bindable bindable, SpringBXMLSerializer ser) {
+                ser.bind(bindable, bindable.getClass());
+                bindable.initialize(ser.getNamespace(),
+                        ser.getLocation(), ser.getResources());
         }
 
         @Override
@@ -240,10 +265,10 @@ public interface PivotApplicationContext
 
         @Override
         public <T> T getBean(String name, Class<T> requiredType) {
-            Object result;
+            Object result = null;
 
             if (super.containsBean(name)) {
-                return super.getBean(name, requiredType);
+                result = super.getBean(name, requiredType);
             } else if (getNamespace() != null) {
                 result = getNamespace().get(name);
 
@@ -252,6 +277,10 @@ public interface PivotApplicationContext
                         return (T) result;
                     }
                 }
+            }
+
+            if (result != null) {
+                return (T) result;
             }
 
             return null;
@@ -289,35 +318,12 @@ public interface PivotApplicationContext
                 }
             }
 
-            return null;
+            return result;
         }
 
         @Override
-        public void bindBean(Bindable bindable) {
-            BXMLSerializer ser = Objects.requireNonNull(getSerializer());
-            ser.setNamespace(getNamespace());
-            AutowireCapableBeanFactory autowireBeanFactory =
-                    getAutowireCapableBeanFactory();
-            List<Class<?>> superClasses =
-                    ClassUtils.getAllSuperclasses(bindable.getClass());
-
-            for (Class<?> superClass : superClasses) {
-                if (Bindable.class.isAssignableFrom(superClass)) {
-                    Object obj = superClass.cast(bindable);
-                    ser.bind(bindable, superClass);
-                    autowireBeanFactory.autowireBean(obj);
-                }
-            }
-
-            ser.bind(bindable);
-            autowireBeanFactory.autowireBean(bindable);
-            bindable.initialize(ser.getNamespace(),
-                    ser.getLocation(), ser.getResources());
-        }
-
-        @Override
-        public final BXMLSerializer getSerializer() {
-            return serializer;
+        public final SpringBXMLSerializer getSerializer() {
+            return bxmlSerializer;
         }
 
         @Override
@@ -400,7 +406,7 @@ public interface PivotApplicationContext
             @Override
             public void propertyChanged(Object bean, String propertyName) {
                 if (propertyName.equals(APPLICATION_WINDOW_PROPERTYNAME)) {
-                    processNamespace();
+                    processNamespace(getNamespace());
                 }
             }
         }

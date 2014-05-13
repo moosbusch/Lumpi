@@ -15,7 +15,10 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.gui.window.spi;
 
+import java.net.URL;
 import org.apache.pivot.beans.Bindable;
+import org.apache.pivot.collections.Map;
+import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Frame;
 
@@ -38,6 +41,10 @@ public abstract class BindableFrame extends Frame implements Bindable {
 
     public BindableFrame(String title, Component content) {
         super(title, content);
+    }
+
+    @Override
+    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 
 }

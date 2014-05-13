@@ -16,12 +16,12 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.gui.form.editor.impl;
 
 import org.moosbusch.lumPi.gui.form.editor.spi.AbstractNumberFormEditor;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.IntegerNumberValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.IntegerValidator;
 
 /**
  *
  * @author moosbusch
  */
-public class DefaultIntegerFormEditor extends AbstractNumberFormEditor<Integer, IntegerNumberValidator> {
+public class DefaultIntegerFormEditor extends AbstractNumberFormEditor<IntegerValidator> {
 
 }

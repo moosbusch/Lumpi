@@ -16,12 +16,12 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.gui.form.editor.impl;
 
 import org.moosbusch.lumPi.gui.form.editor.spi.AbstractNumberFormEditor;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.DoubleNumberValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.DoubleValidator;
 
 /**
  *
  * @author moosbusch
  */
-public class DefaultDoubleFormEditor extends AbstractNumberFormEditor<Double, DoubleNumberValidator> {
+public class DefaultDoubleFormEditor extends AbstractNumberFormEditor<DoubleValidator> {
 
 }

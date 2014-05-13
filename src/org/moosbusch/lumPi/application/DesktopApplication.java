@@ -15,8 +15,6 @@
  */
 package org.moosbusch.lumPi.application;
 
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.net.URL;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -24,25 +22,25 @@ import java.util.logging.Logger;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Application;
-import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.Display;
-import org.apache.pivot.wtk.Window;
 import org.moosbusch.lumPi.application.impl.DefaultPivotApplicationContext;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
+import org.springframework.context.ApplicationEvent;
 
 /**
  *
  * @author moosbusch
  */
-public interface DesktopApplication<T extends PivotApplicationContext> extends Application {
+public interface DesktopApplication<T extends PivotApplicationContext>
+        extends Application {
 
-    public Class<?>[] getAnnotatedClasses();
+    public Class<?>[] getConfigurationClasses();
 
-    public String[] getAnnotatedBeanPackages();
+    public String[] getConfigurationPackages();
 
-    public URL[] getBeanConfigurations();
+    public URL[] getBeanConfigurationFiles();
 
-    public URL getBXMLConfiguration();
+    public URL getBXMLConfigurationFile();
 
     public Resources getResources();
 
@@ -50,40 +48,19 @@ public interface DesktopApplication<T extends PivotApplicationContext> extends A
 
     public BindableWindow getApplicationWindow();
 
-    public Display getDisplay();
+    public abstract class Adapter extends Application.Adapter
+            implements DesktopApplication<PivotApplicationContext> {
 
-    public abstract class Adapter
-            extends Application.Adapter implements DesktopApplication<PivotApplicationContext> {
-
-        private Display display = null;
         private final PivotApplicationContext context;
-        private final HostWindowResizeListener windowListener;
 
         public Adapter() {
             this.context = initApplicationContext();
-            this.windowListener = new HostWindowResizeListener();
-        }
-
-        private java.awt.Window getHostWindow() {
-            if (getApplicationWindow() != null) {
-                return getApplicationWindow().getDisplay().getHostWindow();
-            }
-
-            return null;
-        }
-
-        private void closeApplicationWindow() {
-            Display dsp = getDisplay();
-
-            for (int i = dsp.getLength() - 1; i >= 0; i--) {
-                Window win = (Window) dsp.get(i);
-                win.close();
-            }
         }
 
         private void closeApplicationContext() {
             try (PivotApplicationContext ctx = getApplicationContext()) {
-                ctx.stop();
+                ctx.shutdownContext();
+                ctx.close();
             }
         }
 
@@ -95,25 +72,26 @@ public interface DesktopApplication<T extends PivotApplicationContext> extends A
             return new DefaultPivotApplicationContext(this);
         }
 
-        protected void startupImpl(Display display, Map<String, String> namespace) throws Exception {
+        protected void startupImpl(Display display, BindableWindow applicationWindow,
+                Map<String, String> namespace) throws Exception {
         }
 
         protected boolean shutdownImpl(boolean optional) {
             return false;
         }
 
+        protected void onApplicationEventImpl(ApplicationEvent event) {
+        }
+
         @Override
         public final BindableWindow getApplicationWindow() {
+            BindableWindow result = getApplicationContext().getApplicationWindow();
+
+            if (result != null) {
+                return result;
+            }
+
             return getApplicationContext().getBean(BindableWindow.class);
-        }
-
-        @Override
-        public final Display getDisplay() {
-            return display;
-        }
-
-        private void setDisplay(Display display) {
-            this.display = display;
         }
 
         @Override
@@ -124,13 +102,10 @@ public interface DesktopApplication<T extends PivotApplicationContext> extends A
         @Override
         public final void startup(Display display, Map<String, String> properties)
                 throws Exception {
-            setDisplay(Objects.requireNonNull(display));
-            Window window = Objects.requireNonNull(getApplicationWindow());
-            window.open(display);
-            DesktopApplicationContext.sizeHostToFit(window);
-            java.awt.Window hostWindow = Objects.requireNonNull(getHostWindow());
-            hostWindow.addComponentListener(windowListener);
-            startupImpl(display, properties);
+            BindableWindow window = Objects.requireNonNull(getApplicationWindow());
+            window.setDisplay(display);
+            startupImpl(display, window, properties);
+            window.open();
         }
 
         @Override
@@ -139,7 +114,6 @@ public interface DesktopApplication<T extends PivotApplicationContext> extends A
             boolean result = false;
 
             closeApplicationContext();
-            closeApplicationWindow();
 
             try {
                 result = super.shutdown(optionalExt);
@@ -152,12 +126,12 @@ public interface DesktopApplication<T extends PivotApplicationContext> extends A
         }
 
         @Override
-        public Class<?>[] getAnnotatedClasses() {
+        public Class<?>[] getConfigurationClasses() {
             return null;
         }
 
         @Override
-        public String[] getAnnotatedBeanPackages() {
+        public String[] getConfigurationPackages() {
             return null;
         }
 
@@ -165,26 +139,6 @@ public interface DesktopApplication<T extends PivotApplicationContext> extends A
         public Resources getResources() {
             return null;
         }
-
-        private class HostWindowResizeListener extends ComponentAdapter {
-
-            @Override
-            public void componentResized(ComponentEvent e) {
-                java.awt.Component cmp = e.getComponent();
-
-                if (cmp instanceof java.awt.Window) {
-                    java.awt.Window hostWindow = (java.awt.Window) cmp;
-                    java.awt.Insets insets = hostWindow.getInsets();
-
-                    synchronized (hostWindow.getTreeLock()) {
-                        getApplicationWindow().setPreferredSize(
-                                cmp.getWidth() - insets.left - insets.right,
-                                cmp.getHeight() - insets.top - insets.bottom);
-                    }
-                }
-            }
-        }
     }
-
 
 }

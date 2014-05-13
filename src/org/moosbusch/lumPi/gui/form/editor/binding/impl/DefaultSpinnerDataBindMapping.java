@@ -19,7 +19,7 @@ import org.apache.pivot.collections.List;
 import org.apache.pivot.wtk.Spinner;
 import org.moosbusch.lumPi.gui.form.editor.binding.spi.AbstractSpinnerFormEditorBindMapping;
 import org.moosbusch.lumPi.gui.form.editor.FormEditor;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -33,7 +33,7 @@ public class DefaultSpinnerDataBindMapping extends AbstractSpinnerFormEditorBind
 
     @Override
     public List<?> toSpinnerData(Object value) {
-        return PivotUtil.toListData(value);
+        return LumPiUtil.toListData(value);
     }
 
     @Override

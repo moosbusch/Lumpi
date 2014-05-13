@@ -15,11 +15,14 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.gui.component.impl;
 
+import java.awt.Font;
 import java.net.URL;
 import org.apache.pivot.wtk.ImageView;
 import org.apache.pivot.wtk.Label;
 import org.apache.pivot.wtk.TablePane;
+import org.apache.pivot.wtk.Theme;
 import org.apache.pivot.wtk.media.Image;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -47,13 +50,16 @@ public class Header extends TablePane {
     }
 
     private void init() {
-        imageColumn.setWidth(100);
+        Font labelFont = Theme.getTheme().getFont();
+        LumPiUtil.setComponentStyle(headingLabel,
+                "font", labelFont.deriveFont(Font.BOLD));
+        imageView.setPreferredSize(48, 48);
+
+        imageColumn.setWidth(48);
         textColumn.setWidth("1*");
 
-        headingRow.setHeight(35);
-        messageRow.setHeight("1*");
-
-        imageView.setPreferredSize(100, 100);
+        headingRow.setHeight(24);
+        messageRow.setHeight(48);
 
         headingRow.add(new TablePane.Filler());
         headingRow.add(headingLabel);

@@ -55,7 +55,7 @@ public class FormUtil {
         if (excludedProps.containsKey(propertyName)) {
             Class<?>[] ignPropsType = excludedProps.get(propertyName);
 
-            Set<Class<?>> superTypes = PivotUtil.getSuperTypes(
+            Set<Class<?>> superTypes = LumPiUtil.getSuperTypes(
                     type, true, true, true);
 
             if (!ArrayUtils.contains(ignPropsType, type)) {
@@ -113,7 +113,7 @@ public class FormUtil {
 
                     if (!ArrayUtils.contains(ignPropsType, type)) {
                         Set<Class<?>> superTypes =
-                                PivotUtil.getSuperTypes(type, false, true, true);
+                                LumPiUtil.getSuperTypes(type, false, true, true);
 
                         for (Class<?> superType : superTypes) {
                             if (ArrayUtils.contains(ignPropsType, superType)) {

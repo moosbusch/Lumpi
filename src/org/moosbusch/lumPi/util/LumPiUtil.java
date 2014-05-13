@@ -16,6 +16,9 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.util;
 
 import java.awt.EventQueue;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
@@ -53,9 +56,9 @@ import org.springframework.util.ObjectUtils;
  *
  * @author moosbusch
  */
-public class PivotUtil {
+public class LumPiUtil {
 
-    private PivotUtil() {
+    private LumPiUtil() {
     }
 
     public static boolean pathEndsWith(java.nio.file.Path p, String end) {
@@ -464,5 +467,42 @@ public class PivotUtil {
             }
         }.invokeLater();
 
+    }
+
+    public static Set<String> getBeanPropertyNames(Object bean) {
+        return getBeanPropertyNames(bean.getClass());
+    }
+
+    public static Set<String> getBeanPropertyNames(Class<?> beanClass) {
+        Set<String> result = new HashSet<>();
+        BeanInfo beanInfo = null;
+
+        try {
+            beanInfo = Introspector.getBeanInfo(beanClass);
+        } catch (IntrospectionException ex) {
+            Logger.getLogger(LumPiUtil.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+                result.add(pd.getName());
+            }
+        }
+
+        return result;
+    }
+
+    public static void printBeanPropertyNames(Class<?> beanClass) {
+        Set<String> result = getBeanPropertyNames(beanClass);
+
+        for (String propertyName: result) {
+            System.out.println(propertyName);
+        }
+    }
+
+    public static void printBeanPropertyNames(Object bean) {
+        Set<String> result = getBeanPropertyNames(bean);
+
+        for (String propertyName: result) {
+            System.out.println(propertyName);
+        }
     }
 }

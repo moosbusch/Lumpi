@@ -17,7 +17,7 @@ package org.moosbusch.lumPi.gui.component.impl;
 
 import org.apache.pivot.wtk.BoxPane;
 import org.apache.pivot.wtk.Orientation;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -35,9 +35,9 @@ public class DefaultButtonBoxPane extends BoxPane {
     }
 
     private void init() {
-        PivotUtil.setComponentStyle(this, "padding", 10);
-        PivotUtil.setComponentStyle(this, "horizontalAlignment", "right");
-        PivotUtil.setComponentStyle(this, "verticalAlignment", "bottom");
+        LumPiUtil.setComponentStyle(this, "padding", 10);
+        LumPiUtil.setComponentStyle(this, "horizontalAlignment", "right");
+        LumPiUtil.setComponentStyle(this, "verticalAlignment", "bottom");
     }
 
 }

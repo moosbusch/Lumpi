@@ -54,7 +54,7 @@ public interface OSGiController {
 
     public boolean ungetService(ServiceReference<?> sr);
 
-    public static class Adapter implements OSGiController {
+    public static abstract class Adapter implements OSGiController {
 
         private Felix felix;
 

@@ -16,12 +16,12 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.gui.form.editor.impl;
 
 import org.moosbusch.lumPi.gui.form.editor.spi.AbstractNumberFormEditor;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.ShortNumberValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.ShortValidator;
 
 /**
  *
  * @author moosbusch
  */
-public class DefaultShortFormEditor extends AbstractNumberFormEditor<Short, ShortNumberValidator> {
+public class DefaultShortFormEditor extends AbstractNumberFormEditor<ShortValidator> {
 
 }

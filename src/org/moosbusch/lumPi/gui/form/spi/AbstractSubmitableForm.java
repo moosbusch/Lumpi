@@ -25,7 +25,7 @@ import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Form;
 import org.apache.pivot.wtk.validation.Validator;
 import org.moosbusch.lumPi.gui.component.Submitable;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -49,11 +49,11 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
     }
 
     private void initStyles() {
-        PivotUtil.setComponentStyle(this, "fill", "true");
-        PivotUtil.setComponentStyle(this, "leftAlignLabels", "true");
-        PivotUtil.setComponentStyle(this, "horizontalSpacing", "10");
-        PivotUtil.setComponentStyle(this, "verticalSpacing", "10");
-        PivotUtil.setComponentStyle(this, "padding", "10");
+        LumPiUtil.setComponentStyle(this, "fill", "true");
+        LumPiUtil.setComponentStyle(this, "leftAlignLabels", "true");
+        LumPiUtil.setComponentStyle(this, "horizontalSpacing", "10");
+        LumPiUtil.setComponentStyle(this, "verticalSpacing", "10");
+        LumPiUtil.setComponentStyle(this, "padding", "10");
     }
 
     public static String createFormFieldName(Class<?> beanClass, String propertyName) {

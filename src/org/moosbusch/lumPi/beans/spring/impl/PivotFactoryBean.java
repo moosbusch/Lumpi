@@ -17,9 +17,9 @@ package org.moosbusch.lumPi.beans.spring.impl;
 
 import java.io.IOException;
 import java.util.Objects;
-import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.serialization.SerializationException;
 import org.moosbusch.lumPi.application.PivotApplicationContext;
+import org.moosbusch.lumPi.application.SpringBXMLSerializer;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
@@ -39,7 +39,7 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
     @Autowired
     private ApplicationContext applicationContext;
 
-    protected BindableWindow readObject(BXMLSerializer serializer)
+    protected BindableWindow readObject(SpringBXMLSerializer serializer)
             throws IOException, SerializationException {
         BindableWindow result = getApplicationContext().getApplicationWindow();
 
@@ -52,7 +52,7 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
                         serializer.getLocation());
             }
 
-            getApplicationContext().setApplicationWindow(Objects.requireNonNull(result));
+            getApplicationContext().setApplicationWindow(result);
         }
 
         return result;
@@ -70,7 +70,7 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
     }
 
     @Override
-    public boolean isSingleton() {
+    public final boolean isSingleton() {
         return true;
     }
 

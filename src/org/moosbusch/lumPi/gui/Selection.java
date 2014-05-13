@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.pivot.collections.Dictionary.Pair;
 import org.apache.pivot.collections.LinkedList;
 import org.apache.pivot.wtk.Component;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -129,7 +129,7 @@ public interface Selection<T extends Object> {
 
             if (StringUtils.isNotBlank(expr)) {
                 String[] exprTokens = StringUtils.split(
-                        PivotUtil.requireNotBlank(expr), getSeparatorChar());
+                        LumPiUtil.requireNotBlank(expr), getSeparatorChar());
 
                 for (String exprToken : exprTokens) {
                     add(StringUtils.deleteWhitespace(exprToken));

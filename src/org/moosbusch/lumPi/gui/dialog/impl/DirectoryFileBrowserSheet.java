@@ -6,7 +6,7 @@ package org.moosbusch.lumPi.gui.dialog.impl;
 
 import java.io.File;
 import org.apache.pivot.util.Filter;
-import org.moosbusch.lumPi.util.PivotUtil;
+import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
  *
@@ -20,7 +20,7 @@ public class DirectoryFileBrowserSheet extends DefaultSubmitableFileBrowserSheet
 
     private void init() {
         setDisabledFileFilter(new DirectoryFileFilter());
-        PivotUtil.setComponentStyle(getFileBrowser(), "hideDisabledFiles", true);
+        LumPiUtil.setComponentStyle(getFileBrowser(), "hideDisabledFiles", true);
     }
 
     private class DirectoryFileFilter implements Filter<File> {

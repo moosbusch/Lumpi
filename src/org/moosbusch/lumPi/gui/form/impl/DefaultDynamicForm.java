@@ -40,6 +40,7 @@ public class DefaultDynamicForm extends AbstractDynamicForm<Object> {
     public boolean canSubmit(Object value) {
         for (String formField : getEditors()) {
             FormEditor<? extends Component> editor = getEditors().get(formField);
+            
             if (!editor.isValid(this)) {
                 return false;
             }

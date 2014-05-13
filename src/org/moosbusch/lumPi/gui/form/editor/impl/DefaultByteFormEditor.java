@@ -16,12 +16,12 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.gui.form.editor.impl;
 
 import org.moosbusch.lumPi.gui.form.editor.spi.AbstractNumberFormEditor;
-import org.moosbusch.lumPi.gui.form.editor.validator.impl.ByteNumberValidator;
+import org.moosbusch.lumPi.gui.form.editor.validator.impl.ByteValidator;
 
 /**
  *
  * @author moosbusch
  */
-public class DefaultByteFormEditor extends AbstractNumberFormEditor<Byte, ByteNumberValidator> {
+public class DefaultByteFormEditor extends AbstractNumberFormEditor<ByteValidator> {
 
 }
