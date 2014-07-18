@@ -23,7 +23,7 @@ import org.moosbusch.lumPi.beans.PropertyChangeAware;
  *
  * @author moosbusch
  */
-public interface ValueHolder<T extends Object> extends PropertyChangeAware {
+public interface ValueStore<T extends Object> extends PropertyChangeAware {
 
     public static final String VALUE_PROPERTY = "value";
 
@@ -32,7 +32,7 @@ public interface ValueHolder<T extends Object> extends PropertyChangeAware {
     public void setValue(T val);
 
     public abstract class Adapter<T extends Object>
-            implements ValueHolder<T> {
+            implements ValueStore<T> {
 
         private T value;
         private final PropertyChangeAware pca;

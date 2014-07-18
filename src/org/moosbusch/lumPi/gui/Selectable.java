@@ -15,13 +15,13 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.gui;
 
-import org.moosbusch.lumPi.gui.component.ValueHolder;
+import org.moosbusch.lumPi.gui.component.ValueStore;
 
 /**
  *
  * @author moosbusch
  */
-public interface Selectable<T extends Object> extends ValueHolder<T> {
+public interface Selectable<T extends Object> extends ValueStore<T> {
 
     public static final String SELECTION_PROPERTY = "selection";
 
@@ -29,7 +29,7 @@ public interface Selectable<T extends Object> extends ValueHolder<T> {
 
     public void setSelection(Selection<T> selItem);
 
-    public static class Adapter<T extends Object> extends ValueHolder.Adapter<T>
+    public static class Adapter<T extends Object> extends ValueStore.Adapter<T>
             implements Selectable<T> {
 
         private Selection<T> selItem;

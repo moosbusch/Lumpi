@@ -15,16 +15,19 @@
  */
 package org.moosbusch.lumPi.application.impl;
 
-import org.moosbusch.lumPi.application.DesktopApplication;
-import org.moosbusch.lumPi.application.PivotApplicationContext;
+import org.moosbusch.lumPi.application.LumPiApplication;
+import org.moosbusch.lumPi.application.LumPiApplicationContext;
 
 /**
  *
  * @author moosbusch
  */
-public class DefaultPivotApplicationContext extends PivotApplicationContext.Adapter {
+public class DefaulLumPiApplicationContext
+    extends LumPiApplicationContext.Adapter {
 
-    public DefaultPivotApplicationContext(DesktopApplication<? extends PivotApplicationContext> application) {
+
+    public DefaulLumPiApplicationContext(LumPiApplication
+            <? extends LumPiApplicationContext> application) {
         super(application);
     }
 

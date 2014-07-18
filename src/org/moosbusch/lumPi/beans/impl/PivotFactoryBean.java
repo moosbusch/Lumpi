@@ -13,12 +13,12 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.moosbusch.lumPi.beans.spring.impl;
+package org.moosbusch.lumPi.beans.impl;
 
 import java.io.IOException;
 import java.util.Objects;
 import org.apache.pivot.serialization.SerializationException;
-import org.moosbusch.lumPi.application.PivotApplicationContext;
+import org.moosbusch.lumPi.application.LumPiApplicationContext;
 import org.moosbusch.lumPi.application.SpringBXMLSerializer;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.beans.BeansException;
@@ -74,8 +74,8 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
         return true;
     }
 
-    public PivotApplicationContext getApplicationContext() {
-        return (PivotApplicationContext) applicationContext;
+    public LumPiApplicationContext getApplicationContext() {
+        return (LumPiApplicationContext) applicationContext;
     }
 
     @Override

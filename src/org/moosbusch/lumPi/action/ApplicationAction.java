@@ -19,7 +19,6 @@ import java.awt.EventQueue;
 import java.net.URL;
 import java.util.Objects;
 import org.apache.pivot.beans.BeanMonitor;
-import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.ListenerList;
@@ -29,7 +28,7 @@ import org.apache.pivot.wtk.ActionListener;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.content.ButtonData;
 import org.apache.pivot.wtk.media.Image;
-import org.moosbusch.lumPi.beans.PropertyChangeAware;
+import org.moosbusch.lumPi.beans.SmartBindable;
 import org.moosbusch.lumPi.gui.Labelable;
 import static org.moosbusch.lumPi.gui.Labelable.BUTTON_DATA_PROPERTY_NAME;
 import static org.moosbusch.lumPi.gui.Labelable.ICON_PROPERTY_NAME;
@@ -40,7 +39,7 @@ import static org.moosbusch.lumPi.gui.Labelable.USER_DATA_PROPERTY_NAME;
  *
  * @author moosbusch
  */
-public interface ApplicationAction extends Bindable, Labelable {
+public interface ApplicationAction extends SmartBindable, Labelable {
 
     public static final String ENABLED_PROPERTY_NAME = "enabled";
 
@@ -58,23 +57,23 @@ public interface ApplicationAction extends Bindable, Labelable {
 
     public static abstract class Adapter extends Action implements ApplicationAction {
 
-        private final PropertyChangeAware pca;
+        private final SmartBindable bindableAdapter;
         private ButtonData buttonData;
 
         public Adapter() {
-            this.pca = new PropertyChangeAware.Adapter(this);
+            this.bindableAdapter = new SmartBindable.Adapter(this);
             initButtonData();
         }
 
         public Adapter(boolean enabled) {
             super(enabled);
-            this.pca = new PropertyChangeAware.Adapter(this);
+            this.bindableAdapter = new SmartBindable.Adapter(this);
             initButtonData();
         }
 
         public Adapter(ButtonData buttonData, boolean enabled) {
             super(enabled);
-            this.pca = new PropertyChangeAware.Adapter(this);
+            this.bindableAdapter = new SmartBindable.Adapter(this);
             this.buttonData = Objects.requireNonNull(buttonData);
         }
 
@@ -98,6 +97,11 @@ public interface ApplicationAction extends Bindable, Labelable {
             EventQueue.invokeLater(() -> {
                 doPerform(source);
             });
+        }
+
+        @Override
+        public final void perform() {
+            perform(null);
         }
 
         @Override
@@ -168,34 +172,41 @@ public interface ApplicationAction extends Bindable, Labelable {
         }
 
         @Override
-        public final void perform() {
-            perform(null);
+        public boolean isInitialized() {
+            return bindableAdapter.isInitialized();
+        }
+
+        @Override
+        public void setInitialized(boolean initialized) {
+            bindableAdapter.setInitialized(initialized);
         }
 
         @Override
         public BeanMonitor getMonitor() {
-            return pca.getMonitor();
+            return bindableAdapter.getMonitor();
         }
 
         @Override
         public void addPropertyChangeListener(PropertyChangeListener pcl) {
-            pca.addPropertyChangeListener(pcl);
+            bindableAdapter.addPropertyChangeListener(pcl);
         }
 
         @Override
         public void removePropertyChangeListener(PropertyChangeListener pcl) {
-            pca.removePropertyChangeListener(pcl);
+            bindableAdapter.removePropertyChangeListener(pcl);
         }
 
         @Override
         public void firePropertyChange(String propertyName) {
-            if (pca != null) {
-                pca.firePropertyChange(propertyName);
+            if (bindableAdapter != null) {
+                bindableAdapter.firePropertyChange(propertyName);
             }
         }
 
         @Override
         public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
+            bindableAdapter.initialize(namespace, location, resources);
         }
+
     }
 }

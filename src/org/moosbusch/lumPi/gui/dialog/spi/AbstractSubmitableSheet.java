@@ -45,6 +45,11 @@ public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
     }
 
     @Override
+    public T modifyValueBeforeSubmit(T value) {
+        return value;
+    }
+
+    @Override
     public final void cancel() {
         submitable.cancel();
         close();
@@ -109,6 +114,16 @@ public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
     }
 
     @Override
+    public final boolean isInitialized() {
+        return submitable.isInitialized();
+    }
+
+    @Override
+    public final void setInitialized(boolean initialized) {
+        submitable.setInitialized(initialized);
+    }
+
+    @Override
     public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 
@@ -139,6 +154,15 @@ public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
         @Override
         public void onSubmit(T value) {
             AbstractSubmitableSheet.this.onSubmit(value);
+        }
+
+        @Override
+        public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
+        }
+
+        @Override
+        public T modifyValueBeforeSubmit(T value) {
+            return AbstractSubmitableSheet.this.modifyValueBeforeSubmit(value);
         }
     }
 }

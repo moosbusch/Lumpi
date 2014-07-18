@@ -94,6 +94,11 @@ public abstract class AbstractSubmitableFileBrowserSheet
         addPropertyChangeListener(new PropertyCangeListenerImpl());
     }
 
+    @Override
+    public Sequence<File> modifyValueBeforeSubmit(Sequence<File> value) {
+        return value;
+    }
+
     public FileBrowser getFileBrowser() {
         return fileBrowser;
     }

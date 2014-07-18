@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.moosbusch.lumPi.beans.spring.impl;
+package org.moosbusch.lumPi.beans.impl;
 
 import org.moosbusch.lumPi.action.impl.DefaultDialogAction;
+import org.moosbusch.lumPi.action.impl.DefaultPromptAction;
 import org.moosbusch.lumPi.action.impl.DefaultQuitAction;
+import org.moosbusch.lumPi.action.impl.DefaultSheetAction;
 import org.moosbusch.lumPi.gui.component.impl.FillScrollPane;
 import org.moosbusch.lumPi.gui.dialog.impl.DefaultSubmitableFileBrowserSheet;
 import org.moosbusch.lumPi.gui.dialog.impl.DirectoryFileBrowserSheet;
 import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitableDialog;
+import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitablePrompt;
+import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitableSheet;
 import org.moosbusch.lumPi.gui.filtered.FilteredListButton;
 import org.moosbusch.lumPi.gui.filtered.FilteredListView;
 import org.moosbusch.lumPi.gui.filtered.FilteredTableView;
@@ -35,7 +39,7 @@ import org.moosbusch.lumPi.gui.form.editor.impl.DefaultShortFormEditor;
 import org.moosbusch.lumPi.gui.form.editor.impl.DefaultStringFormEditor;
 import org.moosbusch.lumPi.gui.form.editor.impl.RadioButtonBooleanFormEditor;
 import org.moosbusch.lumPi.gui.form.impl.DefaultDynamicForm;
-import org.moosbusch.lumPi.gui.menu.ConfigurableMenuHandler;
+import org.moosbusch.lumPi.gui.menu.impl.ConfigurableMenuHandler;
 import org.moosbusch.lumPi.gui.renderer.impl.DefaultButtonDataRenderer;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.springframework.context.annotation.Bean;
@@ -57,6 +61,18 @@ public class LumPiMiscBean  {
     public DefaultDialogAction<? extends BindableWindow, ? extends AbstractSubmitableDialog<?>>
          createDefaultDialogAction() {
         return new DefaultDialogAction<>();
+    }
+
+    @Bean
+    public DefaultSheetAction<? extends BindableWindow, ? extends AbstractSubmitableSheet<?>>
+         createDefaultSheetAction() {
+        return new DefaultSheetAction<>();
+    }
+
+    @Bean
+    public DefaultPromptAction<? extends BindableWindow, ? extends AbstractSubmitablePrompt<?>>
+         createDefaultPromptAction() {
+        return new DefaultPromptAction<>();
     }
 
     @Bean

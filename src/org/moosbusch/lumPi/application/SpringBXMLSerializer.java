@@ -63,12 +63,12 @@ public interface SpringBXMLSerializer extends Serializer<Object>, Resolvable {
         @Override
         public final void bind(Object object, Class<?> type) throws BindException {
             super.bind(object, type);
-            getApplicationContext().getAutowireCapableBeanFactory().autowireBean(object);
+            getApplicationContext().autowireBean(object);
         }
 
         @Override
-        public ApplicationContext getApplicationContext() {
-            return applicationContext;
+        public LumPiApplicationContext getApplicationContext() {
+            return (LumPiApplicationContext) applicationContext;
         }
     }
 }

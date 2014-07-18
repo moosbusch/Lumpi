@@ -17,12 +17,19 @@ package org.moosbusch.lumPi.application;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.felix.framework.Felix;
+import org.apache.felix.framework.util.FelixConstants;
 import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
@@ -31,18 +38,19 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.action.ChildWindowAction;
+import static org.moosbusch.lumPi.application.OSGiController.SERVICE_ID_PROPERTY_NAME;
 import org.moosbusch.lumPi.application.impl.DefaultSpringBXMLSerializer;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
-import org.moosbusch.lumPi.beans.spring.impl.LumPiMiscBean;
-import org.moosbusch.lumPi.beans.spring.impl.PivotContentsBean;
-import org.moosbusch.lumPi.beans.spring.impl.PivotEffectsBean;
-import org.moosbusch.lumPi.beans.spring.impl.PivotFactoryBean;
-import org.moosbusch.lumPi.beans.spring.impl.PivotMiscBean;
-import org.moosbusch.lumPi.beans.spring.impl.PivotSerializersBean;
-import org.moosbusch.lumPi.beans.spring.impl.PivotTextBean;
-import org.moosbusch.lumPi.beans.spring.impl.PivotValidatorsBean;
-import org.moosbusch.lumPi.beans.spring.impl.PreferencesFactoryBean;
+import org.moosbusch.lumPi.beans.impl.LumPiMiscBean;
+import org.moosbusch.lumPi.beans.impl.Options;
+import org.moosbusch.lumPi.beans.impl.PivotFactoryBean;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
+import org.moosbusch.lumPi.gui.window.swing.impl.HostFrame;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -53,8 +61,8 @@ import org.springframework.core.io.Resource;
  *
  * @author moosbusch
  */
-public interface PivotApplicationContext
-        extends ConfigurableApplicationContext, Resolvable,
+public interface LumPiApplicationContext
+        extends ConfigurableApplicationContext, Resolvable, OSGiController,
         PropertyChangeAware {
 
     public static final String APPLICATION_WINDOW_PROPERTYNAME = "applicationWindow";
@@ -76,38 +84,53 @@ public interface PivotApplicationContext
 
     public void bindBean(Bindable bindable, SpringBXMLSerializer ser);
 
+    public void autowireBean(Object beanInstance);
+
+    public Object configureBean(Object beanInstance, String id);
+
+    public <T> T createBean(Class<T> type);
+
     public SpringBXMLSerializer getSerializer();
 
-    public Preferences getPreferences();
+    public Options getPreferences();
+
+    public LumPiApplication<? extends LumPiApplicationContext> getApplication();
 
     public BindableWindow getApplicationWindow();
 
     public void setApplicationWindow(BindableWindow window);
 
+    public HostFrame getHostFrame();
+
     public void shutdownContext();
 
     public abstract class Adapter
             extends AnnotationConfigApplicationContext
-            implements PivotApplicationContext {
+            implements LumPiApplicationContext {
 
+        private final LumPiApplication<? extends LumPiApplicationContext> app;
         private final SpringBXMLSerializer bxmlSerializer;
         private final PropertyChangeAware pca;
         private BindableWindow applicationWindow;
-        private final Preferences preferences;
+        private final HostFrame hostFrame;
+        private final Options options;
+        private Felix felix;
 
-        public Adapter(DesktopApplication<? extends PivotApplicationContext> application) {
+        public Adapter(LumPiApplication<? extends LumPiApplicationContext> application) {
+            this.app = Objects.requireNonNull(application);
             this.pca = new PropertyChangeAware.Adapter(this);
-            this.preferences = Preferences.userNodeForPackage(application.getClass());
+            this.hostFrame = new HostFrame(application);
+            this.options = new Options(Preferences.userNodeForPackage(application.getClass()));
             this.bxmlSerializer = initSerializer(Objects.requireNonNull(application));
             init(application);
         }
 
-        private void init(DesktopApplication<? extends PivotApplicationContext> application) {
+        private void init(LumPiApplication<? extends LumPiApplicationContext> application) {
             registerShutdownHook();
             addPropertyChangeListener(new ApplicationWindowListener());
 
             try {
-                registerFactoryBeans();
+                registerFactoryBeans(application);
                 loadXmlConfig(application);
                 loadAnnotationConfig(application);
             } finally {
@@ -115,7 +138,7 @@ public interface PivotApplicationContext
             }
         }
 
-        private void loadAnnotationConfig(DesktopApplication<? extends PivotApplicationContext> application) {
+        private void loadAnnotationConfig(LumPiApplication<? extends LumPiApplicationContext> application) {
             String[] beanPackages = application.getConfigurationPackages();
             Class<?>[] annotatedClasses = application.getConfigurationClasses();
 
@@ -128,7 +151,7 @@ public interface PivotApplicationContext
             }
         }
 
-        private void loadXmlConfig(DesktopApplication<? extends PivotApplicationContext> application) {
+        private void loadXmlConfig(LumPiApplication<? extends LumPiApplicationContext> application) {
             String[] configLocations = configLocationsFromURLs(
                     application.getBeanConfigurationFiles());
 
@@ -145,17 +168,16 @@ public interface PivotApplicationContext
             }
         }
 
-        private Class<?>[] getPivotCoreConfigurationClasses() {
-            return new Class<?>[]{PreferencesFactoryBean.class,
-                PivotFactoryBean.class, PivotSerializersBean.class,
-                PivotContentsBean.class, PivotTextBean.class,
-                PivotValidatorsBean.class, PivotEffectsBean.class,
-                PivotMiscBean.class, LumPiMiscBean.class};
+        private Class<?>[] getPivotCoreConfigurationClasses(
+                LumPiApplication<? extends LumPiApplicationContext> application) {
+            return new Class<?>[]{PivotFactoryBean.class, Objects.requireNonNull(
+                application.getPivotBeanConfigurationClass()), LumPiMiscBean.class};
         }
 
-        private void registerFactoryBeans() {
+        private void registerFactoryBeans(
+                LumPiApplication<? extends LumPiApplicationContext> application) {
             Class<?>[] corePivotConfigurationClasses = Objects.requireNonNull(
-                    getPivotCoreConfigurationClasses());
+                    getPivotCoreConfigurationClasses(application));
 
             for (Class<?> pivotFactoryBeanClass : corePivotConfigurationClasses) {
                 register(pivotFactoryBeanClass);
@@ -176,7 +198,7 @@ public interface PivotApplicationContext
             return null;
         }
 
-        private SpringBXMLSerializer initSerializer(DesktopApplication<? extends PivotApplicationContext> application) {
+        private SpringBXMLSerializer initSerializer(LumPiApplication<? extends LumPiApplicationContext> application) {
             SpringBXMLSerializer result = Objects.requireNonNull(createSerializer());
             result.setLocation(application.getBXMLConfigurationFile());
             result.setResources(application.getResources());
@@ -218,10 +240,25 @@ public interface PivotApplicationContext
         }
 
         @Override
+        public final void autowireBean(Object beanInstance) {
+            getAutowireCapableBeanFactory().autowireBean(beanInstance);
+        }
+
+        @Override
+        public final <T> T createBean(Class<T> type) {
+            return getAutowireCapableBeanFactory().createBean(type);
+        }
+
+        @Override
+        public final Object configureBean(Object beanInstance, String id) {
+            return getAutowireCapableBeanFactory().configureBean(beanInstance, id);
+        }
+
+        @Override
         public void bindBean(Bindable bindable, SpringBXMLSerializer ser) {
-                ser.bind(bindable, bindable.getClass());
-                bindable.initialize(ser.getNamespace(),
-                        ser.getLocation(), ser.getResources());
+            ser.bind(bindable, bindable.getClass());
+            bindable.initialize(ser.getNamespace(),
+                    ser.getLocation(), ser.getResources());
         }
 
         @Override
@@ -241,11 +278,6 @@ public interface PivotApplicationContext
             }
 
             return result;
-        }
-
-        @Override
-        public <T> T getBean(Class<T> requiredType) throws BeansException {
-            return super.getBean(requiredType);
         }
 
         @Override
@@ -322,6 +354,11 @@ public interface PivotApplicationContext
         }
 
         @Override
+        public final LumPiApplication<? extends LumPiApplicationContext> getApplication() {
+            return app;
+        }
+
+        @Override
         public final SpringBXMLSerializer getSerializer() {
             return bxmlSerializer;
         }
@@ -366,8 +403,8 @@ public interface PivotApplicationContext
         }
 
         @Override
-        public Preferences getPreferences() {
-            return preferences;
+        public Options getPreferences() {
+            return options;
         }
 
         @Override
@@ -379,6 +416,65 @@ public interface PivotApplicationContext
         public final void setApplicationWindow(BindableWindow applicationWindow) {
             this.applicationWindow = applicationWindow;
             firePropertyChange(APPLICATION_WINDOW_PROPERTYNAME);
+        }
+
+        @Override
+        public final HostFrame getHostFrame() {
+            return hostFrame;
+        }
+
+        @Override
+        public final BundleContext getBundleContext() {
+            return felix.getBundleContext();
+        }
+
+        @Override
+        public void startFramework(BundleActivator... bundleActivators) throws Exception {
+            java.util.Map<String, Object> osgiProperties = getOSGiProperties();
+            osgiProperties.put(FelixConstants.SYSTEMBUNDLE_ACTIVATORS_PROP,
+                    Arrays.asList(bundleActivators));
+            this.felix = new Felix(osgiProperties);
+            felix.start();
+        }
+
+        @Override
+        public void stopFramework() throws Exception {
+            if (felix != null) {
+                try {
+                    felix.stop();
+                    felix.waitForStop(0);
+                } catch (BundleException | InterruptedException ex) {
+                    Logger.getLogger(LumPiApplicationContext.class.getName()).log(
+                            Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+        @Override
+        public <T> Collection<ServiceReference<T>> getServiceReferences(
+                Class<T> type, String serviceId) throws InvalidSyntaxException {
+            String idFilter = "(" + getServiceIdPropertyName() + "=" + serviceId + ")";
+            return getBundleContext().getServiceReferences(type, idFilter);
+        }
+
+        @Override
+        public <S> S getService(ServiceReference<S> sr) {
+            return getBundleContext().getService(sr);
+        }
+
+        @Override
+        public boolean ungetService(ServiceReference<?> sr) {
+            return getBundleContext().ungetService(sr);
+        }
+
+        @Override
+        public java.util.Map<String, Object> getOSGiProperties() {
+            return new HashMap<>();
+        }
+
+        @Override
+        public String getServiceIdPropertyName() {
+            return SERVICE_ID_PROPERTY_NAME;
         }
 
         @Override

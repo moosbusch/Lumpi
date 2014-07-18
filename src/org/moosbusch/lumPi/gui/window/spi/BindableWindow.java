@@ -15,32 +15,29 @@
  */
 package org.moosbusch.lumPi.gui.window.spi;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.net.URL;
 import org.apache.pivot.beans.BeanMonitor;
-import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
-import org.apache.pivot.util.Vote;
 import org.apache.pivot.wtk.Component;
-import org.apache.pivot.wtk.DesktopApplicationContext;
-import org.apache.pivot.wtk.Display;
 import org.apache.pivot.wtk.Window;
-import org.apache.pivot.wtk.WindowStateListener;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
+import org.moosbusch.lumPi.beans.SmartBindable;
 
 /**
  *
  * @author moosbusch
  */
-public abstract class BindableWindow extends Window implements Bindable, PropertyChangeAware {
+public abstract class BindableWindow extends Window implements SmartBindable, PropertyChangeAware {
 
     public static final String RESIZABLE_PROPERTY_NAME = "resizable";
-    private final PropertyChangeAware.Adapter pca;
+    public static final String ICON_PROPERTY_NAME = "icon";
+    public static final String TITLE_PROPERTY_NAME = "title";
+    public static final String SIZE_PROPERTY_NAME = "size";
+    public static final String PREFERRED_SIZE_PROPERTY_NAME = "preferredSize";
+    private final SmartBindable.Adapter sba;
     private boolean resizable = true;
-    private Display display;
 
     public BindableWindow() {
         this(null);
@@ -48,7 +45,7 @@ public abstract class BindableWindow extends Window implements Bindable, Propert
 
     public BindableWindow(Component content) {
         super(content);
-        this.pca = new PropertyChangeAware.Adapter(this);
+        this.sba = new SmartBindable.Adapter(this);
         init();
     }
 
@@ -56,21 +53,12 @@ public abstract class BindableWindow extends Window implements Bindable, Propert
         setDoubleBuffered(true);
     }
 
-    public void open() {
-        super.open(getDisplay());
+    protected void setIconImpl(URL iconURL) {
+        super.setIcon(iconURL);
     }
 
-    @Override
-    public final Display getDisplay() {
-        if (display != null) {
-            return display;
-        }
-
-        return super.getDisplay();
-    }
-
-    public final void setDisplay(Display display) {
-        this.display = display;
+    protected void setTitleImpl(String title) {
+        super.setTitle(title);
     }
 
     public boolean isResizable() {
@@ -82,117 +70,67 @@ public abstract class BindableWindow extends Window implements Bindable, Propert
         firePropertyChange(RESIZABLE_PROPERTY_NAME);
     }
 
-    public final java.awt.Window getHostWindow() {
-        return getDisplay().getHostWindow();
+    @Override
+    public final void setIcon(String iconName) {
+        super.setIcon(iconName);
+    }
+
+    @Override
+    public final void setIcon(URL iconURL) {
+        setIconImpl(iconURL);
+        firePropertyChange(ICON_PROPERTY_NAME);
+    }
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title);
+        firePropertyChange(TITLE_PROPERTY_NAME);
+    }
+
+    @Override
+    public final void setPreferredSize(int preferredWidth, int preferredHeight) {
+        super.setPreferredSize(preferredWidth, preferredHeight);
+        firePropertyChange(PREFERRED_SIZE_PROPERTY_NAME);
+    }
+
+    @Override
+    public final void setSize(int width, int height) {
+        super.setSize(width, height);
+        firePropertyChange(SIZE_PROPERTY_NAME);
+    }
+
+    @Override
+    public boolean isInitialized() {
+        return sba.isInitialized();
+    }
+
+    @Override
+    public void setInitialized(boolean initialized) {
+        sba.setInitialized(initialized);
     }
 
     @Override
     public final BeanMonitor getMonitor() {
-        return pca.getMonitor();
+        return sba.getMonitor();
     }
 
     @Override
     public final void addPropertyChangeListener(PropertyChangeListener pcl) {
-        pca.addPropertyChangeListener(pcl);
+        sba.addPropertyChangeListener(pcl);
     }
 
     @Override
     public final void removePropertyChangeListener(PropertyChangeListener pcl) {
-        pca.removePropertyChangeListener(pcl);
+        sba.removePropertyChangeListener(pcl);
     }
 
     @Override
     public final void firePropertyChange(String propertyName) {
-        pca.firePropertyChange(propertyName);
+        sba.firePropertyChange(propertyName);
     }
 
     @Override
-    public final void initialize(Map<String, Object> namespace, URL location, Resources resources) {
-        ResizeListener resizeListener = new ResizeListener();
-        getWindowStateListeners().add(resizeListener);
-        addPropertyChangeListener(resizeListener);
-        initializeWindow(namespace, location, resources);
+    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 
-    public void initializeWindow(Map<String, Object> namespace, URL location, Resources resources) {
-    }
-
-    private class ResizeListener extends WindowStateListener.Adapter
-            implements ComponentListener, PropertyChangeListener {
-
-        private void enableResizing(Window window) {
-            java.awt.Window hostWindow = window.getDisplay().getHostWindow();
-
-            if (hostWindow instanceof java.awt.Frame) {
-                java.awt.Frame hostFrame = (java.awt.Frame) hostWindow;
-                hostFrame.setResizable(true);
-            }
-        }
-
-        private void disableResizing(Window window) {
-            java.awt.Window hostWindow = window.getDisplay().getHostWindow();
-
-            if (hostWindow instanceof java.awt.Frame) {
-                java.awt.Frame hostFrame = (java.awt.Frame) hostWindow;
-                hostFrame.setResizable(false);
-            }
-        }
-
-        @Override
-        public Vote previewWindowOpen(Window window) {
-            getHostWindow().addComponentListener(ResizeListener.this);
-            return super.previewWindowOpen(window);
-        }
-
-        @Override
-        public void windowOpened(Window window) {
-            DesktopApplicationContext.sizeHostToFit(window);
-
-            if (!isResizable()) {
-                disableResizing(window);
-            } else {
-                enableResizing(window);
-            }
-        }
-
-        @Override
-        public void propertyChanged(Object bean, String propertyName) {
-            if (propertyName.equals(RESIZABLE_PROPERTY_NAME)) {
-                if (!isResizable()) {
-                    disableResizing(BindableWindow.this);
-                } else {
-                    enableResizing(BindableWindow.this);
-                }
-            }
-        }
-
-        @Override
-        public void componentResized(ComponentEvent e) {
-            java.awt.Component cmp = e.getComponent();
-
-            if (cmp instanceof java.awt.Window) {
-                java.awt.Window hostWindow = (java.awt.Window) cmp;
-                java.awt.Insets insets = hostWindow.getInsets();
-
-                synchronized (hostWindow.getTreeLock()) {
-                    setPreferredSize(
-                            cmp.getWidth() - insets.left - insets.right,
-                            cmp.getHeight() - insets.top - insets.bottom);
-                }
-            }
-        }
-
-        @Override
-        public void componentMoved(ComponentEvent e) {
-        }
-
-        @Override
-        public void componentShown(ComponentEvent e) {
-        }
-
-        @Override
-        public void componentHidden(ComponentEvent e) {
-        }
-
-    }
 }

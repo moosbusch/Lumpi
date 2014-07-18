@@ -15,17 +15,15 @@
  */
 package org.moosbusch.lumPi.gui.component;
 
-import java.net.URL;
-import org.apache.pivot.beans.Bindable;
+import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.PropertyChangeListener;
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
+import org.moosbusch.lumPi.beans.SmartBindable;
 
 /**
  *
  * @author moosbusch
  */
-public interface Submitable<T extends Object> extends ValueHolder<T>, Bindable {
+public interface Submitable<T extends Object> extends ValueStore<T>, SmartBindable {
 
     public static final String CANCELED_PROPERTYNAME = "canceled";
     public static final String SUBMITTED_PROPERTYNAME = "submitted";
@@ -48,13 +46,17 @@ public interface Submitable<T extends Object> extends ValueHolder<T>, Bindable {
 
     public void onSubmit(T value);
 
-    public static abstract class Adapter<T extends Object> extends ValueHolder.Adapter<T>
+    public T modifyValueBeforeSubmit(T value);
+
+    public static abstract class Adapter<T extends Object> extends ValueStore.Adapter<T>
             implements Submitable<T>, PropertyChangeListener {
 
+        private final SmartBindable.Adapter sba;
         private boolean canceled = false;
         private boolean submitted = false;
 
         public Adapter() {
+            this.sba = new SmartBindable.Adapter(this);
             init();
         }
 
@@ -63,25 +65,8 @@ public interface Submitable<T extends Object> extends ValueHolder<T>, Bindable {
         }
 
         @Override
-        public boolean isCanceled() {
+        public final boolean isCanceled() {
             return canceled;
-        }
-
-        @Override
-        public void setCanceled(boolean canceled) {
-            this.canceled = canceled;
-            firePropertyChange(CANCELED_PROPERTYNAME);
-        }
-
-        @Override
-        public boolean isSubmitted() {
-            return submitted;
-        }
-
-        @Override
-        public void setSubmitted(boolean submitted) {
-            this.submitted = submitted;
-            firePropertyChange(SUBMITTED_PROPERTYNAME);
         }
 
         @Override
@@ -92,7 +77,8 @@ public interface Submitable<T extends Object> extends ValueHolder<T>, Bindable {
 
         @Override
         public final void submit() {
-            final T val = getValue();
+            final T val = modifyValueBeforeSubmit(getValue());
+            setValue(val);
 
             if (canSubmit(val)) {
                 setSubmitted(true);
@@ -101,17 +87,46 @@ public interface Submitable<T extends Object> extends ValueHolder<T>, Bindable {
         }
 
         @Override
-        public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
+        public final void setCanceled(boolean canceled) {
+            this.canceled = canceled;
+            firePropertyChange(CANCELED_PROPERTYNAME);
+        }
+
+        @Override
+        public final boolean isSubmitted() {
+            return submitted;
+        }
+
+        @Override
+        public final void setSubmitted(boolean submitted) {
+            this.submitted = submitted;
+            firePropertyChange(SUBMITTED_PROPERTYNAME);
+        }
+
+        @Override
+        public boolean isInitialized() {
+            return sba.isInitialized();
+        }
+
+        @Override
+        public void setInitialized(boolean initialized) {
+            sba.setInitialized(initialized);
         }
 
         @Override
         public final void propertyChanged(Object bean, String propertyName) {
             switch (propertyName) {
                 case SUBMITTED_PROPERTYNAME:
-                    onSubmit(getValue());
+                    if (isSubmitted()) {
+                        onSubmit(getValue());
+                    }
+
                     break;
                 case CANCELED_PROPERTYNAME:
-                    onCancel();
+                    if (isCanceled()) {
+                        onCancel();
+                    }
+
                     break;
             }
         }

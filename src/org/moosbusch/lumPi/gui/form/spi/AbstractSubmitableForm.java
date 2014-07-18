@@ -39,6 +39,8 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
     private final Map<String, Class<? extends Validator>> validators;
     private final Submitable<T> submitable;
     private boolean storeOldValue = true;
+    private boolean clearOnCancel = false;
+    private boolean clearOnSubmit = false;
 
     public AbstractSubmitableForm() {
         this.submitable = new SubmitableImpl();
@@ -69,15 +71,26 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
     }
 
     @Override
+    public T modifyValueBeforeSubmit(T value) {
+        return value;
+    }
+
+    @Override
     public final void cancel() {
         submitable.cancel();
-        clear();
+
+        if (isClearOnCancel()) {
+            clear();
+        }
     }
 
     @Override
     public final void submit() {
         submitable.submit();
-        clear();
+
+        if (isClearOnSubmit()) {
+            clear();
+        }
     }
 
     @Override
@@ -137,6 +150,16 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
         submitable.setCanceled(canceled);
     }
 
+    @Override
+    public final boolean isInitialized() {
+        return submitable.isInitialized();
+    }
+
+    @Override
+    public final void setInitialized(boolean initialized) {
+        submitable.setInitialized(initialized);
+    }
+
     public boolean isStoreCurrentValue() {
         return storeOldValue;
     }
@@ -192,6 +215,22 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
         return validators.remove(fieldName);
     }
 
+    public boolean isClearOnCancel() {
+        return clearOnCancel;
+    }
+
+    public void setClearOnCancel(boolean clearOnCancel) {
+        this.clearOnCancel = clearOnCancel;
+    }
+
+    public boolean isClearOnSubmit() {
+        return clearOnSubmit;
+    }
+
+    public void setClearOnSubmit(boolean clearOnSubmit) {
+        this.clearOnSubmit = clearOnSubmit;
+    }
+
     @Override
     public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
@@ -211,6 +250,15 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
         @Override
         public void onSubmit(T value) {
             AbstractSubmitableForm.this.onSubmit(value);
+        }
+
+        @Override
+        public T modifyValueBeforeSubmit(T value) {
+            return AbstractSubmitableForm.this.modifyValueBeforeSubmit(value);
+        }
+
+        @Override
+        public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
         }
     }
 }

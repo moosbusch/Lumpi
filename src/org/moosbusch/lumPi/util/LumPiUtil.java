@@ -16,6 +16,10 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.util;
 
 import java.awt.EventQueue;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.image.BufferedImage;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -48,6 +52,7 @@ import org.apache.pivot.collections.Sequence.Tree.Path;
 import org.apache.pivot.wtk.Action;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.TreeView;
+import org.apache.pivot.wtk.Visual;
 import org.apache.pivot.wtk.content.TreeBranch;
 import org.apache.pivot.wtk.content.TreeNode;
 import org.springframework.util.ObjectUtils;
@@ -59,6 +64,21 @@ import org.springframework.util.ObjectUtils;
 public class LumPiUtil {
 
     private LumPiUtil() {
+    }
+
+    public static BufferedImage createCompatibleImage(int width, int height) {
+        GraphicsEnvironment gd = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsConfiguration conf = gd.getDefaultScreenDevice().getDefaultConfiguration();
+        return conf.createCompatibleImage(width, height);
+    }
+
+    public static BufferedImage toBufferedImage(Visual visual) {
+        BufferedImage result = createCompatibleImage(visual.getWidth(), visual.getHeight());
+        Graphics2D g2 = result.createGraphics();
+        visual.paint(g2);
+        g2.dispose();
+
+        return result;
     }
 
     public static boolean pathEndsWith(java.nio.file.Path p, String end) {

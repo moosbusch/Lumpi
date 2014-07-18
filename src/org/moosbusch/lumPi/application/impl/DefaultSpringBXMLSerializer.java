@@ -32,7 +32,7 @@ public class DefaultSpringBXMLSerializer extends SpringBXMLSerializer.Adapter {
 
     @Override
     protected Object newTypedObject(Class<?> type) {
-        return getApplicationContext().getAutowireCapableBeanFactory().createBean(type);
+        return getApplicationContext().createBean(type);
     }
 
     @Override
