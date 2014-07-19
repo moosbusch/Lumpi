@@ -16,6 +16,7 @@
 
 package org.moosbusch.lumPi.action.impl;
 
+import org.moosbusch.lumPi.action.spi.AbstractPromptAction;
 import org.moosbusch.lumPi.action.PromptAction;
 import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitablePrompt;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
@@ -25,6 +26,6 @@ import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
  * @author Gunnar Kappei
  */
 public class DefaultPromptAction<T extends BindableWindow, V extends AbstractSubmitablePrompt<?>>
-        extends PromptAction.Adapter<T, V> {
+        extends AbstractPromptAction<T, V> {
 
 }

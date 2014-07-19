@@ -15,6 +15,7 @@
  */
 package org.moosbusch.lumPi.action.impl;
 
+import org.moosbusch.lumPi.action.spi.AbstractSheetAction;
 import org.moosbusch.lumPi.action.SheetAction;
 import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitableSheet;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
@@ -24,6 +25,6 @@ import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
  * @author Gunnar Kappei
  */
 public class DefaultSheetAction<T extends BindableWindow, V extends AbstractSubmitableSheet<?>>
-        extends SheetAction.Adapter<T, V> {
+        extends AbstractSheetAction<T, V> {
 
 }

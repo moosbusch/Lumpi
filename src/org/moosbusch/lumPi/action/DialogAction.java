@@ -15,7 +15,6 @@
  */
 package org.moosbusch.lumPi.action;
 
-import org.apache.pivot.wtk.Dialog;
 import org.apache.pivot.wtk.DialogCloseListener;
 import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitableDialog;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
@@ -26,25 +25,4 @@ import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
  */
 public interface DialogAction<T extends BindableWindow, V extends AbstractSubmitableDialog<?>>
         extends ChildWindowAction<T, V>, DialogCloseListener {
-
-    public static abstract class Adapter<T extends BindableWindow, V extends AbstractSubmitableDialog<?>>
-            extends ChildWindowAction.Adapter<T, V> implements DialogAction<T, V> {
-
-        @Override
-        public final void openChildWindow(T applicationWindow, V childWindow) {
-            childWindow.open(applicationWindow, this);
-        }
-
-        @Override
-        public final void dialogClosed(Dialog dialog, boolean modal) {
-            T parent = getApplicationWindow();
-            V child = getChildWindow();
-
-            if (child.isCanceled()) {
-                onChildWindowCanceled(parent, child);
-            } else if (child.isSubmitted()) {
-                onChildWindowSubmitted(parent, child);
-            }
-        }
-    }
 }

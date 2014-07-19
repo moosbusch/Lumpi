@@ -17,6 +17,7 @@
 package org.moosbusch.lumPi.application.impl;
 
 import org.apache.pivot.serialization.Serializer;
+import org.moosbusch.lumPi.application.spi.AbstractSpringBXMLSerializer;
 import org.moosbusch.lumPi.application.SpringBXMLSerializer;
 import org.springframework.context.ApplicationContext;
 
@@ -24,7 +25,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @author Gunnar Kappei
  */
-public class DefaultSpringBXMLSerializer extends SpringBXMLSerializer.Adapter {
+public class DefaultSpringBXMLSerializer extends AbstractSpringBXMLSerializer {
 
     public DefaultSpringBXMLSerializer(ApplicationContext applicationContext) {
         super(applicationContext);

@@ -1,23 +1,22 @@
 /*
-Copyright 2013 Gunnar Kappei
+ Copyright 2013 Gunnar Kappei
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
  */
 package org.moosbusch.lumPi.gui.dialog.spi;
 
 import java.io.File;
 import java.util.Objects;
-import org.apache.pivot.beans.PropertyChangeListener;
 import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.collections.immutable.ImmutableList;
 import org.apache.pivot.serialization.SerializationException;
@@ -34,7 +33,7 @@ import org.apache.pivot.wtk.PushButton;
 import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.TablePane.Column;
 import org.apache.pivot.wtk.TablePane.Row;
-import org.moosbusch.lumPi.gui.component.Submitable;
+import org.moosbusch.lumPi.beans.Submitable;
 import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
@@ -91,7 +90,7 @@ public abstract class AbstractSubmitableFileBrowserSheet
         tablePane.getColumns().add(column);
         setContent(tablePane);
 
-        addPropertyChangeListener(new PropertyCangeListenerImpl());
+        getFileBrowserListeners().add(new FileBrowserSheetListener());
     }
 
     @Override
@@ -183,13 +182,32 @@ public abstract class AbstractSubmitableFileBrowserSheet
         this.mode = Objects.requireNonNull(mode);
     }
 
-    private class PropertyCangeListenerImpl implements PropertyChangeListener {
+    private class FileBrowserSheetListener
+            implements FileBrowserListener {
 
         @Override
-        public void propertyChanged(Object bean, String propertyName) {
-            if (propertyName.equalsIgnoreCase(VALUE_PROPERTY)) {
-                setSelectedFiles(getValue());
-            }
+        public void rootDirectoryChanged(FileBrowser fileBrowser, File previousRootDirectory) {
+        }
+
+        @Override
+        public void selectedFileAdded(FileBrowser fileBrowser, File file) {
+        }
+
+        @Override
+        public void selectedFileRemoved(FileBrowser fileBrowser, File file) {
+        }
+
+        @Override
+        public void selectedFilesChanged(FileBrowser fileBrowser, Sequence<File> previousSelectedFiles) {
+            setValue(getSelectedFiles());
+        }
+
+        @Override
+        public void multiSelectChanged(FileBrowser fileBrowser) {
+        }
+
+        @Override
+        public void disabledFileFilterChanged(FileBrowser fileBrowser, Filter<File> previousDisabledFileFilter) {
         }
 
     }

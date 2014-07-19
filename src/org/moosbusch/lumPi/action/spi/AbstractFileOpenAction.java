@@ -13,11 +13,14 @@ import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
  * @author moosbusch
  */
 public abstract class AbstractFileOpenAction<T extends BindableWindow, V extends AbstractSubmitableFileBrowserSheet>
-        extends FileBrowserAction.Adapter<T, V> {
+        extends AbstractFileBrowserAction<T, V> {
+
+    public AbstractFileOpenAction() {
+        super(FileBrowserSheet.Mode.OPEN);
+    }
 
     @Override
     public void onChildWindowShowing(T applicationWindow, V childWindow) {
-        childWindow.setMode(FileBrowserSheet.Mode.OPEN);
         childWindow.clearSelection();
         childWindow.setVisible(true);
     }

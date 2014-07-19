@@ -24,6 +24,7 @@ import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Window;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
 import org.moosbusch.lumPi.beans.SmartBindable;
+import org.moosbusch.lumPi.beans.impl.SmartBindableAdapter;
 
 /**
  *
@@ -36,7 +37,7 @@ public abstract class BindableWindow extends Window implements SmartBindable, Pr
     public static final String TITLE_PROPERTY_NAME = "title";
     public static final String SIZE_PROPERTY_NAME = "size";
     public static final String PREFERRED_SIZE_PROPERTY_NAME = "preferredSize";
-    private final SmartBindable.Adapter sba;
+    private final SmartBindableAdapter sba;
     private boolean resizable = true;
 
     public BindableWindow() {
@@ -45,7 +46,7 @@ public abstract class BindableWindow extends Window implements SmartBindable, Pr
 
     public BindableWindow(Component content) {
         super(content);
-        this.sba = new SmartBindable.Adapter(this);
+        this.sba = new SmartBindableAdapter(this);
         init();
     }
 

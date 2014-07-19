@@ -31,36 +31,4 @@ public interface PropertyChangeAware {
     public void removePropertyChangeListener(PropertyChangeListener pcl);
 
     public void firePropertyChange(String propertyName);
-
-    public static class Adapter implements PropertyChangeAware {
-
-        private final BeanMonitor monitor;
-
-        public Adapter(Object bean) {
-            this.monitor = new BeanMonitor(bean);
-        }
-
-        @Override
-        public BeanMonitor getMonitor() {
-            return monitor;
-        }
-
-        @Override
-        public void addPropertyChangeListener(PropertyChangeListener pcl) {
-            getMonitor().getPropertyChangeListeners().add(pcl);
-        }
-
-        @Override
-        public void removePropertyChangeListener(PropertyChangeListener pcl) {
-            getMonitor().getPropertyChangeListeners().remove(pcl);
-        }
-
-        @Override
-        public void firePropertyChange(String propertyName) {
-            for (PropertyChangeListener pcl : getMonitor().getPropertyChangeListeners()) {
-                pcl.propertyChanged(getMonitor().getBean(), propertyName);
-            }
-        }
-
-    }
 }

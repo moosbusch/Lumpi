@@ -15,13 +15,14 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.action.impl;
 
+import org.moosbusch.lumPi.action.spi.AbstractQuitAction;
 import org.moosbusch.lumPi.action.QuitAction;
 
 /**
  *
  * @author moosbusch
  */
-public class DefaultQuitAction extends QuitAction.Adapter {
+public class DefaultQuitAction extends AbstractQuitAction {
 
     @Override
     public boolean canExit() {

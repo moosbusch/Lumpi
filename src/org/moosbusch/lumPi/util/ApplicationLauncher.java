@@ -19,13 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.pivot.collections.HashMap;
 import org.apache.pivot.wtk.ApplicationContext;
-import static org.apache.pivot.wtk.ApplicationContext.handleUncaughtException;
-import static org.apache.pivot.wtk.ApplicationContext.queueCallback;
-import org.apache.pivot.wtk.DesktopApplicationContext;
-import org.apache.pivot.wtk.DesktopApplicationContext.DisplayListener;
 import org.apache.pivot.wtk.Display;
 import org.moosbusch.lumPi.application.LumPiApplication;
-import org.moosbusch.lumPi.gui.window.swing.impl.HostFrame;
 
 /**
  *
@@ -48,11 +43,11 @@ public class ApplicationLauncher {
                 final Display display =
                         application.getApplicationContext().getHostFrame().getDisplay();
 
-                queueCallback(() -> {
+                ApplicationContext.queueCallback(() -> {
                     try {
                         application.startup(display, new HashMap<>());
                     } catch (Exception exception) {
-                        handleUncaughtException(exception);
+                        ApplicationContext.handleUncaughtException(exception);
                     }
                 });
             }

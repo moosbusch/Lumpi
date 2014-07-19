@@ -16,6 +16,7 @@
 
 package org.moosbusch.lumPi.action.impl;
 
+import org.moosbusch.lumPi.action.spi.AbstractDialogAction;
 import org.moosbusch.lumPi.action.DialogAction;
 import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitableDialog;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
@@ -25,6 +26,6 @@ import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
  * @author Gunnar Kappei
  */
 public class DefaultDialogAction<T extends BindableWindow, V extends AbstractSubmitableDialog<?>>
-    extends DialogAction.Adapter<T, V>{
+    extends AbstractDialogAction<T, V>{
 
 }

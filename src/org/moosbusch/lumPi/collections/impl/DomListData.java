@@ -13,7 +13,7 @@ Copyright 2013 Gunnar Kappei
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package org.moosbusch.lumPi.collections;
+package org.moosbusch.lumPi.collections.impl;
 
 import org.apache.pivot.collections.ArrayList;
 import org.apache.pivot.wtk.content.TreeBranch;

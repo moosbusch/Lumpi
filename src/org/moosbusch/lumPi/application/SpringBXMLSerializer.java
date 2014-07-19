@@ -17,14 +17,11 @@ package org.moosbusch.lumPi.application;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
-import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.beans.BindException;
 import org.apache.pivot.beans.Resolvable;
 import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.serialization.Serializer;
 import org.apache.pivot.util.Resources;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -43,32 +40,4 @@ public interface SpringBXMLSerializer extends Serializer<Object>, Resolvable {
     public Object readObject(URL locationArgument, Resources resourcesArgument)
             throws IOException, SerializationException;
 
-    public abstract class Adapter extends BXMLSerializer
-            implements SpringBXMLSerializer {
-
-        @Autowired
-        private final ApplicationContext applicationContext;
-
-        public Adapter(ApplicationContext applicationContext) {
-            this.applicationContext = Objects.requireNonNull(applicationContext);
-        }
-
-        @Override
-        protected abstract Object newTypedObject(Class<?> type);
-
-        @Override
-        protected abstract SpringBXMLSerializer newIncludeSerializer(
-                Class<? extends Serializer<?>> type);
-
-        @Override
-        public final void bind(Object object, Class<?> type) throws BindException {
-            super.bind(object, type);
-            getApplicationContext().autowireBean(object);
-        }
-
-        @Override
-        public LumPiApplicationContext getApplicationContext() {
-            return (LumPiApplicationContext) applicationContext;
-        }
-    }
 }

@@ -15,13 +15,9 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.gui;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
 import java.util.Comparator;
 import java.util.Objects;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.pivot.collections.Dictionary.Pair;
 import org.apache.pivot.collections.LinkedList;
 import org.apache.pivot.wtk.Component;
 import org.moosbusch.lumPi.util.LumPiUtil;
@@ -42,64 +38,6 @@ public interface Selection<T extends Object> {
 
     public T evaluate() throws Exception;
 
-    public class Adapter<T extends Object> implements Selection<T> {
-
-        private final Pair<Expression, Reference<T>> data;
-        private Reference<Component> eventSourceRef;
-
-        public Adapter(Component eventSource, T value, String expr) {
-            this.eventSourceRef = new WeakReference<>(
-                    Objects.requireNonNull(eventSource));
-            this.data = new Pair<Expression, Reference<T>>(
-                    new Expression(expr), new WeakReference<>(
-                    Objects.requireNonNull(value)));
-        }
-
-        public Adapter(Component eventSource, T value, Expression expr) {
-            this.eventSourceRef = new WeakReference<>(
-                    Objects.requireNonNull(eventSource));
-            this.data = new Pair<Expression, Reference<T>>(
-                    expr, new WeakReference<>(Objects.requireNonNull(value)));
-        }
-
-        @Override
-        public Component getEventSource() {
-            return eventSourceRef.get();
-        }
-
-        @Override
-        public void setEventSource(Component eventSource) {
-            this.eventSourceRef = new WeakReference<>(
-                    Objects.requireNonNull(eventSource));
-        }
-
-        @Override
-        public T getValue() {
-            return data.value.get();
-        }
-
-        @Override
-        public Expression getExpression() {
-            return data.key;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public T evaluate() throws Exception {
-            if (getExpression().isEmpty()) {
-                return getValue();
-            } else {
-                Object result = PropertyUtils.getProperty(
-                        getValue(), getExpression().toString());
-
-                if (result != null) {
-                    return (T) result;
-                }
-            }
-
-            return null;
-        }
-    }
 
     public static final class Expression extends LinkedList<String> {
 

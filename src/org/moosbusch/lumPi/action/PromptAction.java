@@ -15,7 +15,6 @@
  */
 package org.moosbusch.lumPi.action;
 
-import org.apache.pivot.wtk.Sheet;
 import org.apache.pivot.wtk.SheetCloseListener;
 import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitablePrompt;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
@@ -26,25 +25,4 @@ import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
  */
 public interface PromptAction<T extends BindableWindow, V extends AbstractSubmitablePrompt<?>>
         extends ChildWindowAction<T, V>, SheetCloseListener {
-
-    public static abstract class Adapter<T extends BindableWindow, V extends AbstractSubmitablePrompt<?>>
-            extends ChildWindowAction.Adapter<T, V> implements PromptAction<T, V> {
-
-        @Override
-        public final void openChildWindow(T applicationWindow, V childWindow) {
-            childWindow.open(applicationWindow, this);
-        }
-
-        @Override
-        public final void sheetClosed(Sheet sheet) {
-            T parent = getApplicationWindow();
-            V child = getChildWindow();
-
-            if (child.isCanceled()) {
-                onChildWindowCanceled(parent, child);
-            } else if (child.isSubmitted()) {
-                onChildWindowSubmitted(parent, child);
-            }
-        }
-    }
 }

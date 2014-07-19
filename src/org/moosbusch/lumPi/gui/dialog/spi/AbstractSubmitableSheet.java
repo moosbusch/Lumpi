@@ -22,9 +22,8 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Sheet;
-import org.moosbusch.lumPi.gui.component.Submitable;
-import static org.moosbusch.lumPi.gui.component.Submitable.CANCELED_PROPERTYNAME;
-import static org.moosbusch.lumPi.gui.component.Submitable.SUBMITTED_PROPERTYNAME;
+import org.moosbusch.lumPi.beans.Submitable;
+import org.moosbusch.lumPi.beans.spi.AbstractSubmitable;
 
 /**
  *
@@ -139,7 +138,7 @@ public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
         }
     }
 
-    private class SubmitableImpl extends Submitable.Adapter<T> {
+    private class SubmitableImpl extends AbstractSubmitable<T> {
 
         @Override
         public boolean canSubmit(T value) {

@@ -15,11 +15,8 @@
  */
 package org.moosbusch.lumPi.action;
 
-import java.util.Objects;
 import org.apache.pivot.util.concurrent.Task;
 import org.apache.pivot.util.concurrent.TaskListener;
-import org.apache.pivot.wtk.Component;
-import org.apache.pivot.wtk.content.ButtonData;
 
 /**
  *
@@ -32,42 +29,4 @@ public interface TaskAction<T extends Object>
 
     public Task<T> getTask();
 
-    public static abstract class Adapter<T extends Object>
-            extends ApplicationAction.Adapter implements TaskAction<T> {
-
-        public Adapter(boolean enabled) {
-            super(enabled);
-        }
-
-        public Adapter() {
-        }
-
-        public Adapter(ButtonData buttonData, boolean enabled) {
-            super(buttonData, enabled);
-        }
-
-        public Adapter(ButtonData buttonData) {
-            super(buttonData);
-        }
-
-        @Override
-        public void taskExecuted(Task<T> task) {
-        }
-
-        @Override
-        public void executeFailed(Task<T> task) {
-        }
-
-        @Override
-        public void initializeTask(Task<T> task) {
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public final void doPerform(Component source) {
-            Task<T> tsk = Objects.requireNonNull(getTask());
-            initializeTask(tsk);
-            tsk.execute(this);
-        }
-    }
 }

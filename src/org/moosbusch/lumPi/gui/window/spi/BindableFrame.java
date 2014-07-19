@@ -21,6 +21,7 @@ import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Frame;
 import org.moosbusch.lumPi.beans.SmartBindable;
+import org.moosbusch.lumPi.beans.impl.SmartBindableAdapter;
 
 /**
  *
@@ -28,25 +29,25 @@ import org.moosbusch.lumPi.beans.SmartBindable;
  */
 public abstract class BindableFrame extends Frame implements SmartBindable {
 
-    private final SmartBindable.Adapter sba;
+    private final SmartBindableAdapter sba;
 
     public BindableFrame() {
-        this.sba = new SmartBindable.Adapter(this);
+        this.sba = new SmartBindableAdapter(this);
     }
 
     public BindableFrame(String title) {
         super(title);
-        this.sba = new SmartBindable.Adapter(this);
+        this.sba = new SmartBindableAdapter(this);
     }
 
     public BindableFrame(Component content) {
         super(content);
-        this.sba = new SmartBindable.Adapter(this);
+        this.sba = new SmartBindableAdapter(this);
     }
 
     public BindableFrame(String title, Component content) {
         super(title, content);
-        this.sba = new SmartBindable.Adapter(this);
+        this.sba = new SmartBindableAdapter(this);
     }
 
     @Override

@@ -24,7 +24,8 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Form;
 import org.apache.pivot.wtk.validation.Validator;
-import org.moosbusch.lumPi.gui.component.Submitable;
+import org.moosbusch.lumPi.beans.Submitable;
+import org.moosbusch.lumPi.beans.spi.AbstractSubmitable;
 import org.moosbusch.lumPi.util.LumPiUtil;
 
 /**
@@ -235,7 +236,7 @@ public abstract class AbstractSubmitableForm<T extends Object> extends Form
     public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 
-    private class SubmitableImpl extends Submitable.Adapter<T> {
+    private class SubmitableImpl extends AbstractSubmitable<T> {
 
         @Override
         public boolean canSubmit(T value) {

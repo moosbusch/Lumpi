@@ -15,6 +15,7 @@
  */
 package org.moosbusch.lumPi.application.impl;
 
+import org.moosbusch.lumPi.application.spi.AbstractLumPiApplicationContext;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
 
@@ -22,11 +23,11 @@ import org.moosbusch.lumPi.application.LumPiApplicationContext;
  *
  * @author moosbusch
  */
-public class DefaulLumPiApplicationContext
-    extends LumPiApplicationContext.Adapter {
+public class DefaultLumPiApplicationContext
+    extends AbstractLumPiApplicationContext {
 
 
-    public DefaulLumPiApplicationContext(LumPiApplication
+    public DefaultLumPiApplicationContext(LumPiApplication
             <? extends LumPiApplicationContext> application) {
         super(application);
     }

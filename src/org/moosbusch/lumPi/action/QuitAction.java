@@ -15,12 +15,6 @@
  */
 package org.moosbusch.lumPi.action;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.pivot.wtk.Component;
-import org.moosbusch.lumPi.application.LumPiApplicationContext;
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  *
  * @author moosbusch
@@ -29,21 +23,4 @@ public interface QuitAction extends ApplicationAction {
 
     public boolean canExit();
 
-    public static abstract class Adapter extends ApplicationAction.Adapter
-        implements QuitAction {
-
-        @Autowired
-        private LumPiApplicationContext appCtx;
-
-        @Override
-        public void doPerform(Component source) {
-            if (canExit()) {
-                try {
-                    appCtx.getApplication().shutdown(true);
-                } catch (Exception ex) {
-                    Logger.getLogger(QuitAction.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }
 }

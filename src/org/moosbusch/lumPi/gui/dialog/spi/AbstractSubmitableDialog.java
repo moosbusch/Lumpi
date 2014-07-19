@@ -22,7 +22,8 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Dialog;
-import org.moosbusch.lumPi.gui.component.Submitable;
+import org.moosbusch.lumPi.beans.Submitable;
+import org.moosbusch.lumPi.beans.spi.AbstractSubmitable;
 
 /**
  *
@@ -155,7 +156,7 @@ public abstract class AbstractSubmitableDialog<T extends Object> extends Dialog
     public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 
-    private class SubmitableImpl extends Submitable.Adapter<T> {
+    private class SubmitableImpl extends AbstractSubmitable<T> {
 
         @Override
         public boolean canSubmit(T value) {

@@ -15,11 +15,7 @@
  */
 package org.moosbusch.lumPi.beans;
 
-import java.net.URL;
 import org.apache.pivot.beans.Bindable;
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
-import org.apache.pivot.wtk.ApplicationContext;
 
 /**
  *
@@ -33,36 +29,4 @@ public interface SmartBindable extends Bindable, PropertyChangeAware {
 
     public void setInitialized(boolean initialized);
 
-    public static class Adapter extends PropertyChangeAware.Adapter
-            implements SmartBindable {
-
-        private boolean initialized = false;
-
-        public Adapter(Bindable bean) {
-            super(bean);
-        }
-
-        @Override
-        public final void initialize(Map<String, Object> namespace, URL location, Resources resources) {
-            if (!isInitialized()) {
-                ApplicationContext.queueCallback(() -> {
-                    Bindable bean = (Bindable) getMonitor().getBean();
-                    bean.initialize(namespace, location, resources);
-                    setInitialized(true);
-                });
-            }
-        }
-
-        @Override
-        public boolean isInitialized() {
-            return initialized;
-        }
-
-        @Override
-        public void setInitialized(boolean initialized) {
-            this.initialized = initialized;
-            firePropertyChange(INITIALIZED_PROPERTY_NAME);
-        }
-
-    }
 }

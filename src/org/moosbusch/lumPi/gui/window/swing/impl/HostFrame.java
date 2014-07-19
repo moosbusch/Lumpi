@@ -42,6 +42,7 @@ import org.apache.pivot.wtk.media.Image;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
+import org.moosbusch.lumPi.beans.impl.PropertyChangeAwareAdapter;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.moosbusch.lumPi.util.LumPiUtil;
 
@@ -62,7 +63,7 @@ public class HostFrame extends JFrame implements PropertyChangeAware {
 
     public HostFrame(LumPiApplication<? extends LumPiApplicationContext> application) {
         this.appRef = new WeakReference<>(application);
-        this.pca = new PropertyChangeAware.Adapter(this);
+        this.pca = new PropertyChangeAwareAdapter(this);
         this.windowListener = new WindowListener();
         this.displayHost = initDisplayHost();
         this.layer = new JLayer<>();

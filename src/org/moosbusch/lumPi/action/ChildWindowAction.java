@@ -15,10 +15,6 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.action;
 
-import java.util.Objects;
-import org.apache.pivot.wtk.Component;
-import org.apache.pivot.wtk.HorizontalAlignment;
-import org.apache.pivot.wtk.VerticalAlignment;
 import org.apache.pivot.wtk.Window;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 
@@ -47,55 +43,4 @@ public interface ChildWindowAction<T extends BindableWindow, V extends Window> e
 
     public void openChildWindow(T applicationWindow, V childWindow);
 
-    public static abstract class Adapter<T extends BindableWindow, V extends Window>
-        extends ApplicationAction.Adapter implements ChildWindowAction<T, V> {
-
-        private T applicationWindow;
-        private V childWindow;
-
-        @Override
-        public final void doPerform(Component evtSource) {
-            V chldWindow = Objects.requireNonNull(getChildWindow());
-            T appWindow = Objects.requireNonNull(getApplicationWindow());
-            chldWindow.align(appWindow.getBounds(),
-                    HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-            onChildWindowShowing(appWindow, chldWindow);
-            openChildWindow(appWindow, chldWindow);
-        }
-
-        @Override
-        public void onChildWindowShowing(T applicationWindow, V childWindow) {
-        }
-
-        @Override
-        public void onChildWindowSubmitted(T applicationWindow, V childWindow) {
-        }
-
-        @Override
-        public void onChildWindowCanceled(T applicationWindow, V childWindow) {
-        }
-
-        @Override
-        public T getApplicationWindow() {
-            return applicationWindow;
-        }
-
-        @Override
-        public void setApplicationWindow(T applicationWindow) {
-            this.applicationWindow = applicationWindow;
-            firePropertyChange(APPLICATION_WINDOW_PROPERTY_NAME);
-        }
-
-        @Override
-        public V getChildWindow() {
-            return childWindow;
-        }
-
-        @Override
-        public void setChildWindow(V childWindow) {
-            this.childWindow = childWindow;
-            firePropertyChange(CHILD_WINDOW_PROPERTY_NAME);
-        }
-
-    }
 }

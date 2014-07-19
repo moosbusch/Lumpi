@@ -24,7 +24,8 @@ import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.MessageType;
 import org.apache.pivot.wtk.Prompt;
-import org.moosbusch.lumPi.gui.component.Submitable;
+import org.moosbusch.lumPi.beans.Submitable;
+import org.moosbusch.lumPi.beans.spi.AbstractSubmitable;
 
 /**
  *
@@ -135,7 +136,7 @@ public abstract class AbstractSubmitablePrompt<T extends Object> extends Prompt
         submitable.setInitialized(initialized);
     }
 
-    private class SubmitableImpl extends Submitable.Adapter<T> {
+    private class SubmitableImpl extends AbstractSubmitable<T> {
 
         @Override
         public boolean canSubmit(T value) {
