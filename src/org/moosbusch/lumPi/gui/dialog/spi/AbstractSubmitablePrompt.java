@@ -15,12 +15,10 @@
  */
 package org.moosbusch.lumPi.gui.dialog.spi;
 
-import java.net.URL;
 import org.apache.pivot.beans.BeanMonitor;
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
-import org.apache.pivot.collections.Map;
 import org.apache.pivot.collections.Sequence;
-import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.MessageType;
 import org.apache.pivot.wtk.Prompt;
@@ -32,7 +30,7 @@ import org.moosbusch.lumPi.beans.spi.AbstractSubmitable;
  * @author moosbusch
  */
 public abstract class AbstractSubmitablePrompt<T extends Object> extends Prompt
-        implements Submitable<T> {
+        implements Submitable<T>, Bindable {
 
     private final Submitable<T> submitable;
 
@@ -126,16 +124,6 @@ public abstract class AbstractSubmitablePrompt<T extends Object> extends Prompt
         submitable.setCanceled(canceled);
     }
 
-    @Override
-    public final boolean isInitialized() {
-        return submitable.isInitialized();
-    }
-
-    @Override
-    public final void setInitialized(boolean initialized) {
-        submitable.setInitialized(initialized);
-    }
-
     private class SubmitableImpl extends AbstractSubmitable<T> {
 
         @Override
@@ -156,10 +144,6 @@ public abstract class AbstractSubmitablePrompt<T extends Object> extends Prompt
         @Override
         public T modifyValueBeforeSubmit(T value) {
             return AbstractSubmitablePrompt.this.modifyValueBeforeSubmit(value);
-        }
-
-        @Override
-        public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
         }
     }
 }

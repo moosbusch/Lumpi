@@ -25,11 +25,13 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,8 +44,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
+import org.apache.pivot.beans.BXML;
 import org.apache.pivot.beans.BeanMonitor;
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
 import org.apache.pivot.beans.Resolvable;
 import org.apache.pivot.collections.ArrayList;
@@ -64,6 +69,31 @@ import org.springframework.util.ObjectUtils;
 public class LumPiUtil {
 
     private LumPiUtil() {
+    }
+
+    public static Map<String, Object> getBXMLFieldValues(Bindable obj) throws IllegalAccessException {
+        Map<String, Object> result = new HashMap<>();
+        Class<?> type = obj.getClass();
+        Field[] allFields = FieldUtils.getAllFields(type);
+
+        if (ArrayUtils.isNotEmpty(allFields)) {
+            for (Field field : allFields) {
+                BXML bxmlAnnotation = field.getAnnotation(BXML.class);
+
+                if (bxmlAnnotation != null) {
+                    String id = bxmlAnnotation.id();
+                    Object fieldValue = FieldUtils.readField(field, obj, true);
+
+                    if (StringUtils.isNotBlank(id)) {
+                        result.put(id, fieldValue);
+                    } else {
+                        result.put(field.getName(), fieldValue);
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     public static BufferedImage createCompatibleImage(int width, int height) {

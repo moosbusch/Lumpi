@@ -40,7 +40,6 @@ import org.moosbusch.lumPi.beans.impl.DefaultPivotBeanConfiguration;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.moosbusch.lumPi.gui.window.swing.impl.HostFrame;
 import org.moosbusch.lumPi.task.spi.AbstractApplicationTask;
-import org.moosbusch.lumPi.task.ApplicationTask;
 import org.osgi.framework.BundleActivator;
 import org.springframework.context.ApplicationEvent;
 
@@ -48,7 +47,8 @@ import org.springframework.context.ApplicationEvent;
  *
  * @author Gunnar Kappei
  */
-public abstract class AbstractLumPiApplication extends Application.Adapter implements LumPiApplication<LumPiApplicationContext> {
+public abstract class AbstractLumPiApplication extends Application.Adapter
+    implements LumPiApplication<LumPiApplicationContext> {
     private final LumPiApplicationContext context;
     private final PivotApplicationContext pivotAppContext;
 
@@ -83,9 +83,11 @@ public abstract class AbstractLumPiApplication extends Application.Adapter imple
     @Override
     public final BindableWindow getApplicationWindow() {
         BindableWindow result = getApplicationContext().getApplicationWindow();
+
         if (result != null) {
             return result;
         }
+
         return getApplicationContext().getBean(BindableWindow.class);
     }
 
@@ -115,7 +117,7 @@ public abstract class AbstractLumPiApplication extends Application.Adapter imple
             OSGiController controller = Objects.requireNonNull(getOSGiController());
             controller.startFramework(getBundleActivators());
         }
-        new UILoaderTask(this, display).executeTask();
+        new UILoaderTask(this).executeTask();
     }
 
     @Override
@@ -156,11 +158,12 @@ public abstract class AbstractLumPiApplication extends Application.Adapter imple
         return null;
     }
 
-    private static class UILoaderTask extends AbstractApplicationTask<BindableWindow> implements TaskListener<BindableWindow> {
+    private static class UILoaderTask extends AbstractApplicationTask<BindableWindow>
+        implements TaskListener<BindableWindow> {
 
         private final Reference<LumPiApplication<? extends LumPiApplicationContext>> appRef;
 
-        public UILoaderTask(LumPiApplication<? extends LumPiApplicationContext> app, Display display) {
+        public UILoaderTask(LumPiApplication<? extends LumPiApplicationContext> app) {
             this.appRef = new WeakReference<>(app);
             init();
         }

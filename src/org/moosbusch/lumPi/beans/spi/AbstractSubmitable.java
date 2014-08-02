@@ -17,9 +17,7 @@
 package org.moosbusch.lumPi.beans.spi;
 
 import org.moosbusch.lumPi.beans.Submitable;
-import org.moosbusch.lumPi.beans.spi.AbstractValueStore;
 import org.apache.pivot.beans.PropertyChangeListener;
-import org.moosbusch.lumPi.beans.impl.SmartBindableAdapter;
 
 /**
  *
@@ -27,12 +25,10 @@ import org.moosbusch.lumPi.beans.impl.SmartBindableAdapter;
  */
 public abstract class AbstractSubmitable<T extends Object>
     extends AbstractValueStore<T> implements Submitable<T>, PropertyChangeListener {
-    private final SmartBindableAdapter sba;
     private boolean canceled = false;
     private boolean submitted = false;
 
     public AbstractSubmitable() {
-        this.sba = new SmartBindableAdapter(this);
         init();
     }
 
@@ -77,16 +73,6 @@ public abstract class AbstractSubmitable<T extends Object>
     public final void setSubmitted(boolean submitted) {
         this.submitted = submitted;
         firePropertyChange(Submitable.SUBMITTED_PROPERTYNAME);
-    }
-
-    @Override
-    public boolean isInitialized() {
-        return sba.isInitialized();
-    }
-
-    @Override
-    public void setInitialized(boolean initialized) {
-        sba.setInitialized(initialized);
     }
 
     @Override

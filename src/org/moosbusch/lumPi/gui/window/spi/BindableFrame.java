@@ -15,53 +15,29 @@
  */
 package org.moosbusch.lumPi.gui.window.spi;
 
-import java.net.URL;
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Frame;
-import org.moosbusch.lumPi.beans.SmartBindable;
-import org.moosbusch.lumPi.beans.impl.SmartBindableAdapter;
 
 /**
  *
  * @author moosbusch
  */
-public abstract class BindableFrame extends Frame implements SmartBindable {
-
-    private final SmartBindableAdapter sba;
+public abstract class BindableFrame extends Frame implements Bindable {
 
     public BindableFrame() {
-        this.sba = new SmartBindableAdapter(this);
     }
 
     public BindableFrame(String title) {
         super(title);
-        this.sba = new SmartBindableAdapter(this);
     }
 
     public BindableFrame(Component content) {
         super(content);
-        this.sba = new SmartBindableAdapter(this);
     }
 
     public BindableFrame(String title, Component content) {
         super(title, content);
-        this.sba = new SmartBindableAdapter(this);
-    }
-
-    @Override
-    public boolean isInitialized() {
-        return sba.isInitialized();
-    }
-
-    @Override
-    public void setInitialized(boolean initialized) {
-        sba.setInitialized(initialized);
-    }
-
-    @Override
-    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 
 }

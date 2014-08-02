@@ -24,12 +24,9 @@ import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
  */
 public interface ChildWindowAction<T extends BindableWindow, V extends Window> extends ApplicationAction {
 
-    public static final String APPLICATION_WINDOW_PROPERTY_NAME = "applicationWindow";
     public static final String CHILD_WINDOW_PROPERTY_NAME = "childWindow";
 
     public T getApplicationWindow();
-
-    public void setApplicationWindow(T applicationWindow);
 
     public V getChildWindow();
 

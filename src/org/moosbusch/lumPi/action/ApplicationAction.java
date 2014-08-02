@@ -18,14 +18,13 @@ package org.moosbusch.lumPi.action;
 import org.apache.pivot.util.ListenerList;
 import org.apache.pivot.wtk.ActionListener;
 import org.apache.pivot.wtk.Component;
-import org.moosbusch.lumPi.beans.SmartBindable;
 import org.moosbusch.lumPi.gui.Labelable;
 
 /**
  *
  * @author moosbusch
  */
-public interface ApplicationAction extends SmartBindable, Labelable {
+public interface ApplicationAction extends Labelable {
 
     public static final String ENABLED_PROPERTY_NAME = "enabled";
 

@@ -17,27 +17,25 @@ package org.moosbusch.lumPi.gui.window.spi;
 
 import java.net.URL;
 import org.apache.pivot.beans.BeanMonitor;
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Window;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
-import org.moosbusch.lumPi.beans.SmartBindable;
-import org.moosbusch.lumPi.beans.impl.SmartBindableAdapter;
+import org.moosbusch.lumPi.beans.impl.PropertyChangeAwareAdapter;
 
 /**
  *
  * @author moosbusch
  */
-public abstract class BindableWindow extends Window implements SmartBindable, PropertyChangeAware {
+public abstract class BindableWindow extends Window implements Bindable, PropertyChangeAware {
 
     public static final String RESIZABLE_PROPERTY_NAME = "resizable";
     public static final String ICON_PROPERTY_NAME = "icon";
     public static final String TITLE_PROPERTY_NAME = "title";
     public static final String SIZE_PROPERTY_NAME = "size";
     public static final String PREFERRED_SIZE_PROPERTY_NAME = "preferredSize";
-    private final SmartBindableAdapter sba;
+    private final PropertyChangeAware pca;
     private boolean resizable = true;
 
     public BindableWindow() {
@@ -46,7 +44,7 @@ public abstract class BindableWindow extends Window implements SmartBindable, Pr
 
     public BindableWindow(Component content) {
         super(content);
-        this.sba = new SmartBindableAdapter(this);
+        this.pca = new PropertyChangeAwareAdapter(this);
         init();
     }
 
@@ -101,37 +99,23 @@ public abstract class BindableWindow extends Window implements SmartBindable, Pr
     }
 
     @Override
-    public boolean isInitialized() {
-        return sba.isInitialized();
-    }
-
-    @Override
-    public void setInitialized(boolean initialized) {
-        sba.setInitialized(initialized);
-    }
-
-    @Override
     public final BeanMonitor getMonitor() {
-        return sba.getMonitor();
+        return pca.getMonitor();
     }
 
     @Override
     public final void addPropertyChangeListener(PropertyChangeListener pcl) {
-        sba.addPropertyChangeListener(pcl);
+        pca.addPropertyChangeListener(pcl);
     }
 
     @Override
     public final void removePropertyChangeListener(PropertyChangeListener pcl) {
-        sba.removePropertyChangeListener(pcl);
+        pca.removePropertyChangeListener(pcl);
     }
 
     @Override
     public final void firePropertyChange(String propertyName) {
-        sba.firePropertyChange(propertyName);
-    }
-
-    @Override
-    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
+        pca.firePropertyChange(propertyName);
     }
 
 }

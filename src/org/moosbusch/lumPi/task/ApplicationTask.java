@@ -17,14 +17,12 @@ package org.moosbusch.lumPi.task;
 
 import org.apache.pivot.util.concurrent.TaskExecutionException;
 import org.apache.pivot.util.concurrent.TaskListener;
-import org.moosbusch.lumPi.beans.SmartBindable;
 
 /**
  *
  * @author moosbusch
  */
-public interface ApplicationTask<T extends Object>
-        extends SmartBindable {
+public interface ApplicationTask<T extends Object> {
 
     public T execute() throws TaskExecutionException;
 

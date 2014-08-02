@@ -16,9 +16,12 @@
 
 package org.moosbusch.lumPi.application.spi;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.beans.BindException;
+import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.serialization.Serializer;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
 import org.moosbusch.lumPi.application.SpringBXMLSerializer;
@@ -29,7 +32,9 @@ import org.springframework.context.ApplicationContext;
  *
  * @author Gunnar Kappei
  */
-public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer implements SpringBXMLSerializer {
+public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer
+    implements SpringBXMLSerializer {
+
     @Autowired
     private final ApplicationContext applicationContext;
 
@@ -43,10 +48,23 @@ public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer implem
     @Override
     protected abstract SpringBXMLSerializer newIncludeSerializer(Class<? extends Serializer<?>> type);
 
+    protected Object readObjectImpl(InputStream inputStream)
+            throws IOException, SerializationException {
+        return super.readObject(inputStream);
+    }
+
+    @Override
+    public final Object readObject(InputStream inputStream)
+            throws IOException, SerializationException {
+        Object result = readObjectImpl(inputStream);
+
+        return result;
+    }
+
     @Override
     public final void bind(Object object, Class<?> type) throws BindException {
+//        getApplicationContext().autowireBean(object);
         super.bind(object, type);
-        getApplicationContext().autowireBean(object);
     }
 
     @Override

@@ -15,7 +15,6 @@
  */
 package org.moosbusch.lumPi.beans.impl;
 
-import java.util.prefs.Preferences;
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.ArrayList;
 import org.apache.pivot.collections.ArrayQueue;
@@ -182,7 +181,6 @@ import org.apache.pivot.wtk.validation.NotEmptyTextValidator;
 import org.apache.pivot.wtk.validation.RegexTextValidator;
 import org.apache.pivot.xml.XMLSerializer;
 import org.moosbusch.lumPi.beans.PivotBeanConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;

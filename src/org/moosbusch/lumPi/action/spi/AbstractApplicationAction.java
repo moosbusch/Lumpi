@@ -21,38 +21,36 @@ import java.net.URL;
 import java.util.Objects;
 import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.PropertyChangeListener;
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.content.ButtonData;
 import org.apache.pivot.wtk.media.Image;
 import org.moosbusch.lumPi.action.ApplicationAction;
-import org.moosbusch.lumPi.beans.SmartBindable;
-import org.moosbusch.lumPi.beans.impl.SmartBindableAdapter;
+import org.moosbusch.lumPi.beans.PropertyChangeAware;
+import org.moosbusch.lumPi.beans.impl.PropertyChangeAwareAdapter;
 
 /**
  *
  * @author Gunnar Kappei
  */
 public abstract class AbstractApplicationAction extends Action implements ApplicationAction {
-    private final SmartBindable bindableAdapter;
+    private final PropertyChangeAware pca;
     private ButtonData buttonData;
 
     public AbstractApplicationAction() {
-        this.bindableAdapter = new SmartBindableAdapter(this);
+        this.pca = new PropertyChangeAwareAdapter(this);
         initButtonData();
     }
 
     public AbstractApplicationAction(boolean enabled) {
         super(enabled);
-        this.bindableAdapter = new SmartBindableAdapter(this);
+        this.pca = new PropertyChangeAwareAdapter(this);
         initButtonData();
     }
 
     public AbstractApplicationAction(ButtonData buttonData, boolean enabled) {
         super(enabled);
-        this.bindableAdapter = new SmartBindableAdapter(this);
+        this.pca = new PropertyChangeAwareAdapter(this);
         this.buttonData = Objects.requireNonNull(buttonData);
     }
 
@@ -151,40 +149,25 @@ public abstract class AbstractApplicationAction extends Action implements Applic
     }
 
     @Override
-    public boolean isInitialized() {
-        return bindableAdapter.isInitialized();
-    }
-
-    @Override
-    public void setInitialized(boolean initialized) {
-        bindableAdapter.setInitialized(initialized);
-    }
-
-    @Override
     public BeanMonitor getMonitor() {
-        return bindableAdapter.getMonitor();
+        return pca.getMonitor();
     }
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
-        bindableAdapter.addPropertyChangeListener(pcl);
+        pca.addPropertyChangeListener(pcl);
     }
 
     @Override
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
-        bindableAdapter.removePropertyChangeListener(pcl);
+        pca.removePropertyChangeListener(pcl);
     }
 
     @Override
     public void firePropertyChange(String propertyName) {
-        if (bindableAdapter != null) {
-            bindableAdapter.firePropertyChange(propertyName);
+        if (pca != null) {
+            pca.firePropertyChange(propertyName);
         }
-    }
-
-    @Override
-    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
-        bindableAdapter.initialize(namespace, location, resources);
     }
 
 }

@@ -16,17 +16,10 @@
 
 package org.moosbusch.lumPi.task.spi;
 
-import java.net.URL;
 import java.util.concurrent.ExecutorService;
-import org.apache.pivot.beans.BeanMonitor;
-import org.apache.pivot.beans.PropertyChangeListener;
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
 import org.apache.pivot.util.concurrent.Task;
 import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.wtk.TaskAdapter;
-import org.moosbusch.lumPi.beans.SmartBindable;
-import org.moosbusch.lumPi.beans.impl.SmartBindableAdapter;
 import org.moosbusch.lumPi.task.ApplicationTask;
 
 /**
@@ -35,7 +28,6 @@ import org.moosbusch.lumPi.task.ApplicationTask;
  */
 public abstract class AbstractApplicationTask<T extends Object> extends Task<T> implements ApplicationTask<T> {
     private final boolean forwardEventsToEDT;
-    private final SmartBindableAdapter sba;
 
     public AbstractApplicationTask() {
         this(true);
@@ -43,19 +35,16 @@ public abstract class AbstractApplicationTask<T extends Object> extends Task<T> 
 
     public AbstractApplicationTask(boolean forwardEventsToEDT) {
         this.forwardEventsToEDT = true;
-        this.sba = new SmartBindableAdapter(this);
     }
 
     public AbstractApplicationTask(ExecutorService executorService) {
         super(executorService);
         this.forwardEventsToEDT = true;
-        this.sba = new SmartBindableAdapter(this);
     }
 
     public AbstractApplicationTask(ExecutorService executorService, boolean forwardEventsToEDT) {
         super(executorService);
         this.forwardEventsToEDT = forwardEventsToEDT;
-        this.sba = new SmartBindableAdapter(this);
     }
 
     @Override
@@ -71,41 +60,4 @@ public abstract class AbstractApplicationTask<T extends Object> extends Task<T> 
     public final synchronized void execute(TaskListener<T> taskListener, ExecutorService executorService) {
         super.execute(taskListener, executorService);
     }
-
-    @Override
-    public boolean isInitialized() {
-        return sba.isInitialized();
-    }
-
-    @Override
-    public void setInitialized(boolean initialized) {
-        sba.setInitialized(initialized);
-    }
-
-    @Override
-    public BeanMonitor getMonitor() {
-        return sba.getMonitor();
-    }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener pcl) {
-        sba.addPropertyChangeListener(pcl);
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener pcl) {
-        sba.removePropertyChangeListener(pcl);
-    }
-
-    @Override
-    public void firePropertyChange(String propertyName) {
-        if (sba != null) {
-            sba.firePropertyChange(propertyName);
-        }
-    }
-
-    @Override
-    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
-    }
-
 }

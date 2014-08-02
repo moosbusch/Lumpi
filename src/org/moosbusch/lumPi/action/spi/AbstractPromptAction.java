@@ -35,6 +35,7 @@ public abstract class AbstractPromptAction<T extends BindableWindow, V extends A
     public final void sheetClosed(Sheet sheet) {
         T parent = getApplicationWindow();
         V child = getChildWindow();
+        
         if (child.isCanceled()) {
             onChildWindowCanceled(parent, child);
         } else if (child.isSubmitted()) {

@@ -17,6 +17,7 @@ package org.moosbusch.lumPi.gui.dialog.spi;
 
 import java.io.File;
 import java.util.Objects;
+import org.apache.pivot.collections.ArrayList;
 import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.collections.immutable.ImmutableList;
 import org.apache.pivot.serialization.SerializationException;
@@ -81,6 +82,7 @@ public abstract class AbstractSubmitableFileBrowserSheet
 
         fileBrowserRow.setHeight(300);
         fileBrowserRow.add(fileBrowser);
+        LumPiUtil.setComponentStyle(fileBrowser, "hideDisabledFiles", true);
 
         buttonRow.setHeight(50);
         buttonRow.add(buttonBoxPane);
@@ -95,7 +97,20 @@ public abstract class AbstractSubmitableFileBrowserSheet
 
     @Override
     public Sequence<File> modifyValueBeforeSubmit(Sequence<File> value) {
+        if (value == null) {
+            return new ArrayList<>();
+        }
+
         return value;
+    }
+
+    @Override
+    public boolean canSubmit(Sequence<File> value) {
+        if (value != null) {
+            return (value.getLength() > 0);
+        }
+
+        return false;
     }
 
     public FileBrowser getFileBrowser() {
@@ -229,4 +244,5 @@ public abstract class AbstractSubmitableFileBrowserSheet
         }
 
     }
+    
 }

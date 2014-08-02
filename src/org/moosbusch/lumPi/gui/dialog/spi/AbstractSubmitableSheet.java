@@ -15,11 +15,9 @@
  */
 package org.moosbusch.lumPi.gui.dialog.spi;
 
-import java.net.URL;
 import org.apache.pivot.beans.BeanMonitor;
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Sheet;
 import org.moosbusch.lumPi.beans.Submitable;
@@ -30,7 +28,7 @@ import org.moosbusch.lumPi.beans.spi.AbstractSubmitable;
  * @author moosbusch
  */
 public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
-        implements Submitable<T>, PropertyChangeListener {
+        implements Submitable<T>, Bindable, PropertyChangeListener {
 
     private final Submitable<T> submitable;
 
@@ -113,20 +111,6 @@ public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
     }
 
     @Override
-    public final boolean isInitialized() {
-        return submitable.isInitialized();
-    }
-
-    @Override
-    public final void setInitialized(boolean initialized) {
-        submitable.setInitialized(initialized);
-    }
-
-    @Override
-    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
-    }
-
-    @Override
     public final void propertyChanged(Object bean, String propertyName) {
         switch (propertyName) {
             case SUBMITTED_PROPERTYNAME:
@@ -153,10 +137,6 @@ public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
         @Override
         public void onSubmit(T value) {
             AbstractSubmitableSheet.this.onSubmit(value);
-        }
-
-        @Override
-        public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
         }
 
         @Override

@@ -15,13 +15,11 @@
  */
 package org.moosbusch.lumPi.application;
 
-import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.Resolvable;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
 import org.moosbusch.lumPi.beans.impl.Options;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.moosbusch.lumPi.gui.window.swing.impl.HostFrame;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -32,28 +30,7 @@ public interface LumPiApplicationContext
         extends ConfigurableApplicationContext, Resolvable, OSGiController,
         PropertyChangeAware {
 
-    public static final String APPLICATION_WINDOW_PROPERTYNAME = "applicationWindow";
-
-    @Override
-    public <T> T getBean(Class<T> requiredType) throws BeansException;
-
-    @Override
-    public boolean containsBean(String id);
-
-    @Override
-    public Object getBean(String id);
-
-    @Override
-    public <T> T getBean(String name, Class<T> requiredType);
-
-    @Override
-    public Object getBean(String name, Object... args) throws BeansException;
-
-    public void bindBean(Bindable bindable, SpringBXMLSerializer ser);
-
-    public void autowireBean(Object beanInstance);
-
-    public Object configureBean(Object beanInstance, String id);
+    public static final String APPLICATION_WINDOW_PROPERTY_NAME = "applicationWindow";
 
     public <T> T createBean(Class<T> type);
 

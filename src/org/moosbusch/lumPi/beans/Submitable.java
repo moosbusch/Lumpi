@@ -15,14 +15,11 @@
  */
 package org.moosbusch.lumPi.beans;
 
-import org.moosbusch.lumPi.beans.ValueStore;
-import org.moosbusch.lumPi.beans.SmartBindable;
-
 /**
  *
  * @author moosbusch
  */
-public interface Submitable<T extends Object> extends ValueStore<T>, SmartBindable {
+public interface Submitable<T extends Object> extends ValueStore<T> {
 
     public static final String CANCELED_PROPERTYNAME = "canceled";
     public static final String SUBMITTED_PROPERTYNAME = "submitted";

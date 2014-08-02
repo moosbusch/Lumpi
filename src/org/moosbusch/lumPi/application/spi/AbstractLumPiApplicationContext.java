@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.moosbusch.lumPi.application.spi;
 
-import java.lang.reflect.Constructor;
+import org.moosbusch.lumPi.application.event.impl.ApplicationWindowLoadedEvent;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,19 +24,15 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
 import org.apache.pivot.beans.BeanMonitor;
-import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
-import org.moosbusch.lumPi.action.ChildWindowAction;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
 import org.moosbusch.lumPi.application.SpringBXMLSerializer;
@@ -54,7 +49,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.io.Resource;
@@ -64,9 +58,9 @@ import org.springframework.core.io.Resource;
  * @author Gunnar Kappei
  */
 public abstract class AbstractLumPiApplicationContext
-    extends AnnotationConfigApplicationContext
-    implements LumPiApplicationContext {
-    
+        extends AnnotationConfigApplicationContext
+        implements LumPiApplicationContext {
+
     private final LumPiApplication<? extends LumPiApplicationContext> app;
     private final SpringBXMLSerializer bxmlSerializer;
     private final PropertyChangeAware pca;
@@ -86,7 +80,8 @@ public abstract class AbstractLumPiApplicationContext
 
     private void init(LumPiApplication<? extends LumPiApplicationContext> application) {
         registerShutdownHook();
-        addPropertyChangeListener(new ApplicationWindowListener());
+        addPropertyChangeListener(new PropertyChangeListenerImpl());
+
         try {
             registerFactoryBeans(application);
             loadXmlConfig(application);
@@ -108,7 +103,8 @@ public abstract class AbstractLumPiApplicationContext
     }
 
     private void loadXmlConfig(LumPiApplication<? extends LumPiApplicationContext> application) {
-        String[] configLocations = configLocationsFromURLs(application.getBeanConfigurationFiles());
+        String[] configLocations = configLocationsFromURLs(
+                application.getBeanConfigurationFiles());
         if (ArrayUtils.isNotEmpty(configLocations)) {
             XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(this);
             for (String configLocation : configLocations) {
@@ -120,12 +116,15 @@ public abstract class AbstractLumPiApplicationContext
         }
     }
 
-    private Class<?>[] getPivotCoreConfigurationClasses(LumPiApplication<? extends LumPiApplicationContext> application) {
-        return new Class<?>[]{PivotFactoryBean.class, Objects.requireNonNull(application.getPivotBeanConfigurationClass()), LumPiMiscBean.class};
+    private Class<?>[] getPivotCoreConfigurationClasses(
+            LumPiApplication<? extends LumPiApplicationContext> application) {
+        return new Class<?>[]{PivotFactoryBean.class, Objects.requireNonNull(
+            application.getPivotBeanConfigurationClass()), LumPiMiscBean.class};
     }
 
     private void registerFactoryBeans(LumPiApplication<? extends LumPiApplicationContext> application) {
-        Class<?>[] corePivotConfigurationClasses = Objects.requireNonNull(getPivotCoreConfigurationClasses(application));
+        Class<?>[] corePivotConfigurationClasses = Objects.requireNonNull(
+                getPivotCoreConfigurationClasses(application));
         for (Class<?> pivotFactoryBeanClass : corePivotConfigurationClasses) {
             register(pivotFactoryBeanClass);
         }
@@ -149,25 +148,6 @@ public abstract class AbstractLumPiApplicationContext
         return result;
     }
 
-    protected void processNamespace(Map<String, Object> namespace) {
-        SpringBXMLSerializer ser = getSerializer();
-        ser.setNamespace(getNamespace());
-        for (String id : namespace) {
-            Object obj = Objects.requireNonNull(namespace.get(id));
-            if (obj instanceof Bindable) {
-                bindBean((Bindable) obj, ser);
-            }
-            if (obj instanceof Action) {
-                registerAction(id, (Action) obj);
-            }
-            if (obj instanceof ChildWindowAction) {
-                ChildWindowAction cwa = (ChildWindowAction) obj;
-                BindableWindow window = Objects.requireNonNull(getApplicationWindow());
-                cwa.setApplicationWindow(window);
-            }
-        }
-    }
-
     protected void registerAction(String actionNameKey, Action action) {
         if (StringUtils.isNotBlank(actionNameKey)) {
             Action.getNamedActions().put(actionNameKey, action);
@@ -179,97 +159,20 @@ public abstract class AbstractLumPiApplicationContext
     }
 
     @Override
-    public final void autowireBean(Object beanInstance) {
-        getAutowireCapableBeanFactory().autowireBean(beanInstance);
-    }
-
-    @Override
     public final <T> T createBean(Class<T> type) {
+        if (BindableWindow.class.isAssignableFrom(type)) {
+            BindableWindow result = getApplicationWindow();
+
+            if (result != null) {
+                return (T) result;
+            } else {
+                result = Objects.requireNonNull((BindableWindow) getAutowireCapableBeanFactory().createBean(type));
+                setApplicationWindow(result);
+                return (T) result;
+            }
+        }
+
         return getAutowireCapableBeanFactory().createBean(type);
-    }
-
-    @Override
-    public final Object configureBean(Object beanInstance, String id) {
-        return getAutowireCapableBeanFactory().configureBean(beanInstance, id);
-    }
-
-    @Override
-    public void bindBean(Bindable bindable, SpringBXMLSerializer ser) {
-        ser.bind(bindable, bindable.getClass());
-        bindable.initialize(ser.getNamespace(), ser.getLocation(), ser.getResources());
-    }
-
-    @Override
-    public boolean containsBean(String id) {
-        boolean result = false;
-        if (StringUtils.isNotBlank(id)) {
-            result = super.containsBean(id);
-            if ((!result) && (getParent() != null)) {
-                result = getParent().containsBean(id);
-            }
-            if ((!result) && (getNamespace() != null)) {
-                result = getNamespace().containsKey(id);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public Object getBean(String id) {
-        Object result = null;
-        if (StringUtils.isNotBlank(id)) {
-            if (super.containsBean(id)) {
-                result = super.getBean(id);
-            } else if (getNamespace() != null) {
-                result = getNamespace().get(id);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public <T> T getBean(String name, Class<T> requiredType) {
-        Object result = null;
-        if (super.containsBean(name)) {
-            result = super.getBean(name, requiredType);
-        } else if (getNamespace() != null) {
-            result = getNamespace().get(name);
-            if (result != null) {
-                if (ClassUtils.isAssignable(result.getClass(), requiredType)) {
-                    return (T) result;
-                }
-            }
-        }
-        if (result != null) {
-            return (T) result;
-        }
-        return null;
-    }
-
-    @Override
-    public Object getBean(String name, Object... args) throws BeansException {
-        Object result = null;
-        if (super.containsBean(name)) {
-            result = super.getBean(name, args);
-        } else if (getNamespace() != null) {
-            result = getNamespace().get(name);
-            if (result != null) {
-                Constructor<?> constructor;
-                if (ArrayUtils.isNotEmpty(args)) {
-                    Class<?>[] parameterTypes = new Class<?>[0];
-                    for (Object arg : args) {
-                        parameterTypes = ArrayUtils.add(parameterTypes, arg.getClass());
-                    }
-                    constructor = ConstructorUtils.getAccessibleConstructor(result.getClass(), parameterTypes);
-                } else {
-                    constructor = ConstructorUtils.getAccessibleConstructor(result.getClass(), new Class<?>[0]);
-                }
-                if (constructor != null) {
-                    return result;
-                }
-            }
-        }
-        return result;
     }
 
     @Override
@@ -331,8 +234,8 @@ public abstract class AbstractLumPiApplicationContext
 
     @Override
     public final void setApplicationWindow(BindableWindow applicationWindow) {
-        this.applicationWindow = applicationWindow;
-        firePropertyChange(APPLICATION_WINDOW_PROPERTYNAME);
+        this.applicationWindow = Objects.requireNonNull(applicationWindow);
+        firePropertyChange(APPLICATION_WINDOW_PROPERTY_NAME);
     }
 
     @Override
@@ -366,7 +269,8 @@ public abstract class AbstractLumPiApplicationContext
     }
 
     @Override
-    public <T> Collection<ServiceReference<T>> getServiceReferences(Class<T> type, String serviceId) throws InvalidSyntaxException {
+    public <T> Collection<ServiceReference<T>> getServiceReferences(Class<T> type, String serviceId)
+            throws InvalidSyntaxException {
         String idFilter = "(" + getServiceIdPropertyName() + "=" + serviceId + ")";
         return getBundleContext().getServiceReferences(type, idFilter);
     }
@@ -411,14 +315,20 @@ public abstract class AbstractLumPiApplicationContext
         pca.firePropertyChange(propertyName);
     }
 
-    private class ApplicationWindowListener implements PropertyChangeListener {
+    private class PropertyChangeListenerImpl implements PropertyChangeListener {
 
         @Override
         public void propertyChanged(Object bean, String propertyName) {
-            if (propertyName.equals(APPLICATION_WINDOW_PROPERTYNAME)) {
-                processNamespace(getNamespace());
+            if (propertyName.equals(APPLICATION_WINDOW_PROPERTY_NAME)) {
+//                long time1 = System.currentTimeMillis();
+//                System.out.println(time1);
+//                processNamespace(getNamespace());
+//                long time2 = System.currentTimeMillis();
+//                System.out.println(time2 -time1);
+                publishEvent(new ApplicationWindowLoadedEvent(AbstractLumPiApplicationContext.this));
             }
         }
     }
+
 
 }

@@ -22,8 +22,8 @@ import org.apache.pivot.wtk.HorizontalAlignment;
 import org.apache.pivot.wtk.VerticalAlignment;
 import org.apache.pivot.wtk.Window;
 import org.moosbusch.lumPi.action.ChildWindowAction;
-import org.moosbusch.lumPi.action.spi.AbstractApplicationAction;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -32,6 +32,7 @@ import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 public abstract class AbstractChildWindowAction<T extends BindableWindow, V extends Window>
     extends AbstractApplicationAction implements ChildWindowAction<T, V> {
 
+    @Autowired
     private T applicationWindow;
     private V childWindow;
 
@@ -57,14 +58,8 @@ public abstract class AbstractChildWindowAction<T extends BindableWindow, V exte
     }
 
     @Override
-    public T getApplicationWindow() {
+    public final T getApplicationWindow() {
         return applicationWindow;
-    }
-
-    @Override
-    public void setApplicationWindow(T applicationWindow) {
-        this.applicationWindow = applicationWindow;
-        firePropertyChange(ChildWindowAction.APPLICATION_WINDOW_PROPERTY_NAME);
     }
 
     @Override

@@ -15,9 +15,6 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.gui.form.impl;
 
-import java.net.URL;
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Component;
 import org.moosbusch.lumPi.gui.form.editor.FormEditor;
 import org.moosbusch.lumPi.gui.form.spi.AbstractDynamicForm;
@@ -47,9 +44,5 @@ public class DefaultDynamicForm extends AbstractDynamicForm<Object> {
         }
 
         return true;
-    }
-
-    @Override
-    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 }

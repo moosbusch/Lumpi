@@ -52,7 +52,6 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
                         serializer.getLocation());
             }
 
-            getApplicationContext().setApplicationWindow(result);
         }
 
         return result;
