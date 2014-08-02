@@ -15,7 +15,6 @@
  */
 package org.moosbusch.lumPi.application.spi;
 
-import org.moosbusch.lumPi.application.event.impl.ApplicationWindowLoadedEvent;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,12 +30,12 @@ import org.apache.felix.framework.util.FelixConstants;
 import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.PropertyChangeListener;
 import org.apache.pivot.collections.Map;
-import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
-import org.moosbusch.lumPi.application.SpringBXMLSerializer;
-import org.moosbusch.lumPi.application.impl.DefaultSpringBXMLSerializer;
+import static org.moosbusch.lumPi.application.LumPiApplicationContext.APPLICATION_WINDOW_PROPERTY_NAME;
+import org.moosbusch.lumPi.application.event.impl.ApplicationWindowLoadedEvent;
+import org.moosbusch.lumPi.application.event.impl.NamespaceEvent;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
 import org.moosbusch.lumPi.beans.impl.LumPiMiscBean;
 import org.moosbusch.lumPi.beans.impl.Options;
@@ -62,8 +61,8 @@ public abstract class AbstractLumPiApplicationContext
         implements LumPiApplicationContext {
 
     private final LumPiApplication<? extends LumPiApplicationContext> app;
-    private final SpringBXMLSerializer bxmlSerializer;
     private final PropertyChangeAware pca;
+    private Map<String, Object> namespace;
     private BindableWindow applicationWindow;
     private final HostFrame hostFrame;
     private final Options options;
@@ -74,7 +73,7 @@ public abstract class AbstractLumPiApplicationContext
         this.pca = new PropertyChangeAwareAdapter(this);
         this.hostFrame = new HostFrame(application);
         this.options = new Options(Preferences.userNodeForPackage(application.getClass()));
-        this.bxmlSerializer = initSerializer(Objects.requireNonNull(application));
+//        this.bxmlSerializer = initSerializer(Objects.requireNonNull(application));
         init(application);
     }
 
@@ -141,21 +140,10 @@ public abstract class AbstractLumPiApplicationContext
         return null;
     }
 
-    private SpringBXMLSerializer initSerializer(LumPiApplication<? extends LumPiApplicationContext> application) {
-        SpringBXMLSerializer result = Objects.requireNonNull(createSerializer());
-        result.setLocation(application.getBXMLConfigurationFile());
-        result.setResources(application.getResources());
-        return result;
-    }
-
     protected void registerAction(String actionNameKey, Action action) {
         if (StringUtils.isNotBlank(actionNameKey)) {
             Action.getNamedActions().put(actionNameKey, action);
         }
-    }
-
-    protected SpringBXMLSerializer createSerializer() {
-        return new DefaultSpringBXMLSerializer(this);
     }
 
     @Override
@@ -181,45 +169,19 @@ public abstract class AbstractLumPiApplicationContext
     }
 
     @Override
-    public final SpringBXMLSerializer getSerializer() {
-        return bxmlSerializer;
-    }
-
-    @Override
     public final URL getLocation() {
-        return getSerializer().getLocation();
-    }
-
-    @Override
-    public final void setLocation(URL location) {
-        getSerializer().setLocation(location);
+        return app.getBXMLConfigurationFile();
     }
 
     @Override
     public final Map<String, Object> getNamespace() {
-        Map<String, Object> result = getSerializer().getNamespace();
-        for (final String beanId : getBeanDefinitionNames()) {
-            if (!result.containsKey(beanId)) {
-                final Object bean = getBean(beanId);
-                result.put(beanId, bean);
-            }
-        }
-        return result;
+        return namespace;
     }
 
     @Override
-    public final void setNamespace(Map<String, Object> pivotNamespace) {
-        getSerializer().setNamespace(pivotNamespace);
-    }
-
-    @Override
-    public final Resources getResources() {
-        return getSerializer().getResources();
-    }
-
-    @Override
-    public final void setResources(Resources resources) {
-        getSerializer().setResources(resources);
+    public final void setNamespace(Map<String, Object> uiNamespace) {
+        this.namespace = uiNamespace;
+        firePropertyChange(NAMESPACE_PROPERTY_NAME);
     }
 
     @Override
@@ -319,16 +281,18 @@ public abstract class AbstractLumPiApplicationContext
 
         @Override
         public void propertyChanged(Object bean, String propertyName) {
-            if (propertyName.equals(APPLICATION_WINDOW_PROPERTY_NAME)) {
-//                long time1 = System.currentTimeMillis();
-//                System.out.println(time1);
-//                processNamespace(getNamespace());
-//                long time2 = System.currentTimeMillis();
-//                System.out.println(time2 -time1);
-                publishEvent(new ApplicationWindowLoadedEvent(AbstractLumPiApplicationContext.this));
+            switch (propertyName) {
+                case APPLICATION_WINDOW_PROPERTY_NAME: {
+                    publishEvent(new ApplicationWindowLoadedEvent(
+                            AbstractLumPiApplicationContext.this));
+                    break;
+                }
+                case NAMESPACE_PROPERTY_NAME: {
+                    publishEvent(new NamespaceEvent(getNamespace()));
+                    break;
+                }
             }
         }
     }
-
 
 }

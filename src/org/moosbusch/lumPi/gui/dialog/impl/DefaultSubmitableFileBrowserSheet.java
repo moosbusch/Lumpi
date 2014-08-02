@@ -16,7 +16,10 @@ Copyright 2013 Gunnar Kappei
 package org.moosbusch.lumPi.gui.dialog.impl;
 
 import java.io.File;
+import java.net.URL;
+import org.apache.pivot.collections.Map;
 import org.apache.pivot.collections.Sequence;
+import org.apache.pivot.util.Resources;
 import org.moosbusch.lumPi.gui.dialog.spi.AbstractSubmitableFileBrowserSheet;
 
 /**
@@ -36,6 +39,10 @@ public class DefaultSubmitableFileBrowserSheet extends AbstractSubmitableFileBro
     @Override
     public boolean canSubmit(Sequence<File> value) {
         return ((getSelectedFiles() != null) || (getSelectedFile() != null));
+    }
+
+    @Override
+    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 
 }

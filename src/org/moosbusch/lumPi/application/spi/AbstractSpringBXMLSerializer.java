@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.moosbusch.lumPi.application.spi;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import org.springframework.context.ApplicationContext;
  * @author Gunnar Kappei
  */
 public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer
-    implements SpringBXMLSerializer {
+        implements SpringBXMLSerializer {
 
     @Autowired
     private final ApplicationContext applicationContext;
@@ -63,7 +62,6 @@ public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer
 
     @Override
     public final void bind(Object object, Class<?> type) throws BindException {
-//        getApplicationContext().autowireBean(object);
         super.bind(object, type);
     }
 

@@ -198,6 +198,7 @@ public abstract class AbstractLumPiApplication extends Application.Adapter
         static {
             createTimer();
         }
+
     }
 
 }

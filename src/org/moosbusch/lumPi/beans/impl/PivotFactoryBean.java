@@ -16,8 +16,10 @@
 package org.moosbusch.lumPi.beans.impl;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
 import org.apache.pivot.serialization.SerializationException;
+import org.apache.pivot.util.Resources;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
 import org.moosbusch.lumPi.application.SpringBXMLSerializer;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
@@ -44,14 +46,18 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
         BindableWindow result = getApplicationContext().getApplicationWindow();
 
         if (result == null) {
-            if (serializer.getResources() != null) {
+            Resources resources = getApplicationContext().getResources();
+            URL location = Objects.requireNonNull(getApplicationContext().getLocation());
+            
+            if (resources != null) {
                 result = (BindableWindow) serializer.readObject(
-                        serializer.getLocation(), serializer.getResources());
+                        location, resources);
             } else {
                 result = (BindableWindow) serializer.readObject(
-                        serializer.getLocation());
+                        location);
             }
 
+            getApplicationContext().setNamespace(serializer.getNamespace());
         }
 
         return result;
@@ -81,4 +87,5 @@ public class PivotFactoryBean implements FactoryBean<BindableWindow>,
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
+
 }

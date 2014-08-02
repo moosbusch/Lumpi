@@ -15,7 +15,9 @@
  */
 package org.moosbusch.lumPi.application;
 
-import org.apache.pivot.beans.Resolvable;
+import java.net.URL;
+import org.apache.pivot.collections.Map;
+import org.apache.pivot.util.Resources;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
 import org.moosbusch.lumPi.beans.impl.Options;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
@@ -27,14 +29,19 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author moosbusch
  */
 public interface LumPiApplicationContext
-        extends ConfigurableApplicationContext, Resolvable, OSGiController,
+        extends ConfigurableApplicationContext, OSGiController,
         PropertyChangeAware {
 
     public static final String APPLICATION_WINDOW_PROPERTY_NAME = "applicationWindow";
+    public static final String NAMESPACE_PROPERTY_NAME = "namespace";
 
     public <T> T createBean(Class<T> type);
 
     public SpringBXMLSerializer getSerializer();
+
+    public Resources getResources();
+
+    public URL getLocation();
 
     public Options getPreferences();
 
@@ -43,6 +50,10 @@ public interface LumPiApplicationContext
     public BindableWindow getApplicationWindow();
 
     public void setApplicationWindow(BindableWindow window);
+
+    public Map<String, Object> getNamespace();
+
+    public void setNamespace(Map<String, Object> uiNamespace);
 
     public HostFrame getHostFrame();
 

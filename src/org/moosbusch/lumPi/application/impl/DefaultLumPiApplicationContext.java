@@ -15,25 +15,35 @@
  */
 package org.moosbusch.lumPi.application.impl;
 
+import org.apache.pivot.util.Resources;
 import org.moosbusch.lumPi.application.spi.AbstractLumPiApplicationContext;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
+import org.moosbusch.lumPi.application.SpringBXMLSerializer;
 
 /**
  *
  * @author moosbusch
  */
 public class DefaultLumPiApplicationContext
-    extends AbstractLumPiApplicationContext {
+        extends AbstractLumPiApplicationContext {
 
-
-    public DefaultLumPiApplicationContext(LumPiApplication
-            <? extends LumPiApplicationContext> application) {
+    public DefaultLumPiApplicationContext(LumPiApplication<? extends LumPiApplicationContext> application) {
         super(application);
     }
 
     @Override
     public void shutdownContext() {
+    }
+
+    @Override
+    public SpringBXMLSerializer getSerializer() {
+        return new DefaultSpringBXMLSerializer(this);
+    }
+
+    @Override
+    public Resources getResources() {
+        return null;
     }
 
 }

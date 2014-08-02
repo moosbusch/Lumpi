@@ -55,6 +55,7 @@ import org.apache.pivot.collections.ArrayList;
 import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.collections.Sequence.Tree.Path;
 import org.apache.pivot.wtk.Action;
+import org.apache.pivot.wtk.ApplicationContext.QueuedCallback;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.TreeView;
 import org.apache.pivot.wtk.Visual;
@@ -69,6 +70,18 @@ import org.springframework.util.ObjectUtils;
 public class LumPiUtil {
 
     private LumPiUtil() {
+    }
+
+    public static QueuedCallback queueCallback(Runnable callback) {
+        return org.apache.pivot.wtk.ApplicationContext.queueCallback(callback);
+    }
+
+    public static QueuedCallback queueCallback(Runnable callback, boolean wait) {
+        return org.apache.pivot.wtk.ApplicationContext.queueCallback(callback, wait);
+    }
+
+    public static void handleUncaughtException(Exception ex) {
+        org.apache.pivot.wtk.ApplicationContext.handleUncaughtException(ex);
     }
 
     public static Map<String, Object> getBXMLFieldValues(Bindable obj) throws IllegalAccessException {
