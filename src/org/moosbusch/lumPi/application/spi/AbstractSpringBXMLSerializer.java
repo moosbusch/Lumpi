@@ -17,14 +17,15 @@ package org.moosbusch.lumPi.application.spi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 import org.apache.pivot.beans.BXMLSerializer;
-import org.apache.pivot.beans.BindException;
+import org.apache.pivot.collections.Map;
 import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.serialization.Serializer;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
 import org.moosbusch.lumPi.application.SpringBXMLSerializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -34,11 +35,10 @@ import org.springframework.context.ApplicationContext;
 public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer
         implements SpringBXMLSerializer {
 
-    @Autowired
-    private final ApplicationContext applicationContext;
+    private final Reference<ApplicationContext> applicationContextRef;
 
     public AbstractSpringBXMLSerializer(ApplicationContext applicationContext) {
-        this.applicationContext = Objects.requireNonNull(applicationContext);
+        this.applicationContextRef = new WeakReference<>(applicationContext);
     }
 
     @Override
@@ -56,18 +56,21 @@ public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer
     public final Object readObject(InputStream inputStream)
             throws IOException, SerializationException {
         Object result = readObjectImpl(inputStream);
+        Map<String, Object> ns = getNamespace();
+
+        if (!ns.isEmpty()) {
+            for (String key : ns) {
+                Object value = Objects.requireNonNull(ns.get(key));
+                getApplicationContext().getNamespace().put(key, value);
+            }
+        }
 
         return result;
     }
 
     @Override
-    public final void bind(Object object, Class<?> type) throws BindException {
-        super.bind(object, type);
-    }
-
-    @Override
     public LumPiApplicationContext getApplicationContext() {
-        return (LumPiApplicationContext) applicationContext;
+        return (LumPiApplicationContext) applicationContextRef.get();
     }
 
 }

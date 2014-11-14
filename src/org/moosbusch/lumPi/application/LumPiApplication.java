@@ -18,24 +18,18 @@ package org.moosbusch.lumPi.application;
 import java.net.URL;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Application;
-import org.moosbusch.lumPi.beans.PivotBeanConfiguration;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
-import org.osgi.framework.BundleActivator;
 
 /**
  *
  * @author moosbusch
  */
-public interface LumPiApplication<T extends LumPiApplicationContext>
+public interface LumPiApplication<T extends LumPiApplicationContext, V extends BindableWindow>
         extends Application {
 
-    public Class<? extends PivotBeanConfiguration> getPivotBeanConfigurationClass();
+    public Class<?>[] getBeanConfigurationClasses();
 
-    public Class<?>[] getConfigurationClasses();
-
-    public String[] getConfigurationPackages();
-
-    public URL[] getBeanConfigurationFiles();
+    public String[] getBeanConfigurationPackages();
 
     public URL getBXMLConfigurationFile();
 
@@ -43,15 +37,7 @@ public interface LumPiApplication<T extends LumPiApplicationContext>
 
     public T getApplicationContext();
 
-    public BindableWindow getApplicationWindow();
-
-    public boolean isOSGiAware();
-
-    public OSGiController getOSGiController();
-
-    public BundleActivator[] getBundleActivators();
-
-    public String[] getServiceNames();
+    public V getApplicationWindow();
 
 
 }

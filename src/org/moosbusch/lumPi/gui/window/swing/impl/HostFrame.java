@@ -56,12 +56,14 @@ public class HostFrame extends JFrame implements PropertyChangeAware {
     public static final String WINDOW_PROPERTY_NAME = "window";
     private final DisplayHost displayHost;
     private final PropertyChangeAware pca;
-    private final Reference<LumPiApplication<? extends LumPiApplicationContext>> appRef;
+    private final Reference<LumPiApplication<? extends LumPiApplicationContext,
+            ? extends BindableWindow>> appRef;
     private final WindowListener windowListener;
     private final JLayer<DisplayHost> layer;
     private BindableWindow window;
 
-    public HostFrame(LumPiApplication<? extends LumPiApplicationContext> application) {
+    public HostFrame(LumPiApplication<? extends LumPiApplicationContext,
+            ? extends BindableWindow> application) {
         this.appRef = new WeakReference<>(application);
         this.pca = new PropertyChangeAwareAdapter(this);
         this.windowListener = new WindowListener();
@@ -108,7 +110,8 @@ public class HostFrame extends JFrame implements PropertyChangeAware {
         return new DisplayHostImpl();
     }
 
-    protected final LumPiApplication<? extends LumPiApplicationContext> getApplication() {
+    protected final LumPiApplication<? extends LumPiApplicationContext,
+         ? extends BindableWindow> getApplication() {
         return appRef.get();
     }
 

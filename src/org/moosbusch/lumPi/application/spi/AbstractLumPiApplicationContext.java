@@ -15,42 +15,43 @@
  */
 package org.moosbusch.lumPi.application.spi;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.framework.Felix;
-import org.apache.felix.framework.util.FelixConstants;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.pivot.beans.BXML;
 import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.PropertyChangeListener;
+import org.apache.pivot.collections.HashMap;
 import org.apache.pivot.collections.Map;
+import org.apache.pivot.collections.MapListener;
+import org.apache.pivot.serialization.SerializationException;
+import org.apache.pivot.util.Resources;
+import org.apache.pivot.util.Vote;
 import org.apache.pivot.wtk.Action;
+import org.apache.pivot.wtk.ApplicationContext;
+import org.apache.pivot.wtk.Window;
+import org.apache.pivot.wtk.WindowStateListener;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
-import static org.moosbusch.lumPi.application.LumPiApplicationContext.APPLICATION_WINDOW_PROPERTY_NAME;
 import org.moosbusch.lumPi.application.event.impl.ApplicationWindowLoadedEvent;
 import org.moosbusch.lumPi.application.event.impl.NamespaceEvent;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
-import org.moosbusch.lumPi.beans.impl.LumPiMiscBean;
 import org.moosbusch.lumPi.beans.impl.Options;
-import org.moosbusch.lumPi.beans.impl.PivotFactoryBean;
 import org.moosbusch.lumPi.beans.impl.PropertyChangeAwareAdapter;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.moosbusch.lumPi.gui.window.swing.impl.HostFrame;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.io.Resource;
 
 /**
  *
@@ -60,84 +61,45 @@ public abstract class AbstractLumPiApplicationContext
         extends AnnotationConfigApplicationContext
         implements LumPiApplicationContext {
 
-    private final LumPiApplication<? extends LumPiApplicationContext> app;
+    private final LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> app;
+    private final Map<String, Object> namespace;
     private final PropertyChangeAware pca;
-    private Map<String, Object> namespace;
     private BindableWindow applicationWindow;
     private final HostFrame hostFrame;
     private final Options options;
-    private Felix felix;
 
-    public AbstractLumPiApplicationContext(LumPiApplication<? extends LumPiApplicationContext> application) {
+    public AbstractLumPiApplicationContext(LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> application) {
         this.app = Objects.requireNonNull(application);
         this.pca = new PropertyChangeAwareAdapter(this);
         this.hostFrame = new HostFrame(application);
         this.options = new Options(Preferences.userNodeForPackage(application.getClass()));
-//        this.bxmlSerializer = initSerializer(Objects.requireNonNull(application));
+        this.namespace = new HashMap<>();
         init(application);
     }
 
-    private void init(LumPiApplication<? extends LumPiApplicationContext> application) {
+    private void init(LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> application) {
         registerShutdownHook();
         addPropertyChangeListener(new PropertyChangeListenerImpl());
+        getNamespace().getMapListeners().add(new MapListenerImpl());
 
         try {
-            registerFactoryBeans(application);
-            loadXmlConfig(application);
             loadAnnotationConfig(application);
         } finally {
             refresh();
         }
     }
 
-    private void loadAnnotationConfig(LumPiApplication<? extends LumPiApplicationContext> application) {
-        String[] beanPackages = application.getConfigurationPackages();
-        Class<?>[] annotatedClasses = application.getConfigurationClasses();
+    private void loadAnnotationConfig(LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> application) {
+        String[] beanPackages = application.getBeanConfigurationPackages();
+        Class<?>[] annotatedClasses = application.getBeanConfigurationClasses();
+
         if (ArrayUtils.isNotEmpty(annotatedClasses)) {
             register(annotatedClasses);
         }
+
         if (ArrayUtils.isNotEmpty(beanPackages)) {
             scan(beanPackages);
         }
-    }
-
-    private void loadXmlConfig(LumPiApplication<? extends LumPiApplicationContext> application) {
-        String[] configLocations = configLocationsFromURLs(
-                application.getBeanConfigurationFiles());
-        if (ArrayUtils.isNotEmpty(configLocations)) {
-            XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(this);
-            for (String configLocation : configLocations) {
-                Resource res = getResource(configLocation);
-                if (res != null) {
-                    xmlReader.loadBeanDefinitions(res);
-                }
-            }
-        }
-    }
-
-    private Class<?>[] getPivotCoreConfigurationClasses(
-            LumPiApplication<? extends LumPiApplicationContext> application) {
-        return new Class<?>[]{PivotFactoryBean.class, Objects.requireNonNull(
-            application.getPivotBeanConfigurationClass()), LumPiMiscBean.class};
-    }
-
-    private void registerFactoryBeans(LumPiApplication<? extends LumPiApplicationContext> application) {
-        Class<?>[] corePivotConfigurationClasses = Objects.requireNonNull(
-                getPivotCoreConfigurationClasses(application));
-        for (Class<?> pivotFactoryBeanClass : corePivotConfigurationClasses) {
-            register(pivotFactoryBeanClass);
-        }
-    }
-
-    private String[] configLocationsFromURLs(URL[] locations) {
-        if (ArrayUtils.isNotEmpty(locations)) {
-            String[] result = new String[locations.length];
-            for (int cnt = 0; cnt < result.length; cnt++) {
-                result[cnt] = locations[cnt].toExternalForm();
-            }
-            return result;
-        }
-        return null;
     }
 
     protected void registerAction(String actionNameKey, Action action) {
@@ -146,25 +108,104 @@ public abstract class AbstractLumPiApplicationContext
         }
     }
 
-    @Override
-    public final <T> T createBean(Class<T> type) {
-        if (BindableWindow.class.isAssignableFrom(type)) {
-            BindableWindow result = getApplicationWindow();
+    protected String getBeanCreationMethodName(Class<?> type) {
+        Class<?>[] configClasses = getApplication().getBeanConfigurationClasses();
 
-            if (result != null) {
-                return (T) result;
-            } else {
-                result = Objects.requireNonNull((BindableWindow) getAutowireCapableBeanFactory().createBean(type));
-                setApplicationWindow(result);
-                return (T) result;
+        if (ArrayUtils.isNotEmpty(configClasses)) {
+            for (Class<?> configClass : configClasses) {
+                Method[] methods = configClass.getMethods();
+
+                for (Method method : methods) {
+                    Class<?> returnType = method.getReturnType();
+
+                    if (returnType == type) {
+                        return method.getName();
+                    }
+                }
             }
         }
 
-        return getAutowireCapableBeanFactory().createBean(type);
+        throw new BeanCreationException("No qualifying bean of type '" + type.getName() + "' is defined!");
+    }
+
+    protected BindableWindow readObject()
+            throws IOException, SerializationException {
+        BindableWindow result;
+
+        Resources resources = getResources();
+        URL location = Objects.requireNonNull(getLocation());
+
+        if (resources != null) {
+            result = (BindableWindow) getSerializer().readObject(
+                    location, resources);
+        } else {
+            result = (BindableWindow) getSerializer().readObject(
+                    location);
+        }
+
+        return result;
     }
 
     @Override
-    public final LumPiApplication<? extends LumPiApplicationContext> getApplication() {
+    public final void initializeGUI() {
+        BindableWindow window = null;
+
+        try {
+            window = Objects.requireNonNull(readObject());
+        } catch (IOException | SerializationException ex) {
+            Logger.getLogger(AbstractLumPiApplicationContext.class.getName()).log(
+                    Level.SEVERE, null, ex);
+        } finally {
+            if (window != null) {
+                getHostFrame().setWindow(window);
+                setApplicationWindow(window);
+            }
+        }
+    }
+
+    @Override
+    public final <T> T createBean(Class<T> type) {
+        String beanCreationMethodName = getBeanCreationMethodName(type);
+
+        return getBean(beanCreationMethodName, type);
+    }
+
+    @Override
+    public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
+        Map<String, Object> ns = getSerializer().getNamespace();
+
+        if (ns != null) {
+            if (ns.containsKey(name)) {
+                Object value = ns.get(name);
+
+                if (value != null) {
+                    if (requiredType.isInstance(value)) {
+                        return (T) value;
+                    }
+                }
+            }
+        }
+
+        return super.getBean(name, requiredType);
+    }
+
+    @Override
+    public Object getBean(String name) throws BeansException {
+        Map<String, Object> ns = getSerializer().getNamespace();
+
+        if (ns.containsKey(name)) {
+            Object value = ns.get(name);
+
+            if (value != null) {
+                return value;
+            }
+        }
+
+        return super.getBean(name);
+    }
+
+    @Override
+    public final LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> getApplication() {
         return app;
     }
 
@@ -176,12 +217,6 @@ public abstract class AbstractLumPiApplicationContext
     @Override
     public final Map<String, Object> getNamespace() {
         return namespace;
-    }
-
-    @Override
-    public final void setNamespace(Map<String, Object> uiNamespace) {
-        this.namespace = uiNamespace;
-        firePropertyChange(NAMESPACE_PROPERTY_NAME);
     }
 
     @Override
@@ -206,58 +241,6 @@ public abstract class AbstractLumPiApplicationContext
     }
 
     @Override
-    public final BundleContext getBundleContext() {
-        return felix.getBundleContext();
-    }
-
-    @Override
-    public void startFramework(BundleActivator... bundleActivators) throws Exception {
-        java.util.Map<String, Object> osgiProperties = getOSGiProperties();
-        osgiProperties.put(FelixConstants.SYSTEMBUNDLE_ACTIVATORS_PROP, Arrays.asList(bundleActivators));
-        this.felix = new Felix(osgiProperties);
-        felix.start();
-    }
-
-    @Override
-    public void stopFramework() throws Exception {
-        if (felix != null) {
-            try {
-                felix.stop();
-                felix.waitForStop(0);
-            } catch (BundleException | InterruptedException ex) {
-                Logger.getLogger(LumPiApplicationContext.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    @Override
-    public <T> Collection<ServiceReference<T>> getServiceReferences(Class<T> type, String serviceId)
-            throws InvalidSyntaxException {
-        String idFilter = "(" + getServiceIdPropertyName() + "=" + serviceId + ")";
-        return getBundleContext().getServiceReferences(type, idFilter);
-    }
-
-    @Override
-    public <S> S getService(ServiceReference<S> sr) {
-        return getBundleContext().getService(sr);
-    }
-
-    @Override
-    public boolean ungetService(ServiceReference<?> sr) {
-        return getBundleContext().ungetService(sr);
-    }
-
-    @Override
-    public java.util.Map<String, Object> getOSGiProperties() {
-        return new HashMap<>();
-    }
-
-    @Override
-    public String getServiceIdPropertyName() {
-        return SERVICE_ID_PROPERTY_NAME;
-    }
-
-    @Override
     public BeanMonitor getMonitor() {
         return pca.getMonitor();
     }
@@ -275,6 +258,36 @@ public abstract class AbstractLumPiApplicationContext
     @Override
     public void firePropertyChange(String propertyName) {
         pca.firePropertyChange(propertyName);
+    }
+
+    private class MapListenerImpl extends MapListener.Adapter<String, Object> {
+
+        @Override
+        public void valueAdded(Map<String, Object> map, String key) {
+            Object value = Objects.requireNonNull(map.get(key));
+
+            if (value instanceof Window) {
+                Window window = (Window) value;
+                window.getWindowStateListeners().add(new WindowStateListenerImpl());
+            }
+        }
+
+    }
+
+    private class WindowStateListenerImpl extends WindowStateListener.Adapter {
+
+        @Override
+        public Vote previewWindowOpen(Window window) {
+            final Map<String, Object> ns = getNamespace();
+
+            for (String key : ns) {
+                final Object value = Objects.requireNonNull(getNamespace().get(key));
+                ApplicationContext.queueCallback(new BindingCallback(ns, value));
+            }
+
+            return super.previewWindowOpen(window);
+        }
+
     }
 
     private class PropertyChangeListenerImpl implements PropertyChangeListener {
@@ -295,4 +308,55 @@ public abstract class AbstractLumPiApplicationContext
         }
     }
 
+    private static class BindingCallback implements Runnable {
+
+        private final Object target;
+        private final Map<String, Object> ns;
+
+        public BindingCallback(Map<String, Object> ns, Object target) {
+            this.target = target;
+            this.ns = ns;
+        }
+
+        @Override
+        public void run() {
+            try {
+                bind(ns, target);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(AbstractLumPiApplicationContext.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        public void bind(Map<String, Object> ns, Object object) throws IllegalAccessException {
+            Field[] fields = object.getClass().getDeclaredFields();
+
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(BXML.class)) {
+                    String fieldName = field.getName();
+                    int fieldModifiers = field.getModifiers();
+                    BXML bindingAnnotation = field.getAnnotation(BXML.class);
+
+                    if ((fieldModifiers & Modifier.FINAL) > 0) {
+                        throw new IllegalAccessException(fieldName + " is final.");
+                    }
+
+                    if ((fieldModifiers & Modifier.PUBLIC) == 0) {
+                        field.setAccessible(true);
+                    }
+
+                    String id = bindingAnnotation.id();
+
+                    if (StringUtils.isBlank(id) || id.equals("\0")) {
+                        id = field.getName();
+                    }
+
+                    if (ns.containsKey(id)) {
+                        Object value = ns.get(id);
+                        FieldUtils.writeDeclaredField(target, id, value, true);
+                    }
+                }
+            }
+
+        }
+    }
 }

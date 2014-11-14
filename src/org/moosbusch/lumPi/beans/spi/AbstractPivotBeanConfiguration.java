@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.moosbusch.lumPi.beans.impl;
+package org.moosbusch.lumPi.beans.spi;
 
 import org.apache.pivot.beans.BXMLSerializer;
 import org.apache.pivot.collections.ArrayList;
@@ -181,19 +181,24 @@ import org.apache.pivot.wtk.validation.NotEmptyTextValidator;
 import org.apache.pivot.wtk.validation.RegexTextValidator;
 import org.apache.pivot.xml.XMLSerializer;
 import org.moosbusch.lumPi.beans.PivotBeanConfiguration;
+import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 
 /**
  *
  * @author Gunnar Kappei
  */
 @Configuration
-public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
+public abstract class AbstractPivotBeanConfiguration<T extends BindableWindow>
+        implements PivotBeanConfiguration<T> {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Sequence.Tree.ImmutablePath createImmutablePath() {
         return new Sequence.Tree.ImmutablePath();
@@ -201,6 +206,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Sequence.Tree<? extends Object> createTree() {
         return new Sequence.Tree<>();
@@ -208,6 +214,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ArrayList<? extends Object> createArrayList() {
         return new ArrayList<>();
@@ -215,6 +222,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ArrayQueue<? extends Object> createArrayQueue() {
         return new ArrayQueue<>();
@@ -222,6 +230,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ArrayStack<? extends Object> createArrayStack() {
         return new ArrayStack<>();
@@ -229,6 +238,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public HashSet<? extends Object> createHashSet() {
         return new HashSet<>();
@@ -236,6 +246,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public HashMap<? extends Object, ? extends Object> createHashMap() {
         return new HashMap<>();
@@ -243,6 +254,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public LinkedList<? extends Object> createLinkedList() {
         return new LinkedList<>();
@@ -250,6 +262,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public LinkedQueue<? extends Object> createLinkedQueue() {
         return new LinkedQueue<>();
@@ -257,6 +270,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public LinkedStack<? extends Object> createLinkedStack() {
         return new LinkedStack<>();
@@ -264,6 +278,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public FileList createFileList() {
         return new FileList();
@@ -271,6 +286,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public CalendarDate createCalendarDate() {
         return new CalendarDate();
@@ -278,6 +294,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Time createTime() {
         return new Time();
@@ -285,6 +302,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TaskGroup createTaskGroup() {
         return new TaskGroup();
@@ -292,6 +310,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TaskSequence createTaskSequence() {
         return new TaskSequence();
@@ -299,6 +318,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BaselineDecorator createBaselineDecorator() {
         return new BaselineDecorator();
@@ -306,6 +326,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BlurDecorator createBlurDecorator() {
         return new BlurDecorator();
@@ -313,6 +334,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ClipDecorator createClipDecorator() {
         return new ClipDecorator();
@@ -320,6 +342,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public DropShadowDecorator createDropShadowDecorator() {
         return new DropShadowDecorator();
@@ -327,6 +350,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public FadeDecorator createFadeDecorator() {
         return new FadeDecorator();
@@ -334,6 +358,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public GrayscaleDecorator createGrayscaleDecorator() {
         return new GrayscaleDecorator();
@@ -341,6 +366,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public OverlayDecorator createOverlayDecorator() {
         return new OverlayDecorator();
@@ -348,6 +374,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ReflectionDecorator createReflectionDecorator() {
         return new ReflectionDecorator();
@@ -355,6 +382,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public RotationDecorator createRotationDecorator() {
         return new RotationDecorator();
@@ -362,6 +390,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public SaturationDecorator createSaturationDecorator() {
         return new SaturationDecorator();
@@ -369,6 +398,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ScaleDecorator createScaleDecorator() {
         return new ScaleDecorator();
@@ -376,6 +406,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ShadeDecorator createShadeDecorator() {
         return new ShadeDecorator();
@@ -383,6 +414,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TagDecorator createTagDecorator() {
         return new TagDecorator();
@@ -390,6 +422,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TranslationDecorator createTranslationDecorator() {
         return new TranslationDecorator();
@@ -397,6 +430,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public WatermarkDecorator createWatermarkDecorator() {
         return new WatermarkDecorator();
@@ -404,6 +438,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Circular createCircular() {
         return new Circular();
@@ -411,6 +446,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Cubic createCubic() {
         return new Cubic();
@@ -418,6 +454,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Exponential createExponential() {
         return new Exponential();
@@ -425,6 +462,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Linear createLinear() {
         return new Linear();
@@ -432,6 +470,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Quadratic createQuadratic() {
         return new Quadratic();
@@ -439,6 +478,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Quartic createQuartic() {
         return new Quartic();
@@ -446,6 +486,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Quintic createQuintic() {
         return new Quintic();
@@ -453,6 +494,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Sine createSine() {
         return new Sine();
@@ -460,6 +502,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BulletedList createBulletedList() {
         return new BulletedList();
@@ -467,6 +510,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ComponentNode createComponentNode() {
         return new ComponentNode();
@@ -474,6 +518,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Document createDocument() {
         return new Document();
@@ -481,6 +526,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ImageNode createImageNode() {
         return new ImageNode();
@@ -488,6 +534,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public List.Item createTextListItem() {
         return new List.Item();
@@ -495,6 +542,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public NumberedList createNumberedList() {
         return new NumberedList();
@@ -502,6 +550,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Paragraph createParagraph() {
         return new Paragraph();
@@ -509,6 +558,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Span createSpan() {
         return new Span();
@@ -516,6 +566,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TextNode createTextNode() {
         return new TextNode();
@@ -523,6 +574,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TextSpan createTextSpan() {
         return new TextSpan();
@@ -530,6 +582,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BigDecimalValidator createBigDecimalValidator() {
         return new BigDecimalValidator();
@@ -537,6 +590,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BigIntegerValidator createBigIntegerValidator() {
         return new BigIntegerValidator();
@@ -544,6 +598,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ComparableRangeValidator<?> createComparableRangeValidator() {
         return new ComparableRangeValidator();
@@ -551,6 +606,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ComparableValidator<?> createComparableValidator() {
         return new ComparableValidator();
@@ -558,6 +614,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public DecimalValidator createDecimalValidator() {
         return new DecimalValidator();
@@ -565,6 +622,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public DoubleRangeValidator createDoubleRangeValidator() {
         return new DoubleRangeValidator();
@@ -572,6 +630,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public DoubleValidator createDoubleValidator() {
         return new DoubleValidator();
@@ -579,6 +638,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public EmptyTextValidator createEmptyTextValidator() {
         return new EmptyTextValidator();
@@ -586,6 +646,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public FloatRangeValidator createFloatRangeValidator() {
         return new FloatRangeValidator();
@@ -593,6 +654,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public FloatValidator createFloatValidator() {
         return new FloatValidator();
@@ -600,6 +662,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public IntRangeValidator createIntRangeValidator() {
         return new IntRangeValidator();
@@ -607,6 +670,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public IntValidator createIntValidator() {
         return new IntValidator();
@@ -614,6 +678,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public NotEmptyTextValidator createNotEmptyTextValidator() {
         return new NotEmptyTextValidator();
@@ -621,6 +686,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public RegexTextValidator createRegexTextValidator() {
         return new RegexTextValidator();
@@ -628,6 +694,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public FileSerializer createFileSerializer() {
         return new FileSerializer();
@@ -635,6 +702,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BinarySerializer createBinarySerializer() {
         return new BinarySerializer();
@@ -642,6 +710,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BufferedImageSerializer createBufferedImageSerializer() {
         return new BufferedImageSerializer();
@@ -649,6 +718,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BXMLSerializer createBXMLSerializer() {
         return new BXMLSerializer();
@@ -656,6 +726,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ByteArraySerializer createByteArraySerializer() {
         return new ByteArraySerializer();
@@ -663,6 +734,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public CSVSerializer createCSVSerializer() {
         return new CSVSerializer();
@@ -670,6 +742,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public JSONSerializer createJSONSerializer() {
         return new JSONSerializer();
@@ -677,6 +750,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public PlainTextSerializer createPlainTextSerializer() {
         return new PlainTextSerializer();
@@ -684,6 +758,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public PropertiesSerializer createPropertiesSerializer() {
         return new PropertiesSerializer();
@@ -691,6 +766,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public StringSerializer createStringSerializer() {
         return new StringSerializer();
@@ -698,6 +774,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public SVGDiagramSerializer createSVGDiagramSerializer() {
         return new SVGDiagramSerializer();
@@ -705,6 +782,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public XMLSerializer createXMLSerializer() {
         return new XMLSerializer();
@@ -712,6 +790,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TextInput createTextInput() {
         return new TextInput();
@@ -719,6 +798,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TextArea createTextArea() {
         return new TextArea();
@@ -726,6 +806,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TextPane createTextPane() {
         return new TextPane();
@@ -733,6 +814,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public RadioButtonGroup createRadioButtonGroup() {
         return new RadioButtonGroup();
@@ -740,6 +822,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ButtonGroup createButtonGroup() {
         return new ButtonGroup();
@@ -747,6 +830,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public PushButton createPushButton() {
         return new PushButton();
@@ -754,6 +838,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public LinkButton createLinkButton() {
         return new LinkButton();
@@ -761,6 +846,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListButton createListButton() {
         return new ListButton();
@@ -768,6 +854,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Rollup createRollup() {
         return new Rollup();
@@ -775,6 +862,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public RadioButton createRadioButton() {
         return new RadioButton();
@@ -782,6 +870,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListView createListView() {
         return new ListView();
@@ -789,6 +878,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableView createTableView() {
         return new TableView();
@@ -796,6 +886,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TreeView createTreeView() {
         return new TreeView();
@@ -803,6 +894,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public MenuButton createMenuButton() {
         return new MenuButton();
@@ -810,6 +902,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Menu createMenu() {
         return new Menu();
@@ -817,6 +910,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Menu.Item createMenuItem() {
         return new Menu.Item();
@@ -824,6 +918,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Menu.Section createMenuSection() {
         return new Menu.Section();
@@ -831,6 +926,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public MenuBar createMenuBar() {
         return new MenuBar();
@@ -838,6 +934,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public MenuBar.Item createMenuBarItem() {
         return new MenuBar.Item();
@@ -845,6 +942,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public MenuPopup createMenuPopup() {
         return new MenuPopup();
@@ -852,6 +950,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public SuggestionPopup createSuggestionPopup() {
         return new SuggestionPopup();
@@ -859,6 +958,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Meter createMeter() {
         return new Meter();
@@ -866,6 +966,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public CalendarButton createCalendarButton() {
         return new CalendarButton();
@@ -873,6 +974,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Calendar createCalendar() {
         return new Calendar();
@@ -880,6 +982,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ColorChooserButton createColorChooserButton() {
         return new ColorChooserButton();
@@ -887,6 +990,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ColorChooser createColorChooser() {
         return new ColorChooser();
@@ -894,6 +998,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Checkbox createCheckbox() {
         return new Checkbox();
@@ -901,6 +1006,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Label createLabel() {
         return new Label();
@@ -908,6 +1014,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public CardPane createCardPane() {
         return new CardPane();
@@ -915,6 +1022,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public GridPane createGridPane() {
         return new GridPane();
@@ -922,6 +1030,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public GridPane.Row createGridPaneRow() {
         return new GridPane.Row();
@@ -929,6 +1038,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TablePane createTablePane() {
         return new TablePane();
@@ -936,6 +1046,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TablePane.Column createTablePaneColumn() {
         return new TablePane.Column();
@@ -943,6 +1054,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TablePane.Row createTablePaneRow() {
         return new TablePane.Row();
@@ -950,6 +1062,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TabPane createTabPane() {
         return new TabPane();
@@ -957,6 +1070,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public BoxPane createBoxPane() {
         return new BoxPane();
@@ -964,6 +1078,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public SplitPane createSplitPane() {
         return new SplitPane();
@@ -971,6 +1086,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public StackPane createStackPane() {
         return new StackPane();
@@ -978,6 +1094,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public FillPane createFillPane() {
         return new FillPane();
@@ -985,6 +1102,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Border createBorder() {
         return new Border();
@@ -992,6 +1110,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Panel createPanel() {
         return new Panel();
@@ -999,6 +1118,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Palette createPalette() {
         return new Palette();
@@ -1006,6 +1126,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Accordion createAccordion() {
         return new Accordion();
@@ -1013,6 +1134,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ActivityIndicator createActivityIndicator() {
         return new ActivityIndicator();
@@ -1020,6 +1142,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Alert createAlert() {
         return new Alert(new String());
@@ -1027,6 +1150,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Dialog createDialog() {
         return new Dialog();
@@ -1034,6 +1158,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Form createForm() {
         return new Form();
@@ -1041,6 +1166,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Form.Section createFormSection() {
         return new Form.Section();
@@ -1048,6 +1174,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Frame createFrame() {
         return new Frame();
@@ -1055,6 +1182,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ImageView createImageView() {
         return new ImageView();
@@ -1062,6 +1190,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Expander createExpander() {
         return new Expander();
@@ -1069,6 +1198,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public FileBrowser createFileBrowser() {
         return new FileBrowser();
@@ -1076,6 +1206,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public FileBrowserSheet createFileBrowserSheet() {
         return new FileBrowserSheet();
@@ -1083,6 +1214,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ScrollBar createScrollBar() {
         return new ScrollBar();
@@ -1090,6 +1222,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ScrollPane createScrollPane() {
         return new ScrollPane();
@@ -1097,6 +1230,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Separator createSeparator() {
         return new Separator();
@@ -1104,6 +1238,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Slider createSlider() {
         return new Slider();
@@ -1111,6 +1246,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Spinner createSpinner() {
         return new Spinner();
@@ -1118,6 +1254,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Tooltip createTooltip() {
         return new Tooltip();
@@ -1125,6 +1262,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Window createWindow() {
         return new Window();
@@ -1132,6 +1270,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Sheet createSheet() {
         return new Sheet();
@@ -1139,6 +1278,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Prompt createPrompt() {
         return new Prompt();
@@ -1146,6 +1286,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Panorama createPanorama() {
         return new Panorama();
@@ -1153,6 +1294,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public AccordionHeaderDataRenderer createAccordionHeaderDataRenderer() {
         return new AccordionHeaderDataRenderer();
@@ -1160,6 +1302,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ButtonData createButtonData() {
         return new ButtonData();
@@ -1167,6 +1310,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ButtonDataRenderer createButtonDataRenderer() {
         return new ButtonDataRenderer();
@@ -1174,6 +1318,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public CalendarButtonDataRenderer createCalendarButtonDataRenderer() {
         return new CalendarButtonDataRenderer();
@@ -1181,6 +1326,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public CalendarDateSpinnerData createCalendarDateSpinnerData() {
         return new CalendarDateSpinnerData();
@@ -1188,6 +1334,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ColorItem createColorItem() {
         return new ColorItem();
@@ -1195,6 +1342,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public LinkButtonDataRenderer createLinkButtonDataRenderer() {
         return new LinkButtonDataRenderer();
@@ -1202,6 +1350,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListButtonColorItemRenderer createListButtonColorItemRenderer() {
         return new ListButtonColorItemRenderer();
@@ -1209,6 +1358,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListButtonDataRenderer createListButtonDataRenderer() {
         return new ListButtonDataRenderer();
@@ -1216,6 +1366,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListItem createListItem() {
         return new ListItem();
@@ -1223,6 +1374,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListViewColorItemRenderer createListViewColorItemRenderer() {
         return new ListViewColorItemRenderer();
@@ -1230,6 +1382,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListViewColorItemRenderer.ColorBadge createColorBadge() {
         return new ListViewColorItemRenderer.ColorBadge();
@@ -1237,6 +1390,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListViewItemEditor createListViewItemEditor() {
         return new ListViewItemEditor();
@@ -1244,6 +1398,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public ListViewItemRenderer createListViewItemRenderer() {
         return new ListViewItemRenderer();
@@ -1251,6 +1406,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public MenuBarItemDataRenderer createMenuBarItemDataRenderer() {
         return new MenuBarItemDataRenderer();
@@ -1258,6 +1414,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public MenuButtonDataRenderer createMenuButtonDataRenderer() {
         return new MenuButtonDataRenderer();
@@ -1265,6 +1422,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public MenuItemData createMenuItemData() {
         return new MenuItemData();
@@ -1272,6 +1430,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public MenuItemDataRenderer createMenuItemDataRenderer() {
         return new MenuItemDataRenderer();
@@ -1279,6 +1438,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public NumericSpinnerData createNumericSpinnerData() {
         return new NumericSpinnerData();
@@ -1286,6 +1446,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public SpinnerItemRenderer createSpinnerItemRenderer() {
         return new SpinnerItemRenderer();
@@ -1293,6 +1454,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewBooleanCellRenderer createTableViewBooleanCellRenderer() {
         return new TableViewBooleanCellRenderer();
@@ -1300,6 +1462,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewCellRenderer createTableViewCellRenderer() {
         return new TableViewCellRenderer();
@@ -1307,6 +1470,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewCheckboxCellRenderer createTableViewCheckboxCellRenderer() {
         return new TableViewCheckboxCellRenderer();
@@ -1314,6 +1478,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewDateCellRenderer createTableViewDateCellRenderer() {
         return new TableViewDateCellRenderer();
@@ -1321,6 +1486,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewFileSizeCellRenderer createTableViewFileSizeCellRenderer() {
         return new TableViewFileSizeCellRenderer();
@@ -1328,6 +1494,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewHeaderData createTableViewHeaderData() {
         return new TableViewHeaderData();
@@ -1335,6 +1502,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewHeaderDataRenderer createTableViewHeaderDataRenderer() {
         return new TableViewHeaderDataRenderer();
@@ -1342,6 +1510,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewImageCellRenderer createTableViewImageCellRenderer() {
         return new TableViewImageCellRenderer();
@@ -1349,6 +1518,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewMultiCellRenderer createTableViewMultiCellRenderer() {
         return new TableViewMultiCellRenderer();
@@ -1356,6 +1526,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewMultiCellRenderer.RendererMapping createRendererMapping() {
         return new TableViewMultiCellRenderer.RendererMapping();
@@ -1363,6 +1534,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewNumberCellRenderer createTableViewNumberCellRenderer() {
         return new TableViewNumberCellRenderer();
@@ -1370,6 +1542,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewRowEditor createTableViewRowEditor() {
         return new TableViewRowEditor();
@@ -1377,6 +1550,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewTextAreaCellRenderer createTableViewTextAreaCellRenderer() {
         return new TableViewTextAreaCellRenderer();
@@ -1384,6 +1558,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TableViewTriStateCellRenderer createTableViewTriStateCellRenderer() {
         return new TableViewTriStateCellRenderer();
@@ -1391,6 +1566,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TreeBranch createTreeBranch() {
         return new TreeBranch();
@@ -1398,6 +1574,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TreeNode createTreeNode() {
         return new TreeNode();
@@ -1405,6 +1582,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TreeViewNodeEditor createTreeViewNodeEditor() {
         return new TreeViewNodeEditor();
@@ -1412,6 +1590,7 @@ public class DefaultPivotBeanConfiguration implements PivotBeanConfiguration {
 
     @Bean
     @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public TreeViewNodeRenderer createTreeViewNodeRenderer() {
         return new TreeViewNodeRenderer();

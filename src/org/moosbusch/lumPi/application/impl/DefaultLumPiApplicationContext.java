@@ -20,6 +20,7 @@ import org.moosbusch.lumPi.application.spi.AbstractLumPiApplicationContext;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
 import org.moosbusch.lumPi.application.SpringBXMLSerializer;
+import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 
 /**
  *
@@ -28,7 +29,8 @@ import org.moosbusch.lumPi.application.SpringBXMLSerializer;
 public class DefaultLumPiApplicationContext
         extends AbstractLumPiApplicationContext {
 
-    public DefaultLumPiApplicationContext(LumPiApplication<? extends LumPiApplicationContext> application) {
+    public DefaultLumPiApplicationContext(LumPiApplication<? extends LumPiApplicationContext,
+            ? extends BindableWindow> application) {
         super(application);
     }
 

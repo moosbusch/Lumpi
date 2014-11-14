@@ -42,130 +42,179 @@ import org.moosbusch.lumPi.gui.form.impl.DefaultDynamicForm;
 import org.moosbusch.lumPi.gui.menu.impl.ConfigurableMenuHandler;
 import org.moosbusch.lumPi.gui.renderer.impl.DefaultButtonDataRenderer;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 
 /**
  *
  * @author Gunnar Kappei
  */
 @Configuration
-public class LumPiMiscBean  {
+public class LumPiMiscBean {
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultQuitAction createDefaultQuitAction() {
         return new DefaultQuitAction();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultDialogAction<? extends BindableWindow, ? extends AbstractSubmitableDialog<?>>
-         createDefaultDialogAction() {
+            createDefaultDialogAction() {
         return new DefaultDialogAction<>();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultSheetAction<? extends BindableWindow, ? extends AbstractSubmitableSheet<?>>
-         createDefaultSheetAction() {
+            createDefaultSheetAction() {
         return new DefaultSheetAction<>();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultPromptAction<? extends BindableWindow, ? extends AbstractSubmitablePrompt<?>>
-         createDefaultPromptAction() {
+            createDefaultPromptAction() {
         return new DefaultPromptAction<>();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public FillScrollPane createFillScrollPane() {
         return new FillScrollPane();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultSubmitableFileBrowserSheet createDefaultSubmitableFileBrowserSheet() {
         return new DefaultSubmitableFileBrowserSheet();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DirectoryFileBrowserSheet createDirectoryFileBrowserSheet() {
         return new DirectoryFileBrowserSheet();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultButtonDataRenderer createDefaultButtonDataRenderer() {
         return new DefaultButtonDataRenderer();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public ConfigurableMenuHandler createConfigurableMenuHandler() {
         return new ConfigurableMenuHandler();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultDynamicForm createDefaultDynamicForm() {
         return new DefaultDynamicForm();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public RadioButtonBooleanFormEditor createRadioButtonBooleanFormEditor() {
         return new RadioButtonBooleanFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultCharacterFormEditor createDefaultCharacterFormEditor() {
         return new DefaultCharacterFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultStringFormEditor createDefaultStringFormEditor() {
         return new DefaultStringFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultByteFormEditor createDefaultByteFormEditor() {
         return new DefaultByteFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultShortFormEditor createDefaultShortFormEditor() {
         return new DefaultShortFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultFloatFormEditor createDefaultFloatFormEditor() {
         return new DefaultFloatFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultDoubleFormEditor createDefaultDoubleFormEditor() {
         return new DefaultDoubleFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultIntegerFormEditor createDefaultIntegerFormEditor() {
         return new DefaultIntegerFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public DefaultCollectionFormEditor createDefaultCollectionFormEditor() {
         return new DefaultCollectionFormEditor();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public FilteredTreeView createFilteredTreeView() {
         return new FilteredTreeView();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public FilteredListView createFilteredListView() {
         return new FilteredListView();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public FilteredTableView createFilteredTableView() {
         return new FilteredTableView();
     }
 
     @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public FilteredListButton createFilteredListButton() {
         return new FilteredListButton();
     }

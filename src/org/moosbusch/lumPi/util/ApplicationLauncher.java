@@ -28,16 +28,16 @@ import org.moosbusch.lumPi.application.LumPiApplication;
  */
 public class ApplicationLauncher {
 
-    public static final void main(Class<? extends LumPiApplication<?>> applicationClass) {
+    public static final void main(Class<? extends LumPiApplication<?, ?>> applicationClass) {
         main(new String[]{applicationClass.getName()});
     }
 
     public static void main(String[] args) {
         String applicationClassName = args[0];
-        final LumPiApplication<?> application;
+        final LumPiApplication<?, ?> application;
 
         try {
-            application = (LumPiApplication<?>) ClassLoader.getSystemClassLoader().loadClass(
+            application = (LumPiApplication<?, ?>) ClassLoader.getSystemClassLoader().loadClass(
                     applicationClassName).newInstance();
             if (application != null) {
                 final Display display =

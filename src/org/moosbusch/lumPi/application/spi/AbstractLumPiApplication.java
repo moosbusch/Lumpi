@@ -16,31 +16,20 @@
 
 package org.moosbusch.lumPi.application.spi;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
-import org.apache.pivot.util.concurrent.Task;
-import org.apache.pivot.util.concurrent.TaskExecutionException;
-import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.ApplicationContext;
-import org.apache.pivot.wtk.Container;
 import org.apache.pivot.wtk.Display;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
-import org.moosbusch.lumPi.application.OSGiController;
 import org.moosbusch.lumPi.application.impl.DefaultLumPiApplicationContext;
-import org.moosbusch.lumPi.beans.PivotBeanConfiguration;
-import org.moosbusch.lumPi.beans.impl.DefaultPivotBeanConfiguration;
+import org.moosbusch.lumPi.beans.impl.LumPiMiscBean;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.moosbusch.lumPi.gui.window.swing.impl.HostFrame;
-import org.moosbusch.lumPi.task.spi.AbstractApplicationTask;
-import org.osgi.framework.BundleActivator;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -48,7 +37,7 @@ import org.springframework.context.ApplicationEvent;
  * @author Gunnar Kappei
  */
 public abstract class AbstractLumPiApplication extends Application.Adapter
-    implements LumPiApplication<LumPiApplicationContext> {
+    implements LumPiApplication<LumPiApplicationContext, BindableWindow> {
     private final LumPiApplicationContext context;
     private final PivotApplicationContext pivotAppContext;
 
@@ -76,19 +65,8 @@ public abstract class AbstractLumPiApplication extends Application.Adapter
     }
 
     @Override
-    public final boolean isOSGiAware() {
-        return ArrayUtils.isNotEmpty(getBundleActivators()) || ArrayUtils.isNotEmpty(getServiceNames());
-    }
-
-    @Override
     public final BindableWindow getApplicationWindow() {
-        BindableWindow result = getApplicationContext().getApplicationWindow();
-
-        if (result != null) {
-            return result;
-        }
-
-        return getApplicationContext().getBean(BindableWindow.class);
+        return getApplicationContext().getApplicationWindow();
     }
 
     @Override
@@ -97,37 +75,16 @@ public abstract class AbstractLumPiApplication extends Application.Adapter
     }
 
     @Override
-    public OSGiController getOSGiController() {
-        return getApplicationContext();
-    }
-
-    @Override
-    public BundleActivator[] getBundleActivators() {
-        return null;
-    }
-
-    @Override
-    public String[] getServiceNames() {
-        return null;
-    }
-
-    @Override
     public final void startup(Display display, Map<String, String> properties) throws Exception {
-        if (isOSGiAware()) {
-            OSGiController controller = Objects.requireNonNull(getOSGiController());
-            controller.startFramework(getBundleActivators());
-        }
-        new UILoaderTask(this).executeTask();
+        getApplicationContext().initializeGUI();
     }
 
     @Override
     public final boolean shutdown(boolean optional) {
         boolean result = false;
         closeApplicationContext();
+
         try {
-            if (isOSGiAware()) {
-                getOSGiController().stopFramework();
-            }
             result = super.shutdown(optional);
         } catch (Exception ex) {
             Logger.getLogger(AbstractLumPiApplication.class.getName()).log(Level.SEVERE, null, ex);
@@ -139,58 +96,18 @@ public abstract class AbstractLumPiApplication extends Application.Adapter
     }
 
     @Override
-    public Class<? extends PivotBeanConfiguration> getPivotBeanConfigurationClass() {
-        return DefaultPivotBeanConfiguration.class;
+    public Class<?>[] getBeanConfigurationClasses() {
+        return new Class<?>[]{LumPiMiscBean.class};
     }
 
     @Override
-    public Class<?>[] getConfigurationClasses() {
-        return null;
-    }
-
-    @Override
-    public String[] getConfigurationPackages() {
+    public String[] getBeanConfigurationPackages() {
         return null;
     }
 
     @Override
     public Resources getResources() {
         return null;
-    }
-
-    private static class UILoaderTask extends AbstractApplicationTask<BindableWindow>
-        implements TaskListener<BindableWindow> {
-
-        private final Reference<LumPiApplication<? extends LumPiApplicationContext>> appRef;
-
-        public UILoaderTask(LumPiApplication<? extends LumPiApplicationContext> app) {
-            this.appRef = new WeakReference<>(app);
-            init();
-        }
-
-        private void init() {
-            Container.setEventDispatchThreadChecker(null);
-        }
-
-        @Override
-        public BindableWindow execute() throws TaskExecutionException {
-            return Objects.requireNonNull(appRef.get().getApplicationWindow());
-        }
-
-        public void executeTask() {
-            execute(this);
-        }
-
-        @Override
-        public void taskExecuted(Task<BindableWindow> task) {
-            BindableWindow result = Objects.requireNonNull(task.getResult());
-            HostFrame hostFrame = appRef.get().getApplicationContext().getHostFrame();
-            hostFrame.setWindow(result);
-        }
-
-        @Override
-        public void executeFailed(Task<BindableWindow> task) {
-        }
     }
 
     private static class PivotApplicationContext extends ApplicationContext {

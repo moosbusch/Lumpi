@@ -1,5 +1,5 @@
 lumPi
-Copyright 2013 Gunnar Kappei
+Copyright 2013-2014 Gunnar Kappei
 
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
@@ -16,16 +16,13 @@ The Apache Software Foundation (http://www.apache.org/).
     Apache Commons Validator 1.4.0 -> https://commons.apache.org/beanutils/
     [ASL 2.0, http://www.apache.org/licenses/]
 
-    Apache Felix 4.4.0 -> http://www.felix.apache.org
-    [ASL 2.0, http://www.apache.org/licenses/]
-
-    Apache Pivot 2.0.3 -> http://www.pivot.apache.org
+    Apache Pivot 2.0.4 -> http://www.pivot.apache.org
     [ASL 2.0, http://www.apache.org/licenses/]
 
 This product includes software developed by
 SpringSource (http://www.springsource.org), a division of VMware, Inc.
 
-    Spring Framework 4.0.4 -> http://www.springsource.org/spring-framework
+    Spring Framework 4.1.2 -> http://www.springsource.org/spring-framework
 
     [ASL 2.0, http://www.apache.org/licenses/]
 
@@ -39,7 +36,7 @@ these subcomponents is subject to the terms and conditions of the
 subcomponent's license, as noted above.
 
 --------------------------------------------------------------------------------
-Copyright (C) 2013 Gunnar Kappei (gkappei@web.de). Verbatim copying
+Copyright (C) 2013-2014 Gunnar Kappei (gkappei@web.de). Verbatim copying
 and distribution of this entire article is permitted in any medium,
 provided this notice is preserved.
 --------------------------------------------------------------------------------

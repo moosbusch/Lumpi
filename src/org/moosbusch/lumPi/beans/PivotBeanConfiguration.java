@@ -180,12 +180,15 @@ import org.apache.pivot.wtk.validation.IntValidator;
 import org.apache.pivot.wtk.validation.NotEmptyTextValidator;
 import org.apache.pivot.wtk.validation.RegexTextValidator;
 import org.apache.pivot.xml.XMLSerializer;
+import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 
 /**
  *
  * @author Gunnar Kappei
  */
-public interface PivotBeanConfiguration {
+public interface PivotBeanConfiguration<T extends BindableWindow> {
+
+    public T createApplicationWindow();
 
     public BulletedList createBulletedList();
 
