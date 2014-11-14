@@ -16,10 +16,13 @@
 package org.moosbusch.lumPi.application.spi;
 
 import java.io.IOException;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,28 +32,27 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.pivot.beans.BXML;
 import org.apache.pivot.beans.BeanMonitor;
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.beans.PropertyChangeListener;
-import org.apache.pivot.collections.HashMap;
+import org.apache.pivot.collections.HashSet;
 import org.apache.pivot.collections.Map;
-import org.apache.pivot.collections.MapListener;
+import org.apache.pivot.collections.Set;
 import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.util.Resources;
 import org.apache.pivot.util.Vote;
 import org.apache.pivot.wtk.Action;
-import org.apache.pivot.wtk.ApplicationContext;
 import org.apache.pivot.wtk.Window;
 import org.apache.pivot.wtk.WindowStateListener;
 import org.moosbusch.lumPi.application.LumPiApplication;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
 import org.moosbusch.lumPi.application.event.impl.ApplicationWindowLoadedEvent;
-import org.moosbusch.lumPi.application.event.impl.NamespaceEvent;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
 import org.moosbusch.lumPi.beans.impl.Options;
 import org.moosbusch.lumPi.beans.impl.PropertyChangeAwareAdapter;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.moosbusch.lumPi.gui.window.swing.impl.HostFrame;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -62,7 +64,7 @@ public abstract class AbstractLumPiApplicationContext
         implements LumPiApplicationContext {
 
     private final LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> app;
-    private final Map<String, Object> namespace;
+    private final Set<String> components;
     private final PropertyChangeAware pca;
     private BindableWindow applicationWindow;
     private final HostFrame hostFrame;
@@ -73,14 +75,13 @@ public abstract class AbstractLumPiApplicationContext
         this.pca = new PropertyChangeAwareAdapter(this);
         this.hostFrame = new HostFrame(application);
         this.options = new Options(Preferences.userNodeForPackage(application.getClass()));
-        this.namespace = new HashMap<>();
+        this.components = new HashSet<>();
         init(application);
     }
 
     private void init(LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> application) {
         registerShutdownHook();
         addPropertyChangeListener(new PropertyChangeListenerImpl());
-        getNamespace().getMapListeners().add(new MapListenerImpl());
 
         try {
             loadAnnotationConfig(application);
@@ -110,31 +111,26 @@ public abstract class AbstractLumPiApplicationContext
 
     protected String getBeanCreationMethodName(Class<?> type) {
         Class<?>[] configClasses = getApplication().getBeanConfigurationClasses();
-
         if (ArrayUtils.isNotEmpty(configClasses)) {
             for (Class<?> configClass : configClasses) {
                 Method[] methods = configClass.getMethods();
 
                 for (Method method : methods) {
                     Class<?> returnType = method.getReturnType();
-
                     if (returnType == type) {
                         return method.getName();
                     }
                 }
             }
         }
-
         throw new BeanCreationException("No qualifying bean of type '" + type.getName() + "' is defined!");
     }
 
     protected BindableWindow readObject()
             throws IOException, SerializationException {
         BindableWindow result;
-
         Resources resources = getResources();
         URL location = Objects.requireNonNull(getLocation());
-
         if (resources != null) {
             result = (BindableWindow) getSerializer().readObject(
                     location, resources);
@@ -142,14 +138,12 @@ public abstract class AbstractLumPiApplicationContext
             result = (BindableWindow) getSerializer().readObject(
                     location);
         }
-
         return result;
     }
 
     @Override
     public final void initializeGUI() {
         BindableWindow window = null;
-
         try {
             window = Objects.requireNonNull(readObject());
         } catch (IOException | SerializationException ex) {
@@ -166,42 +160,7 @@ public abstract class AbstractLumPiApplicationContext
     @Override
     public final <T> T createBean(Class<T> type) {
         String beanCreationMethodName = getBeanCreationMethodName(type);
-
         return getBean(beanCreationMethodName, type);
-    }
-
-    @Override
-    public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
-        Map<String, Object> ns = getSerializer().getNamespace();
-
-        if (ns != null) {
-            if (ns.containsKey(name)) {
-                Object value = ns.get(name);
-
-                if (value != null) {
-                    if (requiredType.isInstance(value)) {
-                        return (T) value;
-                    }
-                }
-            }
-        }
-
-        return super.getBean(name, requiredType);
-    }
-
-    @Override
-    public Object getBean(String name) throws BeansException {
-        Map<String, Object> ns = getSerializer().getNamespace();
-
-        if (ns.containsKey(name)) {
-            Object value = ns.get(name);
-
-            if (value != null) {
-                return value;
-            }
-        }
-
-        return super.getBean(name);
     }
 
     @Override
@@ -215,8 +174,8 @@ public abstract class AbstractLumPiApplicationContext
     }
 
     @Override
-    public final Map<String, Object> getNamespace() {
-        return namespace;
+    public final Set<String> getComponents() {
+        return components;
     }
 
     @Override
@@ -260,31 +219,48 @@ public abstract class AbstractLumPiApplicationContext
         pca.firePropertyChange(propertyName);
     }
 
-    private class MapListenerImpl extends MapListener.Adapter<String, Object> {
+    @Override
+    public void valueAdded(Map<String, Object> map, String key) {
+        Object value = Objects.requireNonNull(map.get(key));
 
-        @Override
-        public void valueAdded(Map<String, Object> map, String key) {
-            Object value = Objects.requireNonNull(map.get(key));
+        if (getComponents().add(key)) {
+            getBeanFactory().registerSingleton(key, value);
 
             if (value instanceof Window) {
                 Window window = (Window) value;
                 window.getWindowStateListeners().add(new WindowStateListenerImpl());
             }
         }
+    }
 
+    @Override
+    public void valueUpdated(Map<String, Object> map, String key, Object previousValue) {
+    }
+
+    @Override
+    public void valueRemoved(Map<String, Object> map, String key, Object value) {
+    }
+
+    @Override
+    public void mapCleared(Map<String, Object> map) {
+    }
+
+    @Override
+    public void comparatorChanged(Map<String, Object> map, Comparator<String> previousComparator) {
     }
 
     private class WindowStateListenerImpl extends WindowStateListener.Adapter {
 
         @Override
         public Vote previewWindowOpen(Window window) {
-            final Map<String, Object> ns = getNamespace();
+            for (String key : getComponents()) {
+                final Object value = Objects.requireNonNull(getBean(key));
 
-            for (String key : ns) {
-                final Object value = Objects.requireNonNull(getNamespace().get(key));
-                ApplicationContext.queueCallback(new BindingCallback(ns, value));
+                if (value instanceof Bindable) {
+                    org.apache.pivot.wtk.ApplicationContext.queueCallback(
+                            new BindingCallback(AbstractLumPiApplicationContext.this, (Bindable) value));
+                }
             }
-
             return super.previewWindowOpen(window);
         }
 
@@ -300,63 +276,58 @@ public abstract class AbstractLumPiApplicationContext
                             AbstractLumPiApplicationContext.this));
                     break;
                 }
-                case NAMESPACE_PROPERTY_NAME: {
-                    publishEvent(new NamespaceEvent(getNamespace()));
-                    break;
+                default: {
                 }
             }
         }
+
     }
 
     private static class BindingCallback implements Runnable {
 
-        private final Object target;
-        private final Map<String, Object> ns;
+        private final Bindable target;
+        private final Reference<ApplicationContext> applicationContextRef;
 
-        public BindingCallback(Map<String, Object> ns, Object target) {
+        public BindingCallback(ApplicationContext applicationContext, Bindable target) {
             this.target = target;
-            this.ns = ns;
+        this.applicationContextRef = new WeakReference<>(applicationContext);
         }
 
         @Override
         public void run() {
             try {
-                bind(ns, target);
+                bind(applicationContextRef.get(), target);
             } catch (IllegalAccessException ex) {
                 Logger.getLogger(AbstractLumPiApplicationContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
-        public void bind(Map<String, Object> ns, Object object) throws IllegalAccessException {
-            Field[] fields = object.getClass().getDeclaredFields();
+        public void bind(ApplicationContext applicationContext, Bindable bean) throws IllegalAccessException {
+            Field[] fields = bean.getClass().getDeclaredFields();
 
             for (Field field : fields) {
                 if (field.isAnnotationPresent(BXML.class)) {
                     String fieldName = field.getName();
                     int fieldModifiers = field.getModifiers();
                     BXML bindingAnnotation = field.getAnnotation(BXML.class);
-
                     if ((fieldModifiers & Modifier.FINAL) > 0) {
                         throw new IllegalAccessException(fieldName + " is final.");
                     }
-
                     if ((fieldModifiers & Modifier.PUBLIC) == 0) {
                         field.setAccessible(true);
                     }
-
                     String id = bindingAnnotation.id();
-
                     if (StringUtils.isBlank(id) || id.equals("\0")) {
                         id = field.getName();
                     }
-
-                    if (ns.containsKey(id)) {
-                        Object value = ns.get(id);
+                    if (applicationContext.containsBean(id)) {
+                        Object value = applicationContext.getBean(id);
                         FieldUtils.writeDeclaredField(target, id, value, true);
                     }
                 }
             }
-
         }
+
     }
+
 }

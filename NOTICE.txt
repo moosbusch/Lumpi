@@ -4,7 +4,7 @@ Copyright 2013-2014 Gunnar Kappei
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
-    Apache Commons BeanUtils 1.9.1 -> https://commons.apache.org/beanutils/
+    Apache Commons BeanUtils 1.9.2 -> https://commons.apache.org/beanutils/
     [ASL 2.0, http://www.apache.org/licenses/]
 
     Apache Commons Lang 3-3.2 -> http://www.commons.apache.org/lang/

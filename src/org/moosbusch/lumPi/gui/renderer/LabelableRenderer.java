@@ -4,6 +4,7 @@
  */
 package org.moosbusch.lumPi.gui.renderer;
 
+import java.net.URI;
 import java.net.URL;
 import org.apache.pivot.wtk.media.Image;
 
@@ -13,7 +14,7 @@ import org.apache.pivot.wtk.media.Image;
  */
 public interface LabelableRenderer {
 
-    public URL getIconUrl(Object item);
+    public URI getIconUri(Object item);
 
     public int getIconSize();
 

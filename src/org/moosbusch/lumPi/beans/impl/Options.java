@@ -29,14 +29,14 @@ import org.apache.commons.lang3.ClassUtils;
 public class Options {
 
     private final Preferences preferences;
-    private boolean autoputDefaults = true;
-    private byte[] defaultByteArray = new byte[0];
-    private boolean defaultBoolean = Boolean.FALSE;
-    private float defaultFloat = 0.0f;
-    private int defaultInteger = 0;
-    private double defaultDouble = 0.0d;
-    private long defaultLong = 0l;
-    private String defaultString = new String();
+    private final boolean autoputDefaults = true;
+    private final byte[] defaultByteArray = new byte[0];
+    private final boolean defaultBoolean = Boolean.FALSE;
+    private final float defaultFloat = 0.0f;
+    private final int defaultInteger = 0;
+    private final double defaultDouble = 0.0d;
+    private final long defaultLong = 0l;
+    private final String defaultString = "";
 
     public Options(Preferences preferences) {
         this.preferences = Objects.requireNonNull(preferences);
@@ -83,7 +83,7 @@ public class Options {
     }
 
     public String get(String key) {
-        return get(key, new String());
+        return get(key, "");
     }
 
     public void remove(String key) {
@@ -194,64 +194,32 @@ public class Options {
         return autoputDefaults;
     }
 
-    public void setAutoputDefaults(boolean autoputDefaults) {
-        this.autoputDefaults = autoputDefaults;
-    }
-
     public byte[] getDefaultByteArray() {
-        return defaultByteArray;
-    }
-
-    public void setDefaultByteArray(byte[] defaultByteArray) {
-        this.defaultByteArray = defaultByteArray;
+        return defaultByteArray.clone();
     }
 
     public boolean getDefaultBoolean() {
         return defaultBoolean;
     }
 
-    public void setDefaultBoolean(boolean defaultBoolean) {
-        this.defaultBoolean = defaultBoolean;
-    }
-
     public float getDefaultFloat() {
         return defaultFloat;
-    }
-
-    public void setDefaultFloat(float defaultFloat) {
-        this.defaultFloat = defaultFloat;
     }
 
     public int getDefaultInteger() {
         return defaultInteger;
     }
 
-    public void setDefaultInteger(int defaultInteger) {
-        this.defaultInteger = defaultInteger;
-    }
-
     public double getDefaultDouble() {
         return defaultDouble;
-    }
-
-    public void setDefaultDouble(double defaultDouble) {
-        this.defaultDouble = defaultDouble;
     }
 
     public long getDefaultLong() {
         return defaultLong;
     }
 
-    public void setDefaultLong(long defaultLong) {
-        this.defaultLong = defaultLong;
-    }
-
     public String getDefaultString() {
         return defaultString;
-    }
-
-    public void setDefaultString(String defaultString) {
-        this.defaultString = defaultString;
     }
 
 }

@@ -16,13 +16,13 @@
 package org.moosbusch.lumPi.application;
 
 import java.net.URL;
-import org.apache.pivot.collections.Map;
+import org.apache.pivot.collections.MapListener;
+import org.apache.pivot.collections.Set;
 import org.apache.pivot.util.Resources;
 import org.moosbusch.lumPi.beans.PropertyChangeAware;
 import org.moosbusch.lumPi.beans.impl.Options;
 import org.moosbusch.lumPi.gui.window.spi.BindableWindow;
 import org.moosbusch.lumPi.gui.window.swing.impl.HostFrame;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -30,20 +30,13 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author moosbusch
  */
 public interface LumPiApplicationContext
-        extends ConfigurableApplicationContext, PropertyChangeAware {
+        extends ConfigurableApplicationContext, PropertyChangeAware, MapListener<String, Object> {
 
     public static final String APPLICATION_WINDOW_PROPERTY_NAME = "applicationWindow";
-    public static final String NAMESPACE_PROPERTY_NAME = "namespace";
 
     public void initializeGUI();
 
     public <T> T createBean(Class<T> type);
-
-    @Override
-    public <T> T getBean(String name, Class<T> requiredType) throws BeansException;
-
-    @Override
-    public Object getBean(String name) throws BeansException;
 
     public SpringBXMLSerializer getSerializer();
 
@@ -59,7 +52,7 @@ public interface LumPiApplicationContext
 
     public void setApplicationWindow(BindableWindow window);
 
-    public Map<String, Object> getNamespace();
+    public Set<String> getComponents();
 
     public HostFrame getHostFrame();
 

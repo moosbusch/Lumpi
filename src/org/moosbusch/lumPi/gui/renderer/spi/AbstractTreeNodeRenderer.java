@@ -15,7 +15,10 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.gui.renderer.spi;
 
-import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.pivot.collections.HashMap;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.collections.Sequence.Tree.Path;
@@ -23,6 +26,7 @@ import org.apache.pivot.wtk.ImageView;
 import org.apache.pivot.wtk.Label;
 import org.apache.pivot.wtk.TreeView;
 import org.apache.pivot.wtk.TreeView.NodeCheckState;
+import org.apache.pivot.wtk.content.TreeNode;
 import org.apache.pivot.wtk.content.TreeViewNodeRenderer;
 import org.apache.pivot.wtk.media.Image;
 import org.moosbusch.lumPi.gui.renderer.LabelableComponentRenderer;
@@ -35,7 +39,7 @@ import org.moosbusch.lumPi.util.RendererUtil;
 public abstract class AbstractTreeNodeRenderer
         extends TreeViewNodeRenderer implements LabelableComponentRenderer {
 
-    private final Map<URL, Image> icons;
+    private final Map<URI, Image> icons;
     private boolean showText = true;
     private int iconSize = 16;
 
@@ -49,7 +53,7 @@ public abstract class AbstractTreeNodeRenderer
     }
 
     @Override
-    public Map<URL, Image> getIcons() {
+    public Map<URI, Image> getIcons() {
         return icons;
     }
 
@@ -87,16 +91,21 @@ public abstract class AbstractTreeNodeRenderer
 
     @Override
     public Image getIcon(Object item) {
-        URL iconUrl = getIconUrl(item);
+        URI iconUri = getIconUri(item);
 
-        if (iconUrl != null) {
-            Image result = getIcons().get(iconUrl);
+        if (iconUri != null) {
+            Image result = getIcons().get(iconUri);
 
             if (result != null) {
                 getImageView().setImage(result);
                 return result;
             } else {
-                getImageView().setImage(iconUrl);
+                try {
+                    getImageView().setImage(iconUri.toURL());
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(AbstractTreeNodeRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
                 return getImageView().getImage();
             }
         }
@@ -111,7 +120,7 @@ public abstract class AbstractTreeNodeRenderer
         if (node != null) {
             RendererUtil.renderData(this, node);
         } else {
-            super.render(node, path, rowIndex, treeView, expanded, selected,
+            super.render(new TreeNode(), path, rowIndex, treeView, expanded, selected,
                     checkState, highlighted, disabled);
         }
     }

@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.moosbusch.lumPi.beans.spi;
 
-import org.moosbusch.lumPi.beans.Submitable;
 import org.apache.pivot.beans.PropertyChangeListener;
+import org.moosbusch.lumPi.beans.Submitable;
 
 /**
  *
  * @author Gunnar Kappei
  */
 public abstract class AbstractSubmitable<T extends Object>
-    extends AbstractValueStore<T> implements Submitable<T>, PropertyChangeListener {
+        extends AbstractValueStore<T> implements Submitable<T>, PropertyChangeListener {
+
     private boolean canceled = false;
     private boolean submitted = false;
 
@@ -78,16 +78,20 @@ public abstract class AbstractSubmitable<T extends Object>
     @Override
     public final void propertyChanged(Object bean, String propertyName) {
         switch (propertyName) {
-            case Submitable.SUBMITTED_PROPERTYNAME:
+            case Submitable.SUBMITTED_PROPERTYNAME: {
                 if (isSubmitted()) {
                     onSubmit(getValue());
                 }
                 break;
-            case Submitable.CANCELED_PROPERTYNAME:
+            }
+            case Submitable.CANCELED_PROPERTYNAME: {
                 if (isCanceled()) {
                     onCancel();
                 }
                 break;
+            }
+            default: {
+            }
         }
     }
 

@@ -15,6 +15,7 @@
  */
 package org.moosbusch.lumPi.action;
 
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.util.ListenerList;
 import org.apache.pivot.wtk.ActionListener;
 import org.apache.pivot.wtk.Component;
@@ -24,7 +25,7 @@ import org.moosbusch.lumPi.gui.Labelable;
  *
  * @author moosbusch
  */
-public interface ApplicationAction extends Labelable {
+public interface ApplicationAction extends Labelable, Bindable {
 
     public static final String ENABLED_PROPERTY_NAME = "enabled";
 

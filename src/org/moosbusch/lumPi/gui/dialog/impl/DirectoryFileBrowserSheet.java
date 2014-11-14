@@ -23,7 +23,7 @@ public class DirectoryFileBrowserSheet extends DefaultSubmitableFileBrowserSheet
         LumPiUtil.setComponentStyle(getFileBrowser(), "hideDisabledFiles", true);
     }
 
-    private class DirectoryFileFilter implements Filter<File> {
+    private static class DirectoryFileFilter implements Filter<File> {
 
         @Override
         public boolean include(File item) {

@@ -65,7 +65,7 @@ public class ListButtonStoreValueDelegate<T extends ListButton> implements Store
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
                     Logger.getLogger(AbstractDynamicForm.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
-                    if ((oldPropertyValue != null) && (oldPropertyValue != null)) {
+                    if ((newPropertyValue != null) && (oldPropertyValue != null)) {
                         if ((newPropertyValue instanceof java.util.Collection)
                                 && (oldPropertyValue instanceof java.util.Collection)) {
                             java.util.Collection<Object> newColl =
@@ -73,11 +73,9 @@ public class ListButtonStoreValueDelegate<T extends ListButton> implements Store
                             java.util.Collection<Object> oldColl =
                                     (java.util.Collection<Object>) oldPropertyValue;
 
-                            for (Object obj : newColl) {
-                                if (!oldColl.contains(obj)) {
-                                    oldColl.add(obj);
-                                }
-                            }
+                            newColl.stream().filter((obj) -> (!oldColl.contains(obj))).forEach((obj) -> {
+                                oldColl.add(obj);
+                            });
                         } else if ((newPropertyValue instanceof Sequence)
                                 && (oldPropertyValue instanceof Sequence)) {
                             Sequence<Object> newSeq = (Sequence<Object>) newPropertyValue;

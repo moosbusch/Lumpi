@@ -30,9 +30,9 @@ import org.springframework.context.ApplicationContext;
  */
 public interface SpringBXMLSerializer extends Serializer<Object>, Resolvable {
 
-    public void bind(Object object, Class<?> type) throws BindException;
-
     public ApplicationContext getApplicationContext();
+
+    public void bind(Object object, Class<?> type) throws BindException;
 
     public Object readObject(URL locationArgument)
             throws IOException, SerializationException;

@@ -21,6 +21,8 @@ import java.net.URL;
 import java.util.Objects;
 import org.apache.pivot.beans.BeanMonitor;
 import org.apache.pivot.beans.PropertyChangeListener;
+import org.apache.pivot.collections.Map;
+import org.apache.pivot.util.Resources;
 import org.apache.pivot.wtk.Action;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.content.ButtonData;
@@ -168,6 +170,10 @@ public abstract class AbstractApplicationAction extends Action implements Applic
         if (pca != null) {
             pca.firePropertyChange(propertyName);
         }
+    }
+
+    @Override
+    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
     }
 
 }

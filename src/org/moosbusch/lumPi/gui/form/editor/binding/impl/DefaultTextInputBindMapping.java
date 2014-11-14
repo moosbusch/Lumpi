@@ -36,7 +36,7 @@ public class DefaultTextInputBindMapping<T extends TextInput>
             return value.toString();
         }
 
-        return new String();
+        return "";
     }
 
     @Override
@@ -45,6 +45,6 @@ public class DefaultTextInputBindMapping<T extends TextInput>
             return text;
         }
 
-        return new String();
+        return "";
     }
 }

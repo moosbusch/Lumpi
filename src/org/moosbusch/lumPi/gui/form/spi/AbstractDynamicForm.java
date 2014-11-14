@@ -1,17 +1,17 @@
 /*
-Copyright 2013 Gunnar Kappei
+ Copyright 2013 Gunnar Kappei
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
  */
 package org.moosbusch.lumPi.gui.form.spi;
 
@@ -169,7 +169,7 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
     }
 
     protected PropertyDescriptor[] getPropertyDescriptors(Class<?> beanClass) {
-         return PropertyUtils.getPropertyDescriptors(beanClass);
+        return PropertyUtils.getPropertyDescriptors(beanClass);
     }
 
     public final FormEditor<? extends Component> getEditor(String beanClassName,
@@ -177,8 +177,8 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
         String formFieldName = AbstractDynamicForm.createFormFieldName(
                 beanClassName, propertyName);
         FormEditor<? extends Component> result = null;
-        Class<? extends FormEditor<? extends Component>> editorClass =
-                lookupEditorClass(formFieldName, propertyClassName);
+        Class<? extends FormEditor<? extends Component>> editorClass
+                = lookupEditorClass(formFieldName, propertyClassName);
 
         if (editorClass != null) {
             try {
@@ -200,8 +200,8 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
 
     protected Class<? extends FormEditor<? extends Component>> lookupEditorClass(
             String formFieldName, String propertyClassName) {
-        Class<? extends FormEditor<? extends Component>> result =
-                getEditorsMap().get(formFieldName);
+        Class<? extends FormEditor<? extends Component>> result
+                = getEditorsMap().get(formFieldName);
 
         if (result == null) {
             result = getEditorsMap().get(propertyClassName);
@@ -217,11 +217,13 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
                 Logger.getLogger(AbstractDynamicForm.class.getName()).log(
                         Level.SEVERE, null, ex);
             } finally {
-                for (Class<?> superType : superTypes) {
-                    result = getEditorsMap().get(superType.getName());
+                if (superTypes != null) {
+                    for (Class<?> superType : superTypes) {
+                        result = getEditorsMap().get(superType.getName());
 
-                    if (result != null) {
-                        break;
+                        if (result != null) {
+                            break;
+                        }
                     }
                 }
             }
@@ -246,8 +248,8 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
                 new HelpListener(formFieldName));
 
         if (editor instanceof AbstractNumberFormEditor<?>) {
-            AbstractNumberFormEditor<?> numberEditor =
-                    (AbstractNumberFormEditor<?>) editor;
+            AbstractNumberFormEditor<?> numberEditor
+                    = (AbstractNumberFormEditor<?>) editor;
             TextInput numberTextInput = numberEditor.getComponent();
             numberTextInput.setValidator(numberEditor.getValidator(this));
         }
@@ -286,7 +288,6 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
                 }
             }
 
-
         }
     }
 
@@ -295,8 +296,8 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
         if (context != null) {
             for (String formField : getEditors()) {
                 FormEditor<? extends Component> editor = getEditors().get(formField);
-                StoreValueDelegate<? extends Component> storeValueDelegate =
-                        editor.getStoreValueDelegate();
+                StoreValueDelegate<? extends Component> storeValueDelegate
+                        = editor.getStoreValueDelegate();
                 if (storeValueDelegate != null) {
                     storeValueDelegate.storeValue(context);
                 } else {
@@ -361,5 +362,7 @@ public abstract class AbstractDynamicForm<T extends Object> extends AbstractSubm
 
             return super.keyPressed(component, keyCode, keyLocation);
         }
+
     }
+
 }

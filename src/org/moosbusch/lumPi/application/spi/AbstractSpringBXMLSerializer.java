@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.util.Objects;
 import org.apache.pivot.beans.BXMLSerializer;
-import org.apache.pivot.collections.Map;
 import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.serialization.Serializer;
 import org.moosbusch.lumPi.application.LumPiApplicationContext;
@@ -39,6 +37,11 @@ public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer
 
     public AbstractSpringBXMLSerializer(ApplicationContext applicationContext) {
         this.applicationContextRef = new WeakReference<>(applicationContext);
+        init();
+    }
+
+    private void init() {
+        getNamespace().getMapListeners().add(getApplicationContext());
     }
 
     @Override
@@ -56,14 +59,14 @@ public abstract class AbstractSpringBXMLSerializer extends BXMLSerializer
     public final Object readObject(InputStream inputStream)
             throws IOException, SerializationException {
         Object result = readObjectImpl(inputStream);
-        Map<String, Object> ns = getNamespace();
-
-        if (!ns.isEmpty()) {
-            for (String key : ns) {
-                Object value = Objects.requireNonNull(ns.get(key));
-                getApplicationContext().getNamespace().put(key, value);
-            }
-        }
+//        Map<String, Object> ns = getNamespace();
+//
+//        if (!ns.isEmpty()) {
+//            for (String key : ns) {
+//                Object value = Objects.requireNonNull(ns.get(key));
+//                getApplicationContext().put(key, value);
+//            }
+//        }
 
         return result;
     }

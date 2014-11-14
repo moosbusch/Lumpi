@@ -1,23 +1,25 @@
 /*
-Copyright 2013 Gunnar Kappei
+ Copyright 2013 Gunnar Kappei
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
  */
 package org.moosbusch.lumPi.gui;
 
 import java.util.Comparator;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.pivot.collections.LinkedList;
 import org.apache.pivot.wtk.Component;
 import org.moosbusch.lumPi.util.LumPiUtil;
@@ -37,7 +39,6 @@ public interface Selection<T extends Object> {
     public void setEventSource(Component evtSource);
 
     public T evaluate() throws Exception;
-
 
     public static final class Expression extends LinkedList<String> {
 
@@ -77,14 +78,18 @@ public interface Selection<T extends Object> {
 
         public String getSubExpression(int startIndex, int tokenCount) {
             String separator = new String(new char[]{getSeparatorChar()});
-            String result = new String();
+            String result = "";
 
             if (tokenCount == 0) {
                 return get(startIndex);
             } else {
+                StringBuilder buf = new StringBuilder();
+                buf.append(result);
+
                 for (int cnt = 0; cnt < tokenCount; cnt++) {
                     String token = get(startIndex + cnt);
-                    result = result + getSeparatorChar() + token;
+                     buf.append(getSeparatorChar());
+                     buf.append(token);
                 }
 
                 if (StringUtils.startsWith(result, separator)) {
@@ -116,6 +121,27 @@ public interface Selection<T extends Object> {
         }
 
         @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
+                return true;
+            }
+            if (obj.getClass() != getClass()) {
+                return false;
+            }
+
+            return new EqualsBuilder()
+                    .appendSuper(super.equals(obj)).isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return HashCodeBuilder.reflectionHashCode(this);
+        }
+
+        @Override
         public String toString() {
             if (!isEmpty()) {
                 String result = getSubExpression(0, getLength());
@@ -127,5 +153,7 @@ public interface Selection<T extends Object> {
 
             return super.toString();
         }
+
     }
+
 }

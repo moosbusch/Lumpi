@@ -16,7 +16,10 @@
 
 package org.moosbusch.lumPi.task.spi;
 
+import java.net.URL;
 import java.util.concurrent.ExecutorService;
+import org.apache.pivot.collections.Map;
+import org.apache.pivot.util.Resources;
 import org.apache.pivot.util.concurrent.Task;
 import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.wtk.TaskAdapter;
@@ -60,4 +63,9 @@ public abstract class AbstractApplicationTask<T extends Object> extends Task<T> 
     public final synchronized void execute(TaskListener<T> taskListener, ExecutorService executorService) {
         super.execute(taskListener, executorService);
     }
+
+    @Override
+    public void initialize(Map<String, Object> namespace, URL location, Resources resources) {
+    }
+
 }

@@ -113,12 +113,16 @@ public abstract class AbstractSubmitableSheet<T extends Object> extends Sheet
     @Override
     public final void propertyChanged(Object bean, String propertyName) {
         switch (propertyName) {
-            case SUBMITTED_PROPERTYNAME:
+            case SUBMITTED_PROPERTYNAME: {
                 onSubmit(getValue());
                 break;
-            case CANCELED_PROPERTYNAME:
+            }
+            case CANCELED_PROPERTYNAME: {
                 onCancel();
                 break;
+            }
+            default: {
+            }
         }
     }
 

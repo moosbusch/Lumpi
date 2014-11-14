@@ -1,17 +1,17 @@
 /*
-Copyright 2013 Gunnar Kappei
+ Copyright 2013 Gunnar Kappei
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
  */
 package org.moosbusch.lumPi.util;
 
@@ -158,8 +158,8 @@ public class LumPiUtil {
         Class<?> result = type;
 
         for (String propertyToken : propertyTokens) {
-            PropertyDescriptor[] descriptors =
-                PropertyUtils.getPropertyDescriptors(result);
+            PropertyDescriptor[] descriptors
+                    = PropertyUtils.getPropertyDescriptors(result);
 
             for (PropertyDescriptor descriptor : descriptors) {
                 if (StringUtils.equalsIgnoreCase(propertyToken, descriptor.getName())) {
@@ -191,8 +191,8 @@ public class LumPiUtil {
 
     public static Collection<Type> getParameterTypesForCollection(Class<?> type) {
         if (isCollectionOrSequence(type)) {
-            Map<TypeVariable<?>, Type> m =
-                    TypeUtils.getTypeArguments((ParameterizedType) type.getGenericSuperclass());
+            Map<TypeVariable<?>, Type> m
+                    = TypeUtils.getTypeArguments((ParameterizedType) type.getGenericSuperclass());
             return m.values();
         }
 
@@ -212,7 +212,7 @@ public class LumPiUtil {
     public static boolean isCollection(Class<?> type) {
         return ((ClassUtils.isAssignable(type, java.util.Collection.class)))
                 || (ClassUtils.isAssignable(type,
-                org.apache.pivot.collections.Collection.class));
+                        org.apache.pivot.collections.Collection.class));
     }
 
     public static boolean isSequence(Class<?> type) {
@@ -231,17 +231,17 @@ public class LumPiUtil {
     public static boolean isCollectionOrSequence(Class<?> type) {
         return (ClassUtils.isAssignable(type, java.util.Collection.class))
                 || (ClassUtils.isAssignable(type,
-                org.apache.pivot.collections.Collection.class))
+                        org.apache.pivot.collections.Collection.class))
                 || (ClassUtils.isAssignable(type,
-                org.apache.pivot.collections.Sequence.class));
+                        org.apache.pivot.collections.Sequence.class));
     }
 
     public static boolean isCollectionOrSequenceOrArrayOrEnum(Class<?> type) {
         if (!((ClassUtils.isAssignable(type, java.util.Collection.class)))
                 || (ClassUtils.isAssignable(type,
-                org.apache.pivot.collections.Collection.class))
+                        org.apache.pivot.collections.Collection.class))
                 || (ClassUtils.isAssignable(type,
-                org.apache.pivot.collections.Sequence.class))) {
+                        org.apache.pivot.collections.Sequence.class))) {
             return type.isArray() || type.isEnum();
         }
 
@@ -249,8 +249,8 @@ public class LumPiUtil {
     }
 
     public static TreeNode getTreeNodeByPath(TreeView treeView, Path path) {
-        org.apache.pivot.collections.List<TreeNode> nodes =
-                (org.apache.pivot.collections.List<TreeNode>) treeView.getTreeData();
+        org.apache.pivot.collections.List<TreeNode> nodes
+                = (org.apache.pivot.collections.List<TreeNode>) treeView.getTreeData();
         TreeNode node = null;
         TreeBranch branch = null;
 
@@ -297,8 +297,8 @@ public class LumPiUtil {
 
         if (value != null) {
             if (value instanceof java.util.Collection) {
-                java.util.Collection<T> coll =
-                        (java.util.Collection<T>) value;
+                java.util.Collection<T> coll
+                        = (java.util.Collection<T>) value;
 
                 for (T obj : coll) {
                     result.add(obj);
@@ -311,8 +311,8 @@ public class LumPiUtil {
                     result.add(obj);
                 }
             } else if (value instanceof org.apache.pivot.collections.Set) {
-                org.apache.pivot.collections.Set<T> set =
-                        (org.apache.pivot.collections.Set<T>) value;
+                org.apache.pivot.collections.Set<T> set
+                        = (org.apache.pivot.collections.Set<T>) value;
 
                 for (T obj : set) {
                     result.add(obj);
@@ -528,6 +528,7 @@ public class LumPiUtil {
             public void run() {
                 Logger.getLogger(type.getClass().getName()).log(level, null, ex);
             }
+
         }.invokeLater();
 
     }
@@ -545,8 +546,14 @@ public class LumPiUtil {
         } catch (IntrospectionException ex) {
             Logger.getLogger(LumPiUtil.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-                result.add(pd.getName());
+            if (beanInfo != null) {
+                PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+
+                if (ArrayUtils.isNotEmpty(propertyDescriptors)) {
+                    for (PropertyDescriptor pd : propertyDescriptors) {
+                        result.add(pd.getName());
+                    }
+                }
             }
         }
 
@@ -556,7 +563,7 @@ public class LumPiUtil {
     public static void printBeanPropertyNames(Class<?> beanClass) {
         Set<String> result = getBeanPropertyNames(beanClass);
 
-        for (String propertyName: result) {
+        for (String propertyName : result) {
             System.out.println(propertyName);
         }
     }
@@ -564,8 +571,9 @@ public class LumPiUtil {
     public static void printBeanPropertyNames(Object bean) {
         Set<String> result = getBeanPropertyNames(bean);
 
-        for (String propertyName: result) {
+        for (String propertyName : result) {
             System.out.println(propertyName);
         }
     }
+
 }

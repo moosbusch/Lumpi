@@ -15,7 +15,7 @@ Copyright 2013 Gunnar Kappei
  */
 package org.moosbusch.lumPi.gui.renderer;
 
-import java.net.URL;
+import java.net.URI;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.ImageView;
 import org.apache.pivot.wtk.Label;
@@ -53,7 +53,6 @@ public interface LabelableComponentRenderer extends LabelableRenderer {
 
     public void setFillIcon(boolean fillIcon);
 
-    public Map<URL, Image> getIcons();
-
+    public Map<URI, Image> getIcons();
 
     }

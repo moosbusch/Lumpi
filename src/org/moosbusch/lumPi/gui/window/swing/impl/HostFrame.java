@@ -55,15 +55,13 @@ public class HostFrame extends JFrame implements PropertyChangeAware {
     private static final long serialVersionUID = 3785740183919711739L;
     public static final String WINDOW_PROPERTY_NAME = "window";
     private final DisplayHost displayHost;
-    private final PropertyChangeAware pca;
-    private final Reference<LumPiApplication<? extends LumPiApplicationContext,
-            ? extends BindableWindow>> appRef;
-    private final WindowListener windowListener;
+    private transient final PropertyChangeAware pca;
+    private transient final Reference<LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow>> appRef;
+    private transient final WindowListener windowListener;
     private final JLayer<DisplayHost> layer;
-    private BindableWindow window;
+    private transient BindableWindow window;
 
-    public HostFrame(LumPiApplication<? extends LumPiApplicationContext,
-            ? extends BindableWindow> application) {
+    public HostFrame(LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> application) {
         this.appRef = new WeakReference<>(application);
         this.pca = new PropertyChangeAwareAdapter(this);
         this.windowListener = new WindowListener();
@@ -110,8 +108,7 @@ public class HostFrame extends JFrame implements PropertyChangeAware {
         return new DisplayHostImpl();
     }
 
-    protected final LumPiApplication<? extends LumPiApplicationContext,
-         ? extends BindableWindow> getApplication() {
+    protected final LumPiApplication<? extends LumPiApplicationContext, ? extends BindableWindow> getApplication() {
         return appRef.get();
     }
 
@@ -138,7 +135,6 @@ public class HostFrame extends JFrame implements PropertyChangeAware {
                 break;
             }
             default: {
-                break;
             }
         }
 
@@ -358,6 +354,8 @@ public class HostFrame extends JFrame implements PropertyChangeAware {
 
                     break;
                 }
+                default: {
+                }
             }
         }
 
@@ -417,4 +415,5 @@ public class HostFrame extends JFrame implements PropertyChangeAware {
         }
 
     }
+
 }

@@ -1145,7 +1145,7 @@ public abstract class AbstractPivotBeanConfiguration<T extends BindableWindow>
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
     public Alert createAlert() {
-        return new Alert(new String());
+        return new Alert("");
     }
 
     @Bean

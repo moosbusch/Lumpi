@@ -16,6 +16,7 @@
 
 package org.moosbusch.lumPi.gui.renderer.impl;
 
+import java.net.URI;
 import java.net.URL;
 import org.moosbusch.lumPi.gui.renderer.spi.AbstractButtonDataRenderer;
 
@@ -26,7 +27,7 @@ import org.moosbusch.lumPi.gui.renderer.spi.AbstractButtonDataRenderer;
 public class DefaultButtonDataRenderer extends AbstractButtonDataRenderer{
 
     @Override
-    public URL getIconUrl(Object item) {
+    public URI getIconUri(Object item) {
         return null;
     }
 

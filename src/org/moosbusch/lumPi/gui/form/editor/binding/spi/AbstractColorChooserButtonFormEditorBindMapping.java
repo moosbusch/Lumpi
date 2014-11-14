@@ -36,10 +36,10 @@ public abstract class AbstractColorChooserButtonFormEditorBindMapping
     protected final void bindButton(T editorComponent) {
         editorComponent.setSelectedColorBindType(getBindType());
         editorComponent.setSelectedColorBindMapping(this);
-        ColorChooserButton(editorComponent);
+        bindButtonImpl(editorComponent);
     }
 
-    protected void ColorChooserButton(T editorComponent) {
+    protected void bindButtonImpl(T editorComponent) {
     }
 
 }

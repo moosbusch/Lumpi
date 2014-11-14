@@ -15,6 +15,7 @@
  */
 package org.moosbusch.lumPi.task;
 
+import org.apache.pivot.beans.Bindable;
 import org.apache.pivot.util.concurrent.TaskExecutionException;
 import org.apache.pivot.util.concurrent.TaskListener;
 
@@ -22,7 +23,7 @@ import org.apache.pivot.util.concurrent.TaskListener;
  *
  * @author moosbusch
  */
-public interface ApplicationTask<T extends Object> {
+public interface ApplicationTask<T extends Object> extends Bindable {
 
     public T execute() throws TaskExecutionException;
 
