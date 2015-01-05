@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.github.moosbusch.lumpi.application.spi;
 
 import io.github.moosbusch.lumpi.application.LumpiApplication;
@@ -26,11 +25,8 @@ import io.github.moosbusch.lumpi.util.LumpiUtil;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.Resources;
-import org.apache.pivot.wtk.Application;
 import org.apache.pivot.wtk.ApplicationContext;
 import org.apache.pivot.wtk.Display;
 import org.springframework.context.ApplicationEvent;
@@ -39,8 +35,9 @@ import org.springframework.context.ApplicationEvent;
  *
  * @author Gunnar Kappei
  */
-public abstract class AbstractLumpiApplication extends Application.Adapter
-    implements LumpiApplication<LumpiApplicationContext, BindableWindow> {
+public abstract class AbstractLumpiApplication
+        implements LumpiApplication<LumpiApplicationContext, BindableWindow> {
+
     private final LumpiApplicationContext context;
     private final PivotApplicationContext pivotAppContext;
 
@@ -84,18 +81,20 @@ public abstract class AbstractLumpiApplication extends Application.Adapter
 
     @Override
     public final boolean shutdown(boolean optional) {
-        boolean result = false;
+        boolean result = optional;
+        HostFrame hostFrame = getApplicationContext().getHostFrame();
         closeApplicationContext();
+        hostFrame.dispose();
 
-        try {
-            result = super.shutdown(optional);
-        } catch (Exception ex) {
-            Logger.getLogger(AbstractLumpiApplication.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            HostFrame hostFrame = getApplicationContext().getHostFrame();
-            hostFrame.dispose();
-        }
         return result;
+    }
+
+    @Override
+    public void suspend() throws Exception {
+    }
+
+    @Override
+    public void resume() throws Exception {
     }
 
     @Override
