@@ -1,1 +1,357 @@
-Hello world!
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  <title>Lumpi by moosbusch</title>
+  <link rel="stylesheet"
+  href="J:/src/moosbusch.github.io/stylesheets/styles.css" />
+  <link rel="stylesheet"
+  href="J:/src/moosbusch.github.io/stylesheets/pygment_trac.css" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, user-scalable=no" />
+  <!--[if lt IE 9]>
+              <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+              <![endif]-->
+</head>
+
+<body>
+
+<div>
+<h1>Lumpi</h1>
+
+<h2>What is Lumpi?</h2>
+
+<p><em>Lumpi</em> ought to be a simple framework for developing desktop
+applications in the Java language. It will hopefully grow into becoming what is
+usually considered an application framework. But even at this early stage in
+devolopment it's already a good starting point for developing lightweight, but
+also possibly sophisticated applications.</p>
+
+<p>Although the project will evolve, it is not planned to let it grow to a size
+comparable to <a href="http://netbeans.org/">NetBeans RCP</a> or <a
+href="http://eclipse.org/">Eclipse RCP</a>. These frameworks seem to be great
+of their own, but appear to be very heavyweight and complex to understand.</p>
+
+<p>The <a href="http://kenai.com/projects/bsaf/pages/Home">Swing Application
+Framework</a> comes close in terms of lightweightness, but <em>Lumpi</em> is
+more inspired by another project that came up quite at the same time, <a
+href="http://spring-rich-c.sourceforge.net/">Spring RCP</a>. I gave a spin to
+both of them, but not only that these projects seem to be abandoned, there were
+also certain reasons why these projects didn't survive. But somehow I really
+liked the concept of <em>Spring RCP</em>, combining UIs and dependency
+injection, although the use of the underlying <em>Spring Framework</em> itself
+was terribly complicated at that time. What is the bigger issue? Solving the
+problem of wiring your components togethe ror writing tons of XML-configuration
+files?</p>
+
+<p>But <em>Spring</em> has become much, much easier to configure over the past
+years, especially because oft he usageof annotations for configuration. At some
+time I decided to create something similar by myself. It was at the time that
+the active development of <em>Swing</em> got stuck and I didn't want to switch
+over to <em>JavaFX</em> making its first steps. So I came across <em>Apache
+Pivot</em>, a nice little UI-toolkit, capable of performing basic DI. This is
+what <em>Swing</em> should have had years ago...</p>
+
+<p>Luckily, <em>Pivot</em> turned out to be very extensible, so I finally
+managed to combine it with the <em>Spring Framework</em>. So in the end, the
+whole world of <em>Spring</em> is at your fingertips. It is easy to combine
+every library with <em>Lumpi</em> that integrates with <em>Spring</em>. And
+there are quite a lot of them. For that reasons, one should be able to build
+quite sophisticated applications while using a lightweight toolkit for the GUI.
+So there is no need to learn about complex RCPs. Some might argue, you are
+instead faced with the complexity of <em>Spring</em> instead. And that's true
+in some way. But <em>Spring</em> also offers the ability to build client
+applications that benefit from well established design patterns derived from
+server programming, somewhat like combing JEE and JSE. Give it a try, and
+you'll be surprised how "complexity" can make your life much easier...</p>
+
+<h2>Getting started</h2>
+
+<p>First of all, grab the latest source release from <a
+href="http://github.com/moosbusch/Lumpi">GitHub</a>, or check out the sources
+directly. <strong>Java 8</strong> is requiredto compile. You also have to
+provide the dependencies. <em>Lumpi</em> currently depends on <em>Commons
+Lang</em>, <em>Commons BeanUtils</em> and, of course, <em>Pivot</em> and the
+<em>Spring Framework</em>. Simply grab the latest versions and you should be
+fine. It is not needed to provide all the jars of <em>Pivot</em> and
+<em>Spring</em>. The minimum of required jars are listed here:</p>
+
+<table>
+  <colgroup><col width="200" />
+  </colgroup>
+  <tbody>
+    <tr>
+      <td>Dependency</td>
+      <td>Version </td>
+      <td>Jars</td>
+    </tr>
+    <tr>
+      <td><a href="http://commons.apache.org/beanutils">Apache Commons
+        BeanUtils</a> </td>
+      <td>&gt;= 1.9.x </td>
+      <td>commons-beanutils-1.9.x.jar</td>
+    </tr>
+    <tr>
+      <td><a href="http://commons.apache.org/lang">Apache Commons Lang</a> </td>
+      <td>&gt;= 3.x</td>
+      <td>commons-lang-3-3.x.x.jar</td>
+    </tr>
+    <tr>
+      <td><a href="http://commons.apache.org/validator">Apache Commons
+        Validator</a> </td>
+      <td>&gt;= 1.4.x</td>
+      <td>commons-validator-1.4.x.jar</td>
+    </tr>
+    <tr>
+      <td><a href="http://pivot.apache.org/">Apache Pivot</a> </td>
+      <td>&gt;= 2.x.x </td>
+      <td>pivot-core-2.x.x.jar, pivot-wtk-2.x.x.jar,
+      pivot-wtk-terra-2.x.x.jar</td>
+    </tr>
+    <tr>
+      <td><a href="http://projects.spring.io/spring-framework">Spring
+        Framework</a> </td>
+      <td>&gt;= 4.x.x </td>
+      <td>spring-core-4.x.x.jar, spring-context-4.x.x.jar,
+        spring-beans-4.x.x.jar, spring-aop-4.x.x.jar</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Note!</strong> There are some transient dependencies for some of
+those libraries which are not listed here. Make sure to include them, perhaps
+read the according documentation provided elsewhere.</p>
+
+<p>At this point, it should be mentioned, that it's mandatory to learn about
+the concepts of <em>Pivot</em> and <em>Spring</em> itself, before you should
+begin using Lumpi. That's because for now <em>Lumpi</em> combines these
+frameworks, rather than putting an abstract wrapper around it. Due to that
+fact, creating your GUI basically means creating it in the same way as you
+would do using plain <em>Pivot</em>. Everything else, e.g. the business logic,
+implies implementing it in form of a special <em>ApplicationContext</em> called
+<em>LumpiApplicationContext</em> which is derived directly from
+<em>Spring</em>. And it behaves as you would exspect from <em>Spring</em>, if
+your are used to it. For those fearing XML, just relax, all configuration
+related to <em>Spring</em> has to be done using its annotation-based approach.
+There is no support for XML-configuration.  </p>
+
+<p>While this is true, all objects created in the <em>Pivot</em> configuration
+(a.k.a. the BXML-file) are created through an <em>ApplicationContext</em>
+provided by <em>Spring</em>, resulting in all beans already made available at
+the time your UI-classes are created (using the <em>ApplicationContext</em>,
+too), and might therefore be injected and referenced at initialization. Simply
+use <em>Spring</em>'s capabilities for autowiring.</p>
+
+<p>And there is one more extension (or broken convention) in behavior compared
+to <em>Pivot</em>: Usually you would extend the <em>Bindable</em> interface to
+get your components injected using the <em>@BXML annotation</em> placed on your
+fields. This functionality provided by <em>Pivot</em> is usually limited to
+only a few components of your program, the so called root-containers like
+<em>Windows</em> or <em>Dialogs</em>. Since I found this feature to be useful
+for some more purposes, like using it in <em>Actions</em> or <em>Tasks</em>,
+injecting through <em>@BXML</em>  is made available for every class
+implementing <em>Bindable</em>. For such use-cases specialized classes are
+provided within <em>Lumpi</em>, as you will see later on. The DI mechanism
+provided through <em>Spring</em> doesn't depend on the <em>Bindable</em>
+interface at all, and may be used apart of it.</p>
+
+<p>For those really wanting a quick start, I provided a hello-world-style <a
+href="https://github.com/moosbusch/Lumpi">sample application</a>. Just unzip
+it, provide the dependencies mentioned above and you are ready for take-off.
+Read on how to use it.</p>
+
+<h2>Hello world!</h2>
+
+<p>First, you have a class representing your application
+(<em>SampleApplication.java</em>), e.g. the location of your BXML-file used for
+building the GUI and the classes to actually configure the parts of your
+application (<strong></strong><em>SampleConfiguration.java</em> in this case).
+And last but not least you'll have to provide a class that represents your
+application window (<em>SampleApplicationWindow.java</em>). But wait! Didn't I
+mention an <em>ApplicationContext</em> in need to be configured? Yes I did.
+There is a default implementation built in already. It is extendable in fact,
+but for now there is no need to do anything like that.</p>
+
+<p>Now it is time to dive into the files contained in the sample application.
+Let's start with our application class itself, imports and package declarations
+are omitted. It basically implements the <em>LumpiApplication</em> interface
+and therefore defines two methods:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Method</strong></td>
+      <td><strong>Explanation</strong> </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>public Collection&lt;Class&lt;?&gt;&gt;
+        getBeanConfigurationClasses(); </td>
+      <td>Returns a Collection representing the classes providing the bean
+        definitions our application will consist of. These classes are
+        configured mostly through  annotations supported by the Spring IoC.
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>public URL getBXMLConfigurationFile(); </td>
+      <td>Returns the URLto the BXML-file used for GUI creation. It may be
+        contained within the application's jar-file (like in the example) or
+        located elsewhere. </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>public static void main(String[] args);</td>
+      <td>The well-known main-method&gt; needed to startup the application by
+        using the ApplicationLauncher class responsible for bootstrapping. </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div>
+<p>And here are the complete sources:</p>
+
+<div>
+<pre><code>public class SampleApplication extends AbstractLumpiApplication {
+	public static final String APPLICATION_PACKAGE_URL = "/org/moosbusch/lumPi/sample/";
+
+	@Override
+	public Collection&lt;Class&lt;?&gt;&gt; getBeanConfigurationClasses() {
+		Collection&lt;Class&lt;?&gt;&gt; result = super.getBeanConfigurationClasses();
+		result.add(SampleConfiguration.class);
+		return result;
+	}
+
+	@Override
+	public URL getBXMLConfigurationFile() {
+		return getClass().getResource(APPLICATION_PACKAGE_URL + "sampleApplication.bxml");
+	}
+
+	public static void main(String[] args) {
+		ApplicationLauncher.main(SampleApplication.class);
+	}
+}</code></pre>
+</div>
+
+<div>
+<p>It's plain to see, it extends an abstract base class,
+<em>AbstractLumPiApplication</em>, and <strong>this is the very point everybody
+should start from</strong>. Usually there should be no need to implement the
+<em>LumPiApplication</em> interface itself. And you shouldn't subclass the
+original classes provided by plain <em>Pivot</em> itself, namely
+<em>Windows</em>, <em>Dialogs</em>, <em>Sheets</em>, <em>Prompts</em>,
+<em>Actions</em> and <em>Tasks</em>. You should always prefer using the
+corresponding subclasses provided by <em>Lumpi</em>. You may face strange
+behavior otherwise. Make sure to have a closer look at the source packages for
+now. There will be a more comprehensive documentation coming up soon.</p>
+
+<p>The next file to mention is <em>SampleConfiguration.java</em>. It contains
+definitions for creating <em>Spring</em> beans. The class is annotated with
+<em>@Configuration</em>, marking it a class containing configuration data. You
+have to include each of those files (you may create virtually as manyas you
+want) in the <em>getBeanConfigurationClasses()</em> method of your
+application-class. Also make sure that <strong>exactly</strong> one of the
+classes contained within that List, all annotated with <em>@Configuration</em>,
+implements the <em>PivotBeanConfiguration</em> interface! An <em>Exception</em>
+will be thrown otherwise. If you have a closer look at the code of our sample
+application, you will notice that there is some existing configuration in
+use:</p>
+</div>
+
+<div>
+<pre><code>@Override
+public Collection&lt;Class&lt;?&gt;&gt; getBeanConfigurationClasses() {
+	Collection&lt;Class&lt;?&gt;&gt; result = super.getBeanConfigurationClasses();
+	result.add(SampleConfiguration.class);
+	eturn result;
+}</code></pre>
+</div>
+
+<div>
+<p>In fact, there have to be definitions for the way of creating every single
+kind of object provided by <em>Pivot</em>, <em>Buttons</em>, <em>Windows</em>,
+<em>Labels</em> and so on. A default implementation is already provided ready
+for use. If you are willing to replace the defaults, this is the place to hook
+in your replacements. </p>
+
+<p>But here are the sources of our configuration:</p>
+</div>
+</div>
+
+<div>
+<pre><code>public class SampleConfiguration extends AbstractPivotBeanConfiguration&lt;SampleApplicationWindow&gt; {
+
+	@Bean
+	@Lazy
+	@Scope(BeanDefinition.SCOPE_SINGLETON)
+	@Override
+	public SampleApplicationWindow createApplicationWindow() {
+		return new SampleApplicationWindow();
+	}
+}</code></pre>
+</div>
+
+<div>
+<p>While there is virtually nothing more to say about this class (provided that
+you are familiar to the Spring IoC, else refer to its documentation) we can
+proceed to our last Java class: SampleApplicationWindow . As you should already
+have guessed, this will act as the main window of our application. Its only
+method has to be implemented according to Pivot's Bindable interface where
+UI-related configuration, especially data-binding,usually takes place. </p>
+</div>
+
+<div>
+<pre><code>public class SampleApplicationWindow extends BindableWindow {
+
+	@Override
+	public void initialize(Map&lt;String, Object&gt; namespace, URL location, Resources resources) {
+	}
+}</code></pre>
+</div>
+
+<div>
+<p>This has been all of the Java related stuff. Let us see how we might get
+harmed by the need of assembling our GUI by using XML. I will only show you the
+markup needed for the sample application. It is very tiny and simple. Of
+course, if you will be doing some real stuff, it will grow and the class
+representing the application window will also grow in size. But the markup used
+by <em>Pivot</em> has a modular design and is well documented. Refer to its
+documentation, as it could be taken as is. </p>
+
+<p>So finally, here is our “verbose“ BXML-file:</p>
+</div>
+
+<div>
+<pre><code>&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;window:SampleApplicationWindow bxml:id="applicationWindow"
+				preferredWidth="800" preferredHeight="600"
+				maximized="true" title="Hello world!"
+				xmlns:bxml="http://pivot.apache.org/bxml"
+				xmlns:window="io.github.moosbusch.lumpi.sample.gui.window.impl"
+				xmlns="org.apache.pivot.wtk"/&gt;</code></pre>
+
+<p>Neat, isn't it? A little markup, basically denoting the class used for our
+application window, default size, title, application specific id. That's all
+there is to it. Finally, let's see the result. Here is a screenshot of our
+minimal sample application:</p>
+
+<p><img alt="Screenshot" src="Lumpi-Screenshot.png"
+style="display: block; text-align: center; margin-left: auto; margin-right: auto"
+width="800" height="596" /></p>
+
+<p>This should have been a concise, but sufficient set of information on how to
+get started with Lumpi, or at least to make clear what it's able to do. If
+you're interested, I'll soon come up with some more detailed information on my
+<a href="http://gkappei.wordpress.com/">blog</a>, showing how to develop a real
+world application.</p>
+</div>
+<script type="text/javascript"
+src="J:/src/moosbusch.github.io/javascripts/scale.fix.js">
+ </script>
+</body>
+</html>
