@@ -1639,4 +1639,14 @@ public abstract class AbstractPivotBeanConfiguration
     public TreeViewNodeRenderer createTreeViewNodeRenderer() {
         return new TreeViewNodeRenderer();
     }
+
+    @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    @Override
+    public GridPane.Filler createGridPaneFiller() {
+        return new GridPane.Filler();
+    }
+    
+    
 }

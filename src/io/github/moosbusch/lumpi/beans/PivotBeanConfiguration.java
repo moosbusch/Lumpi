@@ -451,6 +451,8 @@ public interface PivotBeanConfiguration
 
     public GridPane.Row createGridPaneRow();
 
+    public GridPane.Filler createGridPaneFiller();
+
     public TablePane createTablePane();
 
     public FlowPane createFlowPane();
