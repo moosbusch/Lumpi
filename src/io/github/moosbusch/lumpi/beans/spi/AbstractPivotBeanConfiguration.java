@@ -57,6 +57,7 @@ import org.apache.pivot.wtk.Expander;
 import org.apache.pivot.wtk.FileBrowser;
 import org.apache.pivot.wtk.FileBrowserSheet;
 import org.apache.pivot.wtk.FillPane;
+import org.apache.pivot.wtk.FlowPane;
 import org.apache.pivot.wtk.Form;
 import org.apache.pivot.wtk.Frame;
 import org.apache.pivot.wtk.GridPane;
@@ -90,6 +91,7 @@ import org.apache.pivot.wtk.SuggestionPopup;
 import org.apache.pivot.wtk.TabPane;
 import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.TableView;
+import org.apache.pivot.wtk.TableViewHeader;
 import org.apache.pivot.wtk.TextArea;
 import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.TextPane;
@@ -1122,6 +1124,14 @@ public abstract class AbstractPivotBeanConfiguration
     @Lazy
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Override
+    public FlowPane createFlowPane() {
+        return new FlowPane();
+    }
+
+    @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    @Override
     public Border createBorder() {
         return new Border();
     }
@@ -1508,6 +1518,22 @@ public abstract class AbstractPivotBeanConfiguration
     @Override
     public TableViewFileSizeCellRenderer createTableViewFileSizeCellRenderer() {
         return new TableViewFileSizeCellRenderer();
+    }
+
+    @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    @Override
+    public TableView.Column createTableViewColumn() {
+        return new TableView.Column();
+    }
+
+    @Bean
+    @Lazy
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    @Override
+    public TableViewHeader createTableViewHeader() {
+        return new TableViewHeader();
     }
 
     @Bean

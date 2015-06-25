@@ -56,6 +56,7 @@ import org.apache.pivot.wtk.Expander;
 import org.apache.pivot.wtk.FileBrowser;
 import org.apache.pivot.wtk.FileBrowserSheet;
 import org.apache.pivot.wtk.FillPane;
+import org.apache.pivot.wtk.FlowPane;
 import org.apache.pivot.wtk.Form;
 import org.apache.pivot.wtk.Frame;
 import org.apache.pivot.wtk.GridPane;
@@ -89,6 +90,7 @@ import org.apache.pivot.wtk.SuggestionPopup;
 import org.apache.pivot.wtk.TabPane;
 import org.apache.pivot.wtk.TablePane;
 import org.apache.pivot.wtk.TableView;
+import org.apache.pivot.wtk.TableViewHeader;
 import org.apache.pivot.wtk.TextArea;
 import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.TextPane;
@@ -165,6 +167,7 @@ import org.apache.pivot.wtk.text.NumberedList;
 import org.apache.pivot.wtk.text.Paragraph;
 import org.apache.pivot.wtk.text.PlainTextSerializer;
 import org.apache.pivot.wtk.text.Span;
+//import org.apache.pivot.wtk.text.Span;
 import org.apache.pivot.wtk.text.TextNode;
 import org.apache.pivot.wtk.text.TextSpan;
 import org.apache.pivot.wtk.validation.BigDecimalValidator;
@@ -311,6 +314,10 @@ public interface PivotBeanConfiguration
     public TableViewDateCellRenderer createTableViewDateCellRenderer();
 
     public TableViewFileSizeCellRenderer createTableViewFileSizeCellRenderer();
+    
+    public TableViewHeader createTableViewHeader();
+    
+    public TableView.Column createTableViewColumn();
 
     public TableViewHeaderData createTableViewHeaderData();
 
@@ -445,6 +452,8 @@ public interface PivotBeanConfiguration
     public GridPane.Row createGridPaneRow();
 
     public TablePane createTablePane();
+
+    public FlowPane createFlowPane();
 
     public TablePane.Column createTablePaneColumn();
 

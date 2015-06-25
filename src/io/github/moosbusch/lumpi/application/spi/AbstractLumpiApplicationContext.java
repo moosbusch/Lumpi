@@ -125,8 +125,8 @@ public abstract class AbstractLumpiApplicationContext
     }
 
     protected String getBeanCreationMethodName(Class<?> type) {
-        Collection<Class<?>> configClasses =
-                getApplication().getBeanConfigurationClasses();
+        Collection<Class<?>> configClasses
+                = getApplication().getBeanConfigurationClasses();
 
         if (configClasses != null) {
             if (!configClasses.isEmpty()) {
@@ -193,6 +193,11 @@ public abstract class AbstractLumpiApplicationContext
         return (LumpiApplication<? extends LumpiApplicationContext, ? extends BindableWindow>) getBean(APPLICATION_BEAN_NAME);
     }
 
+    @Override
+    public final Map<String, Object> getNamespace() {
+        return getSerializer().getNamespace();
+    }
+    
     @Override
     public final URL getLocation() {
         return getApplication().getBXMLConfigurationFile();

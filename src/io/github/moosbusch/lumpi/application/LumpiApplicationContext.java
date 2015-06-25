@@ -20,6 +20,7 @@ import io.github.moosbusch.lumpi.beans.impl.Options;
 import io.github.moosbusch.lumpi.gui.window.spi.BindableWindow;
 import io.github.moosbusch.lumpi.gui.window.swing.impl.HostFrame;
 import java.net.URL;
+import org.apache.pivot.collections.Map;
 import org.apache.pivot.collections.MapListener;
 import org.apache.pivot.collections.Set;
 import org.apache.pivot.util.Resources;
@@ -47,6 +48,8 @@ public interface LumpiApplicationContext
     public URL getLocation();
 
     public Options getPreferences();
+    
+    public Map<String, Object> getNamespace();
 
     public LumpiApplication<? extends LumpiApplicationContext, ? extends BindableWindow> getApplication();
 
